@@ -1,0 +1,269 @@
+{
+    "actions": [],
+    "allow_rename": 0,
+    "autoname": "BTRF-.#####",
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "section_basic",
+        "company",
+        "bill_of_exchange",
+        "bill_no",
+        "original_amount",
+        "column_break_basic",
+        "supplier",
+        "linked_purchase_invoice",
+        "transfer_date",
+        "section_transfer",
+        "transfer_amount",
+        "is_partial_transfer",
+        "column_break_transfer",
+        "no_transfer_mark",
+        "section_split",
+        "transfer_sub_start",
+        "transfer_sub_end",
+        "column_break_split",
+        "remaining_sub_start",
+        "remaining_sub_end",
+        "remaining_amount",
+        "section_accounting",
+        "accounts_payable_account",
+        "column_break_acct",
+        "notes_receivable_account",
+        "section_result",
+        "new_bill_of_exchange",
+        "section_remarks",
+        "amended_from",
+        "remarks"
+    ],
+    "fields": [
+        {
+            "fieldname": "section_basic",
+            "fieldtype": "Section Break",
+            "label": "基本信息"
+        },
+        {
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "label": "公司",
+            "options": "Company",
+            "reqd": 1
+        },
+        {
+            "fieldname": "bill_of_exchange",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "关联票据",
+            "options": "Bill of Exchange",
+            "reqd": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.bill_no",
+            "fieldname": "bill_no",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "票据包号",
+            "read_only": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.bill_amount",
+            "fieldname": "original_amount",
+            "fieldtype": "Currency",
+            "label": "原票面金额",
+            "read_only": 1
+        },
+        {
+            "fieldname": "column_break_basic",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "supplier",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "供应商（被背书人）",
+            "options": "Supplier",
+            "reqd": 1
+        },
+        {
+            "fieldname": "linked_purchase_invoice",
+            "fieldtype": "Link",
+            "label": "关联采购发票",
+            "options": "Purchase Invoice"
+        },
+        {
+            "default": "Today",
+            "fieldname": "transfer_date",
+            "fieldtype": "Date",
+            "label": "转让日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_transfer",
+            "fieldtype": "Section Break",
+            "label": "转让信息"
+        },
+        {
+            "fieldname": "transfer_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "转让金额",
+            "reqd": 1
+        },
+        {
+            "default": "0",
+            "fieldname": "is_partial_transfer",
+            "fieldtype": "Check",
+            "label": "是否部分转让"
+        },
+        {
+            "fieldname": "column_break_transfer",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "0",
+            "fieldname": "no_transfer_mark",
+            "fieldtype": "Check",
+            "label": "不得转让标记"
+        },
+        {
+            "fieldname": "section_split",
+            "fieldtype": "Section Break",
+            "label": "子票拆分",
+            "depends_on": "is_partial_transfer"
+        },
+        {
+            "fieldname": "transfer_sub_start",
+            "fieldtype": "Int",
+            "label": "转让子票起始号"
+        },
+        {
+            "fieldname": "transfer_sub_end",
+            "fieldtype": "Int",
+            "label": "转让子票结束号"
+        },
+        {
+            "fieldname": "column_break_split",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "remaining_sub_start",
+            "fieldtype": "Int",
+            "label": "剩余子票起始号",
+            "read_only": 1
+        },
+        {
+            "fieldname": "remaining_sub_end",
+            "fieldtype": "Int",
+            "label": "剩余子票结束号",
+            "read_only": 1
+        },
+        {
+            "fieldname": "remaining_amount",
+            "fieldtype": "Currency",
+            "label": "剩余金额",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_accounting",
+            "fieldtype": "Section Break",
+            "label": "会计信息"
+        },
+        {
+            "fieldname": "accounts_payable_account",
+            "fieldtype": "Link",
+            "label": "应付账款科目",
+            "options": "Account"
+        },
+        {
+            "fieldname": "column_break_acct",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "notes_receivable_account",
+            "fieldtype": "Link",
+            "label": "应收票据科目",
+            "options": "Account"
+        },
+        {
+            "fieldname": "section_result",
+            "fieldtype": "Section Break",
+            "label": "处理结果"
+        },
+        {
+            "fieldname": "new_bill_of_exchange",
+            "fieldtype": "Link",
+            "label": "拆分后新票据",
+            "options": "Bill of Exchange",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_remarks",
+            "fieldtype": "Section Break",
+            "label": "备注"
+        },
+        {
+            "fieldname": "amended_from",
+            "fieldtype": "Link",
+            "label": "修正来源",
+            "no_copy": 1,
+            "options": "Bill Transfer",
+            "print_hide": 1,
+            "read_only": 1
+        },
+        {
+            "fieldname": "remarks",
+            "fieldtype": "Small Text",
+            "label": "备注"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "is_submittable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Bill Transfer",
+    "naming_rule": "Expression",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "cancel": 1,
+            "create": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts User",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "amend": 1,
+            "cancel": 1,
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts Manager",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "read": 1,
+            "report": 1,
+            "role": "Auditor",
+            "export": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}

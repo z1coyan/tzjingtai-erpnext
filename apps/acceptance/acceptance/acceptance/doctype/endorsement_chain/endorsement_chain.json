@@ -1,0 +1,87 @@
+{
+    "actions": [],
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "sequence",
+        "endorser_name",
+        "endorsee_name",
+        "endorsement_date",
+        "column_break_1",
+        "sub_start",
+        "sub_end",
+        "endorsement_amount",
+        "endorsement_log"
+    ],
+    "fields": [
+        {
+            "fieldname": "sequence",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "序号",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorser_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "背书人",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorsee_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "被背书人",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorsement_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "背书日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "sub_start",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "子票起始号"
+        },
+        {
+            "fieldname": "sub_end",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "子票结束号"
+        },
+        {
+            "fieldname": "endorsement_amount",
+            "fieldtype": "Currency",
+            "label": "背书金额"
+        },
+        {
+            "fieldname": "endorsement_log",
+            "fieldtype": "Link",
+            "label": "背书记录",
+            "options": "Endorsement Log"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "istable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Endorsement Chain",
+    "owner": "Administrator",
+    "permissions": [],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 0
+}

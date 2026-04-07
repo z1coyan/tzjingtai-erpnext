@@ -1,0 +1,111 @@
+{
+    "actions": [],
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "enabled",
+        "section_credentials",
+        "aliyun_access_key_id",
+        "aliyun_access_key_secret",
+        "column_break_cred",
+        "ocr_endpoint",
+        "ocr_region_id",
+        "section_back",
+        "back_recognition_enabled",
+        "column_break_back",
+        "back_recognition_keys"
+    ],
+    "fields": [
+        {
+            "default": "0",
+            "fieldname": "enabled",
+            "fieldtype": "Check",
+            "label": "启用 OCR"
+        },
+        {
+            "fieldname": "section_credentials",
+            "fieldtype": "Section Break",
+            "label": "阿里云凭证",
+            "depends_on": "enabled"
+        },
+        {
+            "fieldname": "aliyun_access_key_id",
+            "fieldtype": "Data",
+            "label": "AccessKey ID",
+            "reqd": 1,
+            "depends_on": "enabled"
+        },
+        {
+            "fieldname": "aliyun_access_key_secret",
+            "fieldtype": "Password",
+            "label": "AccessKey Secret",
+            "depends_on": "enabled"
+        },
+        {
+            "fieldname": "column_break_cred",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "ocr-api.cn-hangzhou.aliyuncs.com",
+            "fieldname": "ocr_endpoint",
+            "fieldtype": "Data",
+            "label": "OCR Endpoint"
+        },
+        {
+            "default": "cn-hangzhou",
+            "fieldname": "ocr_region_id",
+            "fieldtype": "Data",
+            "label": "Region ID"
+        },
+        {
+            "fieldname": "section_back",
+            "fieldtype": "Section Break",
+            "label": "背面识别配置",
+            "depends_on": "enabled"
+        },
+        {
+            "default": "0",
+            "fieldname": "back_recognition_enabled",
+            "fieldtype": "Check",
+            "label": "启用背面识别"
+        },
+        {
+            "fieldname": "column_break_back",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "[\"背书人名称\", \"被背书人名称\", \"背书日期\"]",
+            "fieldname": "back_recognition_keys",
+            "fieldtype": "Small Text",
+            "label": "背面识别 Keys（JSON数组）",
+            "depends_on": "back_recognition_enabled"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "issingle": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "OCR Settings",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "read": 1,
+            "role": "System Manager",
+            "write": 1
+        },
+        {
+            "create": 1,
+            "read": 1,
+            "role": "Accounts Manager",
+            "write": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 0
+}

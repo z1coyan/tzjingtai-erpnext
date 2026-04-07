@@ -1,0 +1,315 @@
+{
+    "actions": [],
+    "allow_rename": 0,
+    "autoname": "BRCV-.#####",
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "section_basic",
+        "company",
+        "customer",
+        "posting_date",
+        "column_break_basic",
+        "linked_sales_invoice",
+        "section_images",
+        "front_image",
+        "column_break_images",
+        "back_image",
+        "section_bill_info",
+        "bill_no",
+        "bill_type",
+        "column_break_bill",
+        "sub_ticket_start",
+        "sub_ticket_end",
+        "bill_amount",
+        "section_drawer",
+        "drawer_name",
+        "drawer_account",
+        "drawer_bank",
+        "section_acceptor",
+        "acceptor_name",
+        "acceptor_account",
+        "acceptor_bank",
+        "section_dates",
+        "issue_date",
+        "column_break_dates",
+        "due_date",
+        "section_accounting",
+        "notes_receivable_account",
+        "column_break_acct",
+        "accounts_receivable_account",
+        "section_result",
+        "bill_of_exchange",
+        "section_remarks",
+        "amended_from",
+        "remarks"
+    ],
+    "fields": [
+        {
+            "fieldname": "section_basic",
+            "fieldtype": "Section Break",
+            "label": "基本信息"
+        },
+        {
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "label": "公司",
+            "options": "Company",
+            "reqd": 1
+        },
+        {
+            "fieldname": "customer",
+            "fieldtype": "Link",
+            "label": "客户（背书人）",
+            "options": "Customer",
+            "reqd": 1
+        },
+        {
+            "default": "Today",
+            "fieldname": "posting_date",
+            "fieldtype": "Date",
+            "label": "接收日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_basic",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "linked_sales_invoice",
+            "fieldtype": "Link",
+            "label": "关联销售发票",
+            "options": "Sales Invoice"
+        },
+        {
+            "fieldname": "section_images",
+            "fieldtype": "Section Break",
+            "label": "票据图片（OCR识别）",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "front_image",
+            "fieldtype": "Attach Image",
+            "label": "票据正面图片"
+        },
+        {
+            "fieldname": "column_break_images",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "back_image",
+            "fieldtype": "Attach Image",
+            "label": "票据背面图片"
+        },
+        {
+            "fieldname": "section_bill_info",
+            "fieldtype": "Section Break",
+            "label": "票据信息"
+        },
+        {
+            "fieldname": "bill_no",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "票据包号",
+            "reqd": 1,
+            "description": "30位阿拉伯数字"
+        },
+        {
+            "fieldname": "bill_type",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "票据种类",
+            "options": "银行承兑汇票\n商业承兑汇票\n供应链银票\n供应链商票",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_bill",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "sub_ticket_start",
+            "fieldtype": "Int",
+            "label": "子票区间起始号",
+            "reqd": 1
+        },
+        {
+            "fieldname": "sub_ticket_end",
+            "fieldtype": "Int",
+            "label": "子票区间结束号",
+            "reqd": 1
+        },
+        {
+            "fieldname": "bill_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "票面金额",
+            "read_only": 1,
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_drawer",
+            "fieldtype": "Section Break",
+            "label": "出票人信息"
+        },
+        {
+            "fieldname": "drawer_name",
+            "fieldtype": "Data",
+            "label": "出票人名称",
+            "reqd": 1
+        },
+        {
+            "fieldname": "drawer_account",
+            "fieldtype": "Data",
+            "label": "出票人账号"
+        },
+        {
+            "fieldname": "drawer_bank",
+            "fieldtype": "Data",
+            "label": "出票人开户行"
+        },
+        {
+            "fieldname": "section_acceptor",
+            "fieldtype": "Section Break",
+            "label": "承兑人信息"
+        },
+        {
+            "fieldname": "acceptor_name",
+            "fieldtype": "Data",
+            "label": "承兑人名称",
+            "reqd": 1
+        },
+        {
+            "fieldname": "acceptor_account",
+            "fieldtype": "Data",
+            "label": "承兑人账号"
+        },
+        {
+            "fieldname": "acceptor_bank",
+            "fieldtype": "Data",
+            "label": "承兑人开户行"
+        },
+        {
+            "fieldname": "section_dates",
+            "fieldtype": "Section Break",
+            "label": "票据日期"
+        },
+        {
+            "fieldname": "issue_date",
+            "fieldtype": "Date",
+            "label": "出票日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_dates",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "due_date",
+            "fieldtype": "Date",
+            "label": "到期日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_accounting",
+            "fieldtype": "Section Break",
+            "label": "会计信息"
+        },
+        {
+            "fieldname": "notes_receivable_account",
+            "fieldtype": "Link",
+            "label": "应收票据科目",
+            "options": "Account"
+        },
+        {
+            "fieldname": "column_break_acct",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "accounts_receivable_account",
+            "fieldtype": "Link",
+            "label": "应收账款科目",
+            "options": "Account"
+        },
+        {
+            "fieldname": "section_result",
+            "fieldtype": "Section Break",
+            "label": "处理结果"
+        },
+        {
+            "fieldname": "bill_of_exchange",
+            "fieldtype": "Link",
+            "label": "创建的票据台账",
+            "options": "Bill of Exchange",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_remarks",
+            "fieldtype": "Section Break",
+            "label": "备注"
+        },
+        {
+            "fieldname": "amended_from",
+            "fieldtype": "Link",
+            "label": "修正来源",
+            "no_copy": 1,
+            "options": "Bill Receive",
+            "print_hide": 1,
+            "read_only": 1
+        },
+        {
+            "fieldname": "remarks",
+            "fieldtype": "Small Text",
+            "label": "备注"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "is_submittable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Bill Receive",
+    "naming_rule": "Expression",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "cancel": 1,
+            "create": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts User",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "amend": 1,
+            "cancel": 1,
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts Manager",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "read": 1,
+            "report": 1,
+            "role": "Auditor",
+            "export": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}

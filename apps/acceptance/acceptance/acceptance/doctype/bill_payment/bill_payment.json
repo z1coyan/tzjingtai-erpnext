@@ -1,0 +1,206 @@
+{
+    "actions": [],
+    "allow_rename": 0,
+    "autoname": "BPAY-.#####",
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "section_basic",
+        "bill_of_exchange",
+        "bill_no",
+        "bill_amount",
+        "bill_type",
+        "column_break_basic",
+        "company",
+        "due_date",
+        "section_payment",
+        "payment_date",
+        "payment_amount",
+        "column_break_payment",
+        "payment_status",
+        "section_accounting",
+        "bank_account",
+        "column_break_acct",
+        "notes_receivable_account",
+        "section_remarks",
+        "amended_from",
+        "remarks"
+    ],
+    "fields": [
+        {
+            "fieldname": "section_basic",
+            "fieldtype": "Section Break",
+            "label": "基本信息"
+        },
+        {
+            "fieldname": "bill_of_exchange",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "关联票据",
+            "options": "Bill of Exchange",
+            "reqd": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.bill_no",
+            "fieldname": "bill_no",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "票据包号",
+            "read_only": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.bill_amount",
+            "fieldname": "bill_amount",
+            "fieldtype": "Currency",
+            "label": "票面金额",
+            "read_only": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.bill_type",
+            "fieldname": "bill_type",
+            "fieldtype": "Data",
+            "label": "票据种类",
+            "read_only": 1
+        },
+        {
+            "fieldname": "column_break_basic",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "label": "公司",
+            "options": "Company",
+            "reqd": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.due_date",
+            "fieldname": "due_date",
+            "fieldtype": "Date",
+            "label": "到期日期",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_payment",
+            "fieldtype": "Section Break",
+            "label": "兑付信息"
+        },
+        {
+            "default": "Today",
+            "fieldname": "payment_date",
+            "fieldtype": "Date",
+            "label": "兑付日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "payment_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "兑付金额",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_payment",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "提示付款中",
+            "fieldname": "payment_status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "兑付状态",
+            "options": "提示付款中\n已兑付\n逾期未兑付",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_accounting",
+            "fieldtype": "Section Break",
+            "label": "会计信息"
+        },
+        {
+            "fieldname": "bank_account",
+            "fieldtype": "Link",
+            "label": "收款银行账户",
+            "options": "Account"
+        },
+        {
+            "fieldname": "column_break_acct",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "notes_receivable_account",
+            "fieldtype": "Link",
+            "label": "应收票据科目",
+            "options": "Account"
+        },
+        {
+            "fieldname": "section_remarks",
+            "fieldtype": "Section Break",
+            "label": "备注"
+        },
+        {
+            "fieldname": "amended_from",
+            "fieldtype": "Link",
+            "label": "修正来源",
+            "no_copy": 1,
+            "options": "Bill Payment",
+            "print_hide": 1,
+            "read_only": 1
+        },
+        {
+            "fieldname": "remarks",
+            "fieldtype": "Small Text",
+            "label": "备注"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "is_submittable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Bill Payment",
+    "naming_rule": "Expression",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "cancel": 1,
+            "create": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts User",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "amend": 1,
+            "cancel": 1,
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts Manager",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "read": 1,
+            "report": 1,
+            "role": "Auditor",
+            "export": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}

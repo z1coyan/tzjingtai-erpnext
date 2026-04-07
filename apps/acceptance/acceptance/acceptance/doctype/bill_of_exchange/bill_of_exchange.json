@@ -1,0 +1,345 @@
+{
+    "actions": [],
+    "allow_rename": 0,
+    "autoname": "BOE-.#####",
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "section_basic",
+        "bill_no",
+        "bill_type",
+        "column_break_basic",
+        "issue_date",
+        "due_date",
+        "company",
+        "section_sub_ticket",
+        "sub_ticket_start",
+        "sub_ticket_end",
+        "column_break_sub",
+        "bill_amount",
+        "is_splittable",
+        "section_drawer",
+        "drawer_name",
+        "drawer_account",
+        "drawer_bank",
+        "section_acceptor",
+        "acceptor_name",
+        "acceptor_account",
+        "acceptor_bank",
+        "section_holder",
+        "payee_name",
+        "current_holder",
+        "column_break_holder",
+        "bill_status",
+        "circulation_flag",
+        "no_transfer_mark",
+        "section_links",
+        "parent_bill",
+        "linked_sales_invoice",
+        "column_break_links",
+        "linked_purchase_invoice",
+        "section_sub_tickets",
+        "sub_tickets",
+        "section_endorsement",
+        "endorsement_chain",
+        "section_remarks",
+        "amended_from",
+        "remarks"
+    ],
+    "fields": [
+        {
+            "fieldname": "section_basic",
+            "fieldtype": "Section Break",
+            "label": "票据基本信息"
+        },
+        {
+            "fieldname": "bill_no",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "票据包号",
+            "reqd": 1,
+            "unique": 1,
+            "description": "30位阿拉伯数字"
+        },
+        {
+            "fieldname": "bill_type",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "票据种类",
+            "options": "银行承兑汇票\n商业承兑汇票\n供应链银票\n供应链商票",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_basic",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "issue_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "出票日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "due_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "到期日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "label": "公司",
+            "options": "Company",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_sub_ticket",
+            "fieldtype": "Section Break",
+            "label": "子票区间"
+        },
+        {
+            "fieldname": "sub_ticket_start",
+            "fieldtype": "Int",
+            "label": "子票区间起始号",
+            "reqd": 1,
+            "description": "0表示不可拆分"
+        },
+        {
+            "fieldname": "sub_ticket_end",
+            "fieldtype": "Int",
+            "label": "子票区间结束号",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_sub",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "bill_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "票面金额",
+            "read_only": 1,
+            "reqd": 1,
+            "description": "自动计算 = (结束号 - 起始号 + 1) × 0.01"
+        },
+        {
+            "default": "0",
+            "fieldname": "is_splittable",
+            "fieldtype": "Check",
+            "label": "是否可拆分",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_drawer",
+            "fieldtype": "Section Break",
+            "label": "出票人信息"
+        },
+        {
+            "fieldname": "drawer_name",
+            "fieldtype": "Data",
+            "label": "出票人名称",
+            "reqd": 1
+        },
+        {
+            "fieldname": "drawer_account",
+            "fieldtype": "Data",
+            "label": "出票人账号"
+        },
+        {
+            "fieldname": "drawer_bank",
+            "fieldtype": "Data",
+            "label": "出票人开户行"
+        },
+        {
+            "fieldname": "section_acceptor",
+            "fieldtype": "Section Break",
+            "label": "承兑人信息"
+        },
+        {
+            "fieldname": "acceptor_name",
+            "fieldtype": "Data",
+            "in_standard_filter": 1,
+            "label": "承兑人名称",
+            "reqd": 1
+        },
+        {
+            "fieldname": "acceptor_account",
+            "fieldtype": "Data",
+            "label": "承兑人账号"
+        },
+        {
+            "fieldname": "acceptor_bank",
+            "fieldtype": "Data",
+            "label": "承兑人开户行"
+        },
+        {
+            "fieldname": "section_holder",
+            "fieldtype": "Section Break",
+            "label": "收款与持票信息"
+        },
+        {
+            "fieldname": "payee_name",
+            "fieldtype": "Data",
+            "label": "收款人名称"
+        },
+        {
+            "fieldname": "current_holder",
+            "fieldtype": "Data",
+            "label": "当前持票人"
+        },
+        {
+            "fieldname": "column_break_holder",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "已签发",
+            "fieldname": "bill_status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "票据状态",
+            "options": "已签发\n已收票-可流通\n背书待签收\n已背书转让\n贴现待确认\n已贴现\n提示付款中\n已结清-已结束\n已拆分",
+            "reqd": 1
+        },
+        {
+            "default": "可流通",
+            "fieldname": "circulation_flag",
+            "fieldtype": "Select",
+            "label": "流通标志",
+            "options": "可流通\n不可转让\n已结束"
+        },
+        {
+            "default": "0",
+            "fieldname": "no_transfer_mark",
+            "fieldtype": "Check",
+            "label": "不得转让标记"
+        },
+        {
+            "fieldname": "section_links",
+            "fieldtype": "Section Break",
+            "label": "关联信息"
+        },
+        {
+            "fieldname": "parent_bill",
+            "fieldtype": "Link",
+            "label": "父票据引用",
+            "options": "Bill of Exchange"
+        },
+        {
+            "fieldname": "linked_sales_invoice",
+            "fieldtype": "Link",
+            "label": "关联销售发票",
+            "options": "Sales Invoice"
+        },
+        {
+            "fieldname": "column_break_links",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "linked_purchase_invoice",
+            "fieldtype": "Link",
+            "label": "关联采购发票",
+            "options": "Purchase Invoice"
+        },
+        {
+            "fieldname": "section_sub_tickets",
+            "fieldtype": "Section Break",
+            "label": "子票记录",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "sub_tickets",
+            "fieldtype": "Table",
+            "label": "子票记录",
+            "options": "Bill Sub Ticket"
+        },
+        {
+            "fieldname": "section_endorsement",
+            "fieldtype": "Section Break",
+            "label": "背书链条",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "endorsement_chain",
+            "fieldtype": "Table",
+            "label": "背书链条",
+            "options": "Endorsement Chain"
+        },
+        {
+            "fieldname": "section_remarks",
+            "fieldtype": "Section Break",
+            "label": "备注"
+        },
+        {
+            "fieldname": "amended_from",
+            "fieldtype": "Link",
+            "label": "修正来源",
+            "no_copy": 1,
+            "options": "Bill of Exchange",
+            "print_hide": 1,
+            "read_only": 1
+        },
+        {
+            "fieldname": "remarks",
+            "fieldtype": "Small Text",
+            "label": "备注"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "is_submittable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Bill of Exchange",
+    "naming_rule": "Expression",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "cancel": 1,
+            "create": 1,
+            "delete": 0,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts User",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "amend": 1,
+            "cancel": 1,
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts Manager",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "read": 1,
+            "report": 1,
+            "role": "Auditor",
+            "export": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}

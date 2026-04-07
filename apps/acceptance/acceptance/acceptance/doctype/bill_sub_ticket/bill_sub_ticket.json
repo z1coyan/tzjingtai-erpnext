@@ -1,0 +1,85 @@
+{
+    "actions": [],
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "sub_start",
+        "sub_end",
+        "sub_amount",
+        "column_break_1",
+        "sub_status",
+        "holder",
+        "column_break_2",
+        "related_doc_type",
+        "related_doc_name"
+    ],
+    "fields": [
+        {
+            "fieldname": "sub_start",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "子票起始号",
+            "reqd": 1
+        },
+        {
+            "fieldname": "sub_end",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "子票结束号",
+            "reqd": 1
+        },
+        {
+            "fieldname": "sub_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "子票金额",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "可流通",
+            "fieldname": "sub_status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "子票状态",
+            "options": "可流通\n已转让\n已贴现\n已兑付"
+        },
+        {
+            "fieldname": "holder",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "持票人"
+        },
+        {
+            "fieldname": "column_break_2",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "related_doc_type",
+            "fieldtype": "Data",
+            "label": "关联单据类型"
+        },
+        {
+            "fieldname": "related_doc_name",
+            "fieldtype": "Data",
+            "label": "关联单据编号"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "istable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Bill Sub Ticket",
+    "owner": "Administrator",
+    "permissions": [],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 0
+}

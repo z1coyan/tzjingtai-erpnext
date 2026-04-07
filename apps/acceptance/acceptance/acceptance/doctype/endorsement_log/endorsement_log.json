@@ -1,0 +1,216 @@
+{
+    "actions": [],
+    "allow_rename": 0,
+    "autoname": "ENDO-.#####",
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "section_basic",
+        "bill_of_exchange",
+        "bill_no",
+        "endorsement_type",
+        "column_break_basic",
+        "endorsement_date",
+        "endorsement_amount",
+        "section_endorser",
+        "endorser_name",
+        "endorser_account",
+        "endorser_bank",
+        "column_break_endorser",
+        "endorsee_name",
+        "endorsee_account",
+        "endorsee_bank",
+        "section_sub_ticket",
+        "sub_ticket_start",
+        "sub_ticket_end",
+        "column_break_sub",
+        "no_transfer_mark",
+        "section_remarks",
+        "amended_from",
+        "remarks"
+    ],
+    "fields": [
+        {
+            "fieldname": "section_basic",
+            "fieldtype": "Section Break",
+            "label": "基本信息"
+        },
+        {
+            "fieldname": "bill_of_exchange",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "关联票据",
+            "options": "Bill of Exchange",
+            "reqd": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.bill_no",
+            "fieldname": "bill_no",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "票据包号",
+            "read_only": 1
+        },
+        {
+            "fieldname": "endorsement_type",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "背书类型",
+            "options": "背书接收\n背书转让",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_basic",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "endorsement_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "背书日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorsement_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "背书金额",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_endorser",
+            "fieldtype": "Section Break",
+            "label": "背书人信息"
+        },
+        {
+            "fieldname": "endorser_name",
+            "fieldtype": "Data",
+            "label": "背书人名称",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorser_account",
+            "fieldtype": "Data",
+            "label": "背书人账号"
+        },
+        {
+            "fieldname": "endorser_bank",
+            "fieldtype": "Data",
+            "label": "背书人开户行"
+        },
+        {
+            "fieldname": "column_break_endorser",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "endorsee_name",
+            "fieldtype": "Data",
+            "label": "被背书人名称",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorsee_account",
+            "fieldtype": "Data",
+            "label": "被背书人账号"
+        },
+        {
+            "fieldname": "endorsee_bank",
+            "fieldtype": "Data",
+            "label": "被背书人开户行"
+        },
+        {
+            "fieldname": "section_sub_ticket",
+            "fieldtype": "Section Break",
+            "label": "子票区间"
+        },
+        {
+            "fieldname": "sub_ticket_start",
+            "fieldtype": "Int",
+            "label": "子票区间起始号"
+        },
+        {
+            "fieldname": "sub_ticket_end",
+            "fieldtype": "Int",
+            "label": "子票区间结束号"
+        },
+        {
+            "fieldname": "column_break_sub",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "0",
+            "fieldname": "no_transfer_mark",
+            "fieldtype": "Check",
+            "label": "不得转让标记"
+        },
+        {
+            "fieldname": "section_remarks",
+            "fieldtype": "Section Break",
+            "label": "备注"
+        },
+        {
+            "fieldname": "amended_from",
+            "fieldtype": "Link",
+            "label": "修正来源",
+            "no_copy": 1,
+            "options": "Endorsement Log",
+            "print_hide": 1,
+            "read_only": 1
+        },
+        {
+            "fieldname": "remarks",
+            "fieldtype": "Small Text",
+            "label": "备注"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "is_submittable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Endorsement Log",
+    "naming_rule": "Expression",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "cancel": 1,
+            "create": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts User",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "amend": 1,
+            "cancel": 1,
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts Manager",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "read": 1,
+            "report": 1,
+            "role": "Auditor",
+            "export": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}

@@ -1,0 +1,271 @@
+{
+    "actions": [],
+    "allow_rename": 0,
+    "autoname": "DISC-.#####",
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "section_basic",
+        "bill_of_exchange",
+        "bill_no",
+        "bill_amount",
+        "column_break_basic",
+        "company",
+        "posting_date",
+        "section_discount",
+        "discount_bank",
+        "discount_date",
+        "column_break_discount",
+        "discount_rate",
+        "remaining_days",
+        "section_sub_ticket",
+        "sub_ticket_start",
+        "sub_ticket_end",
+        "column_break_sub",
+        "discount_amount",
+        "section_result",
+        "discount_interest",
+        "column_break_result",
+        "actual_amount",
+        "section_accounting",
+        "bank_account",
+        "column_break_acct1",
+        "notes_receivable_account",
+        "column_break_acct2",
+        "interest_account",
+        "section_remarks",
+        "amended_from",
+        "remarks"
+    ],
+    "fields": [
+        {
+            "fieldname": "section_basic",
+            "fieldtype": "Section Break",
+            "label": "基本信息"
+        },
+        {
+            "fieldname": "bill_of_exchange",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "关联票据",
+            "options": "Bill of Exchange",
+            "reqd": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.bill_no",
+            "fieldname": "bill_no",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "票据包号",
+            "read_only": 1
+        },
+        {
+            "fetch_from": "bill_of_exchange.bill_amount",
+            "fieldname": "bill_amount",
+            "fieldtype": "Currency",
+            "label": "票面金额",
+            "read_only": 1
+        },
+        {
+            "fieldname": "column_break_basic",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "label": "公司",
+            "options": "Company",
+            "reqd": 1
+        },
+        {
+            "default": "Today",
+            "fieldname": "posting_date",
+            "fieldtype": "Date",
+            "label": "记账日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_discount",
+            "fieldtype": "Section Break",
+            "label": "贴现信息"
+        },
+        {
+            "fieldname": "discount_bank",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "贴现银行",
+            "reqd": 1
+        },
+        {
+            "default": "Today",
+            "fieldname": "discount_date",
+            "fieldtype": "Date",
+            "label": "贴现日期",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_discount",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "discount_rate",
+            "fieldtype": "Percent",
+            "label": "贴现利率（年化%）",
+            "reqd": 1
+        },
+        {
+            "fieldname": "remaining_days",
+            "fieldtype": "Int",
+            "label": "剩余天数",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_sub_ticket",
+            "fieldtype": "Section Break",
+            "label": "贴现子票区间（部分贴现时填写）",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "sub_ticket_start",
+            "fieldtype": "Int",
+            "label": "贴现子票起始号"
+        },
+        {
+            "fieldname": "sub_ticket_end",
+            "fieldtype": "Int",
+            "label": "贴现子票结束号"
+        },
+        {
+            "fieldname": "column_break_sub",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "discount_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "贴现金额",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_result",
+            "fieldtype": "Section Break",
+            "label": "计算结果"
+        },
+        {
+            "fieldname": "discount_interest",
+            "fieldtype": "Currency",
+            "label": "贴现利息",
+            "read_only": 1
+        },
+        {
+            "fieldname": "column_break_result",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "actual_amount",
+            "fieldtype": "Currency",
+            "label": "实际到账金额",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_accounting",
+            "fieldtype": "Section Break",
+            "label": "会计信息"
+        },
+        {
+            "fieldname": "bank_account",
+            "fieldtype": "Link",
+            "label": "收款银行账户",
+            "options": "Account"
+        },
+        {
+            "fieldname": "column_break_acct1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "notes_receivable_account",
+            "fieldtype": "Link",
+            "label": "应收票据科目",
+            "options": "Account"
+        },
+        {
+            "fieldname": "column_break_acct2",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "interest_account",
+            "fieldtype": "Link",
+            "label": "贴现利息科目",
+            "options": "Account"
+        },
+        {
+            "fieldname": "section_remarks",
+            "fieldtype": "Section Break",
+            "label": "备注"
+        },
+        {
+            "fieldname": "amended_from",
+            "fieldtype": "Link",
+            "label": "修正来源",
+            "no_copy": 1,
+            "options": "Bill Discount",
+            "print_hide": 1,
+            "read_only": 1
+        },
+        {
+            "fieldname": "remarks",
+            "fieldtype": "Small Text",
+            "label": "备注"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "is_submittable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Bill Discount",
+    "naming_rule": "Expression",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "cancel": 1,
+            "create": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts User",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "amend": 1,
+            "cancel": 1,
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts Manager",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "read": 1,
+            "report": 1,
+            "role": "Auditor",
+            "export": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}
