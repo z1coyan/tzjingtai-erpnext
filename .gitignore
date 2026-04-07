@@ -1,0 +1,25 @@
+# Environment
+.env
+
+# Generated compose file
+docker-compose.yaml
+
+# Runtime data
+sites/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Node
+node_modules/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

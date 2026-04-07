@@ -1,0 +1,10 @@
+.git
+.env
+.env.example
+.gitignore
+.dockerignore
+docker-compose.yaml
+deploy/
+scripts/
+Makefile
+README.md
