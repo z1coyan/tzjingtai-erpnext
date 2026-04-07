@@ -1,4 +1,1 @@
-services:
-  frontend:
-    ports:
-      - "127.0.0.1:${HTTP_PUBLISH_PORT:-8080}:8080"
+services: {}
