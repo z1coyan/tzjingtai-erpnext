@@ -36,12 +36,20 @@ down:
 clean:
 	@docker compose -p $(PROJECT) -f docker-compose.yaml down -v
 
+## Extract app names from apps.json (url basename, strip .git suffix)
+APPS := $(shell python3 -c "\
+import json; \
+apps = json.load(open('build/apps.json')); \
+print(' '.join(a['url'].rstrip('/').split('/')[-1].replace('.git','') for a in apps))")
+INSTALL_APPS := $(foreach app,$(APPS),--install-app $(app))
+
 ## Create a new site (usage: make site SITE=erp.localhost PASS=admin)
+## Apps installed automatically from build/apps.json
 site:
 	@docker compose -p $(PROJECT) -f docker-compose.yaml exec backend \
 		bench new-site $(SITE) \
 			--mariadb-user-host-login-scope='%' \
 			--db-root-password=$(DB_PASSWORD) \
 			--admin-password=$(PASS) \
-			--install-app erpnext \
+			$(INSTALL_APPS) \
 			--set-default
