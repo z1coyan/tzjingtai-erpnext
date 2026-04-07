@@ -1,0 +1,16 @@
+[project]
+name = "acceptance"
+authors = [
+    { name = "台州京泰", email = "dev@tzjingtai.com"}
+]
+description = "承兑汇票全生命周期管理"
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.dev-dependencies]
+# 开发依赖
