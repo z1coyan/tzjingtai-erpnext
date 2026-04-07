@@ -18,7 +18,8 @@ ARG APT_MIRROR
 ARG PIP_INDEX_URL
 ARG PIP_TRUSTED_HOST
 ARG NPM_REGISTRY
-ARG NVM_SOURCE=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+ARG NVM_INSTALL_SCRIPT=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+ARG NODE_MIRROR
 ARG WKHTMLTOPDF_MIRROR=https://github.com/wkhtmltopdf/packaging/releases/download
 
 # Configure APT mirror (if set, replace default Debian sources)
@@ -59,8 +60,9 @@ RUN useradd -ms /bin/bash frappe \
     media-types \
     # NodeJS
     && mkdir -p ${NVM_DIR} \
-    && curl -o- ${NVM_SOURCE} | bash \
+    && curl -o- ${NVM_INSTALL_SCRIPT} | bash \
     && . ${NVM_DIR}/nvm.sh \
+    && if [ -n "${NODE_MIRROR}" ]; then export NVM_NODEJS_ORG_MIRROR=${NODE_MIRROR}; fi \
     && nvm install ${NODE_VERSION} \
     && nvm use v${NODE_VERSION} \
     && if [ -n "${NPM_REGISTRY}" ]; then npm config set registry ${NPM_REGISTRY}; fi \
