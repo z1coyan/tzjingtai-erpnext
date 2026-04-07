@@ -9,7 +9,7 @@ from frappe.model.document import Document
 from frappe.utils import add_days, getdate, today
 
 
-class BillOfExchange(Document):
+class BillofExchange(Document):
 	def validate(self):
 		self.validate_bill_no()
 		self.set_bill_type_from_no()
