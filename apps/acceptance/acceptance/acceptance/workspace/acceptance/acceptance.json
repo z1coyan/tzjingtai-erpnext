@@ -1,150 +1,138 @@
 {
-    "charts": [],
-    "content": null,
-    "creation": "2026-04-07 00:00:00.000000",
-    "custom_blocks": [],
-    "doctype": "Workspace",
-    "for_user": "",
-    "hide_custom": 0,
-    "icon": "note",
-    "idx": 0,
-    "is_default": 0,
-    "is_standard": 1,
-    "label": "承兑汇票",
-    "links": [
-        {
-            "dependencies": "",
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "票据台账",
-            "link_count": 0,
-            "link_to": "Bill of Exchange",
-            "link_type": "DocType",
-            "onboard": 1,
-            "type": "Link"
-        },
-        {
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "票据操作",
-            "link_count": 0,
-            "link_type": "DocType",
-            "onboard": 0,
-            "type": "Card Break"
-        },
-        {
-            "dependencies": "",
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "票据接收",
-            "link_count": 0,
-            "link_to": "Bill Receive",
-            "link_type": "DocType",
-            "onboard": 1,
-            "type": "Link"
-        },
-        {
-            "dependencies": "",
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "票据转让",
-            "link_count": 0,
-            "link_to": "Bill Transfer",
-            "link_type": "DocType",
-            "onboard": 0,
-            "type": "Link"
-        },
-        {
-            "dependencies": "",
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "提前贴现",
-            "link_count": 0,
-            "link_to": "Bill Discount",
-            "link_type": "DocType",
-            "onboard": 0,
-            "type": "Link"
-        },
-        {
-            "dependencies": "",
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "到期兑付",
-            "link_count": 0,
-            "link_to": "Bill Payment",
-            "link_type": "DocType",
-            "onboard": 0,
-            "type": "Link"
-        },
-        {
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "背书管理",
-            "link_count": 0,
-            "link_type": "DocType",
-            "onboard": 0,
-            "type": "Card Break"
-        },
-        {
-            "dependencies": "",
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "背书记录",
-            "link_count": 0,
-            "link_to": "Endorsement Log",
-            "link_type": "DocType",
-            "onboard": 0,
-            "type": "Link"
-        },
-        {
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "设置",
-            "link_count": 0,
-            "link_type": "DocType",
-            "onboard": 0,
-            "type": "Card Break"
-        },
-        {
-            "dependencies": "",
-            "hidden": 0,
-            "is_query_report": 0,
-            "label": "OCR 设置",
-            "link_count": 0,
-            "link_to": "OCR Settings",
-            "link_type": "DocType",
-            "onboard": 0,
-            "type": "Link"
-        }
-    ],
-    "modified": "2026-04-07 00:00:00.000000",
-    "modified_by": "Administrator",
-    "module": "Acceptance",
-    "name": "承兑汇票",
-    "number_cards": [],
-    "owner": "Administrator",
-    "parent_page": "",
-    "public": 1,
-    "restrict_to_domain": "",
-    "roles": [],
-    "sequence_id": 30.0,
-    "shortcuts": [
-        {
-            "color": "Blue",
-            "doc_view": "List",
-            "label": "票据台账",
-            "link_to": "Bill of Exchange",
-            "stats_filter": "",
-            "type": "DocType"
-        },
-        {
-            "color": "Green",
-            "doc_view": "List",
-            "label": "票据接收",
-            "link_to": "Bill Receive",
-            "stats_filter": "",
-            "type": "DocType"
-        }
-    ],
-    "title": "承兑汇票"
+ "charts": [],
+ "content": "[{\"id\":\"acc_card_1\",\"type\":\"card\",\"data\":{\"card_name\":\"票据台账\",\"col\":4}},{\"id\":\"acc_card_2\",\"type\":\"card\",\"data\":{\"card_name\":\"票据操作\",\"col\":4}},{\"id\":\"acc_card_3\",\"type\":\"card\",\"data\":{\"card_name\":\"背书管理\",\"col\":4}},{\"id\":\"acc_card_4\",\"type\":\"card\",\"data\":{\"card_name\":\"设置\",\"col\":4}}]",
+ "creation": "2026-04-07 00:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "type": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "",
+ "idx": 0,
+ "indicator_color": "blue",
+ "is_hidden": 0,
+ "is_standard": 1,
+ "label": "承兑汇票",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "票据台账",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "票据台账",
+   "link_count": 0,
+   "link_to": "Bill of Exchange",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "票据操作",
+   "link_count": 4,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "票据接收",
+   "link_count": 0,
+   "link_to": "Bill Receive",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "票据转让",
+   "link_count": 0,
+   "link_to": "Bill Transfer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "提前贴现",
+   "link_count": 0,
+   "link_to": "Bill Discount",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "到期兑付",
+   "link_count": 0,
+   "link_to": "Bill Payment",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "背书管理",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "背书记录",
+   "link_count": 0,
+   "link_to": "Endorsement Log",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "设置",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "OCR 设置",
+   "link_count": 0,
+   "link_to": "OCR Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-07 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Acceptance",
+ "name": "承兑汇票",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 30.0,
+ "shortcuts": [],
+ "title": "承兑汇票"
 }
