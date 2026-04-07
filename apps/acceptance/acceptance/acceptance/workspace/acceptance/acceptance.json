@@ -123,7 +123,7 @@
     "name": "承兑汇票",
     "number_cards": [],
     "owner": "Administrator",
-    "parent_page": "Accounting",
+    "parent_page": "",
     "public": 1,
     "restrict_to_domain": "",
     "roles": [],
