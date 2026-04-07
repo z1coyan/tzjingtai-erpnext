@@ -1,6 +1,7 @@
 ARG PYTHON_VERSION=3.14.2
 ARG DEBIAN_BASE=bookworm
-FROM python:${PYTHON_VERSION}-slim-${DEBIAN_BASE} AS base
+ARG REGISTRY_MIRROR
+FROM ${REGISTRY_MIRROR:-}python:${PYTHON_VERSION}-slim-${DEBIAN_BASE} AS base
 
 COPY build/resources/nginx-template.conf /templates/nginx/frappe.conf.template
 COPY build/resources/nginx-entrypoint.sh /usr/local/bin/nginx-entrypoint.sh
@@ -11,6 +12,20 @@ ARG WKHTMLTOPDF_DISTRO=bookworm
 ARG NODE_VERSION=24.13.0
 ENV NVM_DIR=/home/frappe/.nvm
 ENV PATH=${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/:${PATH}
+
+# Mirror configuration for China deployment (leave empty to use defaults)
+ARG APT_MIRROR
+ARG PIP_INDEX_URL
+ARG PIP_TRUSTED_HOST
+ARG NPM_REGISTRY
+ARG NVM_SOURCE=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh
+ARG WKHTMLTOPDF_MIRROR=https://github.com/wkhtmltopdf/packaging/releases/download
+
+# Configure APT mirror (if set, replace default Debian sources)
+RUN if [ -n "${APT_MIRROR}" ]; then \
+      sed -i "s|deb.debian.org|${APT_MIRROR}|g" /etc/apt/sources.list.d/debian.sources 2>/dev/null || \
+      sed -i "s|deb.debian.org|${APT_MIRROR}|g" /etc/apt/sources.list 2>/dev/null || true; \
+    fi
 
 RUN useradd -ms /bin/bash frappe \
     && apt-get update \
@@ -44,10 +59,11 @@ RUN useradd -ms /bin/bash frappe \
     media-types \
     # NodeJS
     && mkdir -p ${NVM_DIR} \
-    && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash \
+    && curl -o- ${NVM_SOURCE} | bash \
     && . ${NVM_DIR}/nvm.sh \
     && nvm install ${NODE_VERSION} \
     && nvm use v${NODE_VERSION} \
+    && if [ -n "${NPM_REGISTRY}" ]; then npm config set registry ${NPM_REGISTRY}; fi \
     && npm install -g yarn \
     && nvm alias default v${NODE_VERSION} \
     && rm -rf ${NVM_DIR}/.cache \
@@ -58,14 +74,14 @@ RUN useradd -ms /bin/bash frappe \
     && if [ "$(uname -m)" = "aarch64" ]; then export ARCH=arm64; fi \
     && if [ "$(uname -m)" = "x86_64" ]; then export ARCH=amd64; fi \
     && downloaded_file=wkhtmltox_${WKHTMLTOPDF_VERSION}.${WKHTMLTOPDF_DISTRO}_${ARCH}.deb \
-    && curl -sLO https://github.com/wkhtmltopdf/packaging/releases/download/$WKHTMLTOPDF_VERSION/$downloaded_file \
+    && curl -sLO ${WKHTMLTOPDF_MIRROR}/$WKHTMLTOPDF_VERSION/$downloaded_file \
     && apt-get install -y ./$downloaded_file \
     && rm $downloaded_file \
     # Clean up
     && rm -rf /var/lib/apt/lists/* \
     && rm -fr /etc/nginx/sites-enabled/default \
     && mkdir -p /etc/nginx/snippets \
-    && pip3 install frappe-bench \
+    && pip3 install ${PIP_INDEX_URL:+--index-url ${PIP_INDEX_URL}} ${PIP_TRUSTED_HOST:+--trusted-host ${PIP_TRUSTED_HOST}} frappe-bench \
     # Fixes for non-root nginx and logs to stdout
     && sed -i '/user www-data/d' /etc/nginx/nginx.conf \
     && ln -sf /dev/stdout /var/log/nginx/access.log && ln -sf /dev/stderr /var/log/nginx/error.log \
@@ -118,6 +134,25 @@ COPY build/apps.json /opt/frappe/apps.json
 RUN mkdir -p /opt/frappe && chown -R frappe:frappe /opt/frappe
 
 USER frappe
+
+# Re-declare mirror args for builder stage
+ARG PIP_INDEX_URL
+ARG PIP_TRUSTED_HOST
+ARG NPM_REGISTRY
+
+# Persist pip mirror config for bench init (which runs pip install internally)
+RUN if [ -n "${PIP_INDEX_URL}" ]; then \
+      mkdir -p /home/frappe/.config/pip \
+      && printf '[global]\nindex-url = %s\ntrusted-host = %s\n' \
+         "${PIP_INDEX_URL}" "${PIP_TRUSTED_HOST:-}" \
+         > /home/frappe/.config/pip/pip.conf; \
+    fi
+
+# Persist npm mirror config for bench build (which runs npm/yarn internally)
+RUN if [ -n "${NPM_REGISTRY}" ]; then \
+      echo "registry=${NPM_REGISTRY}" > /home/frappe/.npmrc \
+      && yarn config set registry "${NPM_REGISTRY}" 2>/dev/null || true; \
+    fi
 
 ARG FRAPPE_BRANCH=version-16
 ARG FRAPPE_PATH=https://github.com/frappe/frappe
