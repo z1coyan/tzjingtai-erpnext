@@ -1,0 +1,270 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: acceptance 0.0.1\n"
+"POT-Creation-Date: 2026-04-07 00:00+0000\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Module name
+msgid "Acceptance"
+msgstr "承兑汇票"
+
+#. Workspace Sidebar title
+msgid "Acceptance Bill"
+msgstr "承兑汇票"
+
+#. DocType name
+msgid "Bill of Exchange"
+msgstr "票据台账"
+
+msgid "Bill Receive"
+msgstr "票据接收"
+
+msgid "Bill Transfer"
+msgstr "票据转让"
+
+msgid "Bill Discount"
+msgstr "提前贴现"
+
+msgid "Bill Payment"
+msgstr "到期兑付"
+
+msgid "Endorsement Log"
+msgstr "背书记录"
+
+msgid "Endorsement Chain"
+msgstr "背书链条"
+
+msgid "Bill Sub Ticket"
+msgstr "子票记录"
+
+msgid "OCR Settings"
+msgstr "OCR 设置"
+
+#. Field labels - Bill of Exchange
+msgid "Bill No"
+msgstr "票据包号"
+
+msgid "Bill Type"
+msgstr "票据种类"
+
+msgid "Issue Date"
+msgstr "出票日期"
+
+msgid "Due Date"
+msgstr "到期日期"
+
+msgid "Sub Ticket Start"
+msgstr "子票区间起始号"
+
+msgid "Sub Ticket End"
+msgstr "子票区间结束号"
+
+msgid "Bill Amount"
+msgstr "票面金额"
+
+msgid "Is Splittable"
+msgstr "是否可拆分"
+
+msgid "Drawer Name"
+msgstr "出票人名称"
+
+msgid "Drawer Account"
+msgstr "出票人账号"
+
+msgid "Drawer Bank"
+msgstr "出票人开户行"
+
+msgid "Acceptor Name"
+msgstr "承兑人名称"
+
+msgid "Acceptor Account"
+msgstr "承兑人账号"
+
+msgid "Acceptor Bank"
+msgstr "承兑人开户行"
+
+msgid "Payee Name"
+msgstr "收款人名称"
+
+msgid "Current Holder"
+msgstr "当前持票人"
+
+msgid "Bill Status"
+msgstr "票据状态"
+
+msgid "Circulation Flag"
+msgstr "流通标志"
+
+msgid "No Transfer Mark"
+msgstr "不得转让标记"
+
+msgid "Parent Bill"
+msgstr "父票据引用"
+
+msgid "Linked Sales Invoice"
+msgstr "关联销售发票"
+
+msgid "Linked Purchase Invoice"
+msgstr "关联采购发票"
+
+#. Bill status values
+msgid "Issued"
+msgstr "已签发"
+
+msgid "Received - Circulating"
+msgstr "已收票-可流通"
+
+msgid "Endorsement Pending"
+msgstr "背书待签收"
+
+msgid "Endorsed"
+msgstr "已背书转让"
+
+msgid "Discount Pending"
+msgstr "贴现待确认"
+
+msgid "Discounted"
+msgstr "已贴现"
+
+msgid "Payment Pending"
+msgstr "提示付款中"
+
+msgid "Settled"
+msgstr "已结清-已结束"
+
+msgid "Split"
+msgstr "已拆分"
+
+#. Bill type values
+msgid "Bank Acceptance Bill"
+msgstr "银行承兑汇票"
+
+msgid "Commercial Acceptance Bill"
+msgstr "商业承兑汇票"
+
+msgid "Supply Chain Commercial Bill"
+msgstr "供应链商票"
+
+msgid "Supply Chain Bank Bill"
+msgstr "供应链银票"
+
+#. Bill Receive fields
+msgid "Customer"
+msgstr "客户"
+
+msgid "Posting Date"
+msgstr "接收日期"
+
+msgid "Front Image"
+msgstr "票据正面图片"
+
+msgid "Back Image"
+msgstr "票据背面图片"
+
+msgid "Notes Receivable Account"
+msgstr "应收票据科目"
+
+msgid "Accounts Receivable Account"
+msgstr "应收账款科目"
+
+#. Bill Transfer fields
+msgid "Supplier"
+msgstr "供应商"
+
+msgid "Transfer Date"
+msgstr "转让日期"
+
+msgid "Transfer Amount"
+msgstr "转让金额"
+
+msgid "Is Partial Transfer"
+msgstr "是否部分转让"
+
+msgid "Remaining Amount"
+msgstr "剩余金额"
+
+msgid "Accounts Payable Account"
+msgstr "应付账款科目"
+
+#. Bill Discount fields
+msgid "Discount Bank"
+msgstr "贴现银行"
+
+msgid "Discount Date"
+msgstr "贴现日期"
+
+msgid "Discount Rate"
+msgstr "贴现利率"
+
+msgid "Remaining Days"
+msgstr "剩余天数"
+
+msgid "Discount Amount"
+msgstr "贴现金额"
+
+msgid "Discount Interest"
+msgstr "贴现利息"
+
+msgid "Actual Amount"
+msgstr "实际到账金额"
+
+msgid "Interest Account"
+msgstr "贴现利息科目"
+
+msgid "Bank Account"
+msgstr "收款银行账户"
+
+#. Bill Payment fields
+msgid "Payment Date"
+msgstr "兑付日期"
+
+msgid "Payment Amount"
+msgstr "兑付金额"
+
+msgid "Payment Status"
+msgstr "兑付状态"
+
+#. Endorsement Log fields
+msgid "Endorsement Type"
+msgstr "背书类型"
+
+msgid "Endorser Name"
+msgstr "背书人名称"
+
+msgid "Endorsee Name"
+msgstr "被背书人名称"
+
+msgid "Endorsement Date"
+msgstr "背书日期"
+
+msgid "Endorsement Amount"
+msgstr "背书金额"
+
+#. OCR
+msgid "OCR Recognition"
+msgstr "OCR 识别"
+
+msgid "Tools"
+msgstr "工具"
+
+#. Messages
+msgid "Bill number must be 30 digits starting with 5/6/7/8"
+msgstr "票据包号必须为30位数字，且首位为5/6/7/8"
+
+msgid "Due date must be after issue date"
+msgstr "到期日期必须晚于出票日期"
+
+msgid "Please upload front or back image first"
+msgstr "请先上传票据正面或背面图片"
+
+msgid "Front image uploaded. Run OCR recognition now?"
+msgstr "已上传票据正面图片，是否立即进行 OCR 识别？"
+
+msgid "Front recognition complete, {0} fields filled"
+msgstr "正面识别完成，已填入 {0} 个字段"
+
+msgid "Create"
+msgstr "创建"
