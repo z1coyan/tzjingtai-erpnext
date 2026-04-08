@@ -144,7 +144,12 @@ RUN if [ -n "${GITHUB_PROXY}" ]; then \
 USER frappe
 
 # Avoid HTTP/2 framing issues with some proxies/mirrors
-RUN git config --global http.version HTTP/1.1
+# Also redirect github.com git requests through proxy (yarn install uses git:// for some deps)
+ARG GITHUB_PROXY
+RUN git config --global http.version HTTP/1.1 \
+    && if [ -n "${GITHUB_PROXY}" ]; then \
+         git config --global url."${GITHUB_PROXY}https://github.com/".insteadOf "https://github.com/"; \
+       fi
 
 # Re-declare mirror args for builder stage
 ARG PIP_INDEX_URL
