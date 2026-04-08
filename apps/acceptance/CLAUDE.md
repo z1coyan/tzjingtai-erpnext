@@ -83,5 +83,40 @@ Sales Invoice ──→ Bill Receive ──→ Bill of Exchange(状态=已收票
 - 入口: `acceptance.acceptance.ocr_service.recognize_bill`（@frappe.whitelist）
 - 子票区间不在OCR标准返回中，需用户手动输入
 
+## 命名规范
+
+### 铁律：所有标识符必须使用英文
+
+DocType 名称、fieldname、Section/Column Break label、Select 选项值、状态枚举值、Python 方法名、JS 事件名 —— 一律使用英文。
+中文仅出现在翻译文件 `acceptance/locale/zh.po` 中，作为 UI 显示文本。
+
+### DocType 名称
+- 使用 Title Case 英文短语，如 `Bill of Exchange`、`Endorsement Log`
+- 禁止使用中文作为 DocType name（数据库表名由此派生）
+
+### 字段命名（fieldname）
+- 使用 snake_case 英文，如 `bill_no`、`issue_date`、`drawer_name`
+- label 使用英文 Title Case，如 `Bill No`、`Issue Date`、`Drawer Name`
+- 禁止使用拼音或中文作为 fieldname 或 label
+
+### Select 选项值
+- 使用英文短语，如 `Received - Circulating`、`Bank Acceptance Bill`
+- 禁止在 options 中直接写中文
+
+### Section Break / Column Break
+- label 使用英文，如 `Bill Details`、`Accounting`
+
+### 翻译要求
+- 每新增一个 DocType、字段 label、Select 选项值或用户可见消息，必须同步在 `acceptance/locale/zh.po` 中添加对应的中文翻译条目
+- 翻译文件格式遵循 GNU gettext PO 标准：
+  ```
+  #. 注释说明字段来源
+  msgid "English Text"
+  msgstr "中文翻译"
+  ```
+- Python 代码中用户可见字符串必须用 `_("English text")` 包裹
+- JS 代码中用户可见字符串必须用 `__("English text")` 包裹
+- 验证消息、提示语等运行时文本同样需要翻译条目
+
 ## 定时任务
 `check_bill_maturity()` — 每日扫描到期前7天的票据，发送系统通知
