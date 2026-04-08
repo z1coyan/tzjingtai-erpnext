@@ -101,10 +101,12 @@ function fill_form_from_ocr(frm, data) {
 			acceptor_name: front.acceptor_name,
 			acceptor_account: front.acceptor_account,
 			acceptor_bank: front.acceptor_bank,
+			sub_ticket_start: front.sub_ticket_start,
+			sub_ticket_end: front.sub_ticket_end,
 		};
 
 		for (const [fieldname, value] of Object.entries(field_map)) {
-			if (value && frm.fields_dict[fieldname]) {
+			if (value !== null && value !== undefined && value !== "" && frm.fields_dict[fieldname]) {
 				frm.set_value(fieldname, value);
 				filled_count++;
 			}

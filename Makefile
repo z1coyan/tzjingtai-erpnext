@@ -36,11 +36,13 @@ down:
 clean:
 	@docker compose -p $(PROJECT) -f docker-compose.yaml down -v
 
-## Extract app names from apps.json (url basename, strip .git suffix)
+## Extract app names from apps.json + local apps/ directory
 APPS := $(shell python3 -c "\
-import json; \
+import json, os; \
 apps = json.load(open('build/apps.json')); \
-print(' '.join(a['url'].rstrip('/').split('/')[-1].replace('.git','') for a in apps))")
+remote = [a['url'].rstrip('/').split('/')[-1].replace('.git','') for a in apps]; \
+local = [d for d in os.listdir('apps') if os.path.isfile(os.path.join('apps', d, 'setup.py')) or os.path.isfile(os.path.join('apps', d, 'pyproject.toml'))]; \
+print(' '.join(remote + local))")
 INSTALL_APPS := $(foreach app,$(APPS),--install-app $(app))
 
 ## Create a new site (usage: make site SITE=erp.localhost PASS=admin)

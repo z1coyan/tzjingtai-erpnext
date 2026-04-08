@@ -12,16 +12,6 @@ app_color = "#3498db"
 # 应用依赖
 required_apps = ["frappe", "erpnext"]
 
-# Desk 首页图标
-add_to_apps_screen = [
-	{
-		"name": app_name,
-		"logo": "/assets/acceptance/images/logo.svg",
-		"title": app_title,
-		"route": "/desk/acceptance",
-	}
-]
-
 # Includes in <head>
 # ------------------
 

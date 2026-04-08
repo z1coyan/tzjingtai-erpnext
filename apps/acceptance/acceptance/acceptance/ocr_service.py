@@ -122,8 +122,11 @@ def recognize_bill_back(file_url):
 
 def _map_front_fields(data):
 	"""将阿里云返回字段映射为 DocType 字段名"""
+	# 阿里云 OCR 返回结构: 字段值在嵌套的 data["data"] 中
+	fields = data.get("data", {}) if isinstance(data.get("data"), dict) else data
+
 	# 从票据包号首位推断票据种类
-	draft_number = data.get("draftNumber", "")
+	draft_number = fields.get("draftNumber", "")
 	bill_type_map = {
 		"5": "银行承兑汇票",
 		"6": "商业承兑汇票",
@@ -135,18 +138,20 @@ def _map_front_fields(data):
 	return {
 		"bill_no": draft_number,
 		"bill_type": bill_type,
-		"issue_date": _parse_date(data.get("issueDate")),
-		"due_date": _parse_date(data.get("validToDate")),
-		"drawer_name": data.get("issuerName", ""),
-		"drawer_account": data.get("issuerAccountNumber", ""),
-		"drawer_bank": data.get("issuerAccountBank", ""),
-		"acceptor_name": data.get("acceptorName", ""),
-		"acceptor_account": data.get("acceptorAccountNumber", ""),
-		"acceptor_bank": data.get("acceptorAccountBank", ""),
-		"payee_name": data.get("payeeName", ""),
-		"amount": _parse_amount(data.get("totalAmount")),
-		"amount_in_words": data.get("totalAmountInWords", ""),
-		"non_transferable": data.get("assignability", "") == "不可转让",
+		"issue_date": _parse_date(fields.get("issueDate")),
+		"due_date": _parse_date(fields.get("validToDate")),
+		"drawer_name": fields.get("issuerName", ""),
+		"drawer_account": fields.get("issuerAccountNumber", ""),
+		"drawer_bank": fields.get("issuerAccountBank", ""),
+		"acceptor_name": fields.get("acceptorName", ""),
+		"acceptor_account": fields.get("acceptorAccountNumber", ""),
+		"acceptor_bank": fields.get("acceptorAccountBank", ""),
+		"payee_name": fields.get("payeeName", ""),
+		"amount": _parse_amount(fields.get("totalAmount")),
+		"amount_in_words": fields.get("totalAmountInWords", ""),
+		"non_transferable": "不可转让" in fields.get("assignability", ""),
+		"sub_ticket_start": _parse_sub_ticket(fields.get("subDraftNumber", ""), 0),
+		"sub_ticket_end": _parse_sub_ticket(fields.get("subDraftNumber", ""), 1),
 		# 置信度信息（前端用于标记低置信度字段）
 		"_confidence": _extract_confidence(data),
 	}
@@ -185,6 +190,17 @@ def _parse_date(date_str):
 		if match:
 			return re.sub(pattern, replacement, date_str)
 	return date_str
+
+
+def _parse_sub_ticket(range_str, index):
+	"""从 '135490852-135893859' 格式中提取起始号(index=0)或结束号(index=1)"""
+	if not range_str or "-" not in range_str:
+		return 0
+	parts = range_str.split("-", 1)
+	try:
+		return parts[index]
+	except (ValueError, IndexError):
+		return 0
 
 
 def _parse_amount(amount_str):
