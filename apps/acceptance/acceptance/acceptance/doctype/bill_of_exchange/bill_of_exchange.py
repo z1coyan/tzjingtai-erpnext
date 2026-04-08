@@ -74,6 +74,7 @@ class BillofExchange(Document):
 			"endorsement_amount": amount,
 			"endorsement_log": log_ref,
 		})
+		self.flags.ignore_validate_update_after_submit = True
 		self.save(ignore_permissions=True)
 
 	def split_sub_ticket(self, split_amount):

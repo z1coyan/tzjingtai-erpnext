@@ -270,7 +270,8 @@
             "fieldname": "endorsement_chain",
             "fieldtype": "Table",
             "label": "背书链条",
-            "options": "Endorsement Chain"
+            "options": "Endorsement Chain",
+            "allow_on_submit": 1
         },
         {
             "fieldname": "section_remarks",
