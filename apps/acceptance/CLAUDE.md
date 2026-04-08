@@ -12,8 +12,7 @@
 ```
 acceptance/
 ├── hooks.py                          # doctype_js(SI/PI按钮)、scheduler(到期提醒)
-├── config/desktop.py                 # 桌面模块入口
-├── workspace/acceptance/acceptance.json  # Workspace导航，parent_page=Accounting
+├── acceptance/workspace/承兑汇票/承兑汇票.json  # Workspace导航（Desk首页入口）
 ├── public/js/
 │   ├── sales_invoice.js              # 销售发票→创建票据接收
 │   └── purchase_invoice.js           # 采购发票→创建票据转让
