@@ -1,9 +1,13 @@
+# 生产部署用 compose 文件（合并 base + mariadb + redis）
+# Dokploy / docker compose 可直接使用此文件
+# 所有配置通过环境变量（.env 或 Dokploy UI）注入
+
 x-customizable-image: &customizable_image
   image: ${CUSTOM_IMAGE:-synie-erpnext}:${CUSTOM_TAG:-latest}
   pull_policy: ${PULL_POLICY:-never}
   restart: ${RESTART_POLICY:-unless-stopped}
   build:
-    context: ..
+    context: .
     dockerfile: build/Containerfile
     args:
       FRAPPE_BRANCH: ${FRAPPE_BRANCH:-version-16}
@@ -44,12 +48,18 @@ services:
         bench set-config -gp socketio_port $$SOCKETIO_PORT;
         bench set-config -g chromium_path /usr/bin/chromium-headless-shell;
     environment:
-      DB_HOST: ${DB_HOST:-}
-      DB_PORT: ${DB_PORT:-}
-      REDIS_CACHE: ${REDIS_CACHE:-}
-      REDIS_QUEUE: ${REDIS_QUEUE:-}
+      DB_HOST: db
+      DB_PORT: "3306"
+      REDIS_CACHE: redis-cache:6379
+      REDIS_QUEUE: redis-queue:6379
       SOCKETIO_PORT: 9000
-    depends_on: {}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+      redis-queue:
+        condition: service_started
     restart: on-failure
 
   backend:
@@ -60,7 +70,7 @@ services:
     command:
       - nginx-entrypoint.sh
     ports:
-      - "127.0.0.1:${HTTP_PUBLISH_PORT:-8080}:8080"
+      - "${HTTP_PUBLISH_PORT:-8080}:8080"
     environment:
       BACKEND: backend:8000
       SOCKETIO: websocket:9000
@@ -96,5 +106,37 @@ services:
     <<: *backend_defaults
     command: bench schedule
 
+  db:
+    image: ${REGISTRY_MIRROR:-}mariadb:11.8
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --skip-innodb-read-only-compressed
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-123}
+      MARIADB_AUTO_UPGRADE: 1
+    volumes:
+      - db-data:/var/lib/mysql
+
+  redis-cache:
+    image: ${REGISTRY_MIRROR:-}redis:6.2-alpine
+    restart: unless-stopped
+
+  redis-queue:
+    image: ${REGISTRY_MIRROR:-}redis:6.2-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-queue-data:/data
+
 volumes:
   sites:
+  db-data:
+  redis-queue-data:
