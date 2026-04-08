@@ -92,6 +92,7 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
    FRAPPE_BRANCH=version-16
 
    # 国内镜像加速（推荐）
+   GITHUB_PROXY=https://ghfast.top/
    APT_MIRROR=mirrors.aliyun.com
    PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
    PIP_TRUSTED_HOST=mirrors.aliyun.com

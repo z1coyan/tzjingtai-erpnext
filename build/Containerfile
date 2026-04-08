@@ -135,7 +135,16 @@ RUN apt-get update \
 COPY build/apps.json /opt/frappe/apps.json
 RUN mkdir -p /opt/frappe && chown -R frappe:frappe /opt/frappe
 
+# GitHub proxy: prefix GitHub URLs for China deployment (e.g. https://ghfast.top/)
+ARG GITHUB_PROXY
+RUN if [ -n "${GITHUB_PROXY}" ]; then \
+      sed -i "s|https://github.com/|${GITHUB_PROXY}https://github.com/|g" /opt/frappe/apps.json; \
+    fi
+
 USER frappe
+
+# Avoid HTTP/2 framing issues with some proxies/mirrors
+RUN git config --global http.version HTTP/1.1
 
 # Re-declare mirror args for builder stage
 ARG PIP_INDEX_URL
@@ -161,7 +170,7 @@ ARG FRAPPE_PATH=https://github.com/frappe/frappe
 RUN bench init \
     --apps_path=/opt/frappe/apps.json \
     --frappe-branch=${FRAPPE_BRANCH} \
-    --frappe-path=${FRAPPE_PATH} \
+    --frappe-path=${GITHUB_PROXY:+${GITHUB_PROXY}}${FRAPPE_PATH} \
     --no-procfile \
     --no-backups \
     --skip-redis-config-generation \

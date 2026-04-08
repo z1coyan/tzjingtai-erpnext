@@ -17,6 +17,7 @@ echo "    Frappe branch:  ${FRAPPE_BRANCH}"
 
 # Collect optional mirror build args
 MIRROR_ARGS=()
+[ -n "${GITHUB_PROXY:-}" ]        && MIRROR_ARGS+=(--build-arg "GITHUB_PROXY=${GITHUB_PROXY}")
 [ -n "${APT_MIRROR:-}" ]          && MIRROR_ARGS+=(--build-arg "APT_MIRROR=${APT_MIRROR}")
 [ -n "${PIP_INDEX_URL:-}" ]       && MIRROR_ARGS+=(--build-arg "PIP_INDEX_URL=${PIP_INDEX_URL}")
 [ -n "${PIP_TRUSTED_HOST:-}" ]    && MIRROR_ARGS+=(--build-arg "PIP_TRUSTED_HOST=${PIP_TRUSTED_HOST}")
