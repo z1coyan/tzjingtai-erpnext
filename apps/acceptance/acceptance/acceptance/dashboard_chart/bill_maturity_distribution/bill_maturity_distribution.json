@@ -1,0 +1,22 @@
+{
+    "name": "Bill Maturity Distribution",
+    "chart_name": "Bill Maturity Distribution",
+    "creation": "2026-04-08 00:00:00.000000",
+    "modified": "2026-04-08 00:00:00.000000",
+    "modified_by": "Administrator",
+    "owner": "Administrator",
+    "docstatus": 0,
+    "doctype": "Dashboard Chart",
+    "chart_type": "Custom",
+    "source": "Bill Maturity Distribution",
+    "document_type": "",
+    "is_standard": 1,
+    "module": "Acceptance",
+    "timeseries": 0,
+    "filters_json": "[]",
+    "type": "Bar",
+    "color": "#3498db",
+    "width": "Full",
+    "use_report_chart": 0,
+    "is_public": 1
+}

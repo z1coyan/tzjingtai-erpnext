@@ -1,0 +1,662 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: acceptance 0.0.1\n"
+"POT-Creation-Date: 2026-04-07 00:00+0000\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Module name
+msgid "Acceptance"
+msgstr "承兑汇票"
+
+#. App title
+msgid "Acceptance Bill Management"
+msgstr "承兑汇票管理"
+
+#. Workspace
+msgid "Acceptance Bill"
+msgstr "承兑汇票"
+
+#. ---- DocType names ----
+
+msgid "Bill of Exchange"
+msgstr "票据台账"
+
+msgid "Bill Receive"
+msgstr "票据接收"
+
+msgid "Bill Transfer"
+msgstr "票据转让"
+
+msgid "Bill Discount"
+msgstr "提前贴现"
+
+msgid "Bill Payment"
+msgstr "到期兑付"
+
+msgid "Endorsement Record"
+msgstr "背书记录"
+
+msgid "Endorsement Chain"
+msgstr "背书链条"
+
+msgid "Bill Sub Ticket"
+msgstr "子票记录"
+
+msgid "OCR Settings"
+msgstr "OCR 设置"
+
+msgid "Acceptance Bill Settings"
+msgstr "承兑汇票设置"
+
+#. ---- Common field labels ----
+
+msgid "Bill No"
+msgstr "票据包号"
+
+msgid "Bill Type"
+msgstr "票据种类"
+
+msgid "Issue Date"
+msgstr "出票日期"
+
+msgid "Due Date"
+msgstr "到期日期"
+
+msgid "Company"
+msgstr "公司"
+
+msgid "Bill Amount"
+msgstr "票面金额"
+
+msgid "Bill Status"
+msgstr "票据状态"
+
+msgid "Circulation Flag"
+msgstr "流通标志"
+
+msgid "No Transfer Mark"
+msgstr "不得转让标记"
+
+msgid "Remarks"
+msgstr "备注"
+
+msgid "Amended From"
+msgstr "修正来源"
+
+#. ---- Bill of Exchange field labels ----
+
+msgid "Bill Details"
+msgstr "票据基本信息"
+
+msgid "Sub Ticket Range"
+msgstr "子票区间"
+
+msgid "Sub Ticket Start"
+msgstr "子票区间起始号"
+
+msgid "Sub Ticket End"
+msgstr "子票区间结束号"
+
+msgid "Is Splittable"
+msgstr "是否可拆分"
+
+msgid "Drawer Information"
+msgstr "出票人信息"
+
+msgid "Drawer Name"
+msgstr "出票人名称"
+
+msgid "Drawer Account"
+msgstr "出票人账号"
+
+msgid "Drawer Bank"
+msgstr "出票人开户行"
+
+msgid "Acceptor Information"
+msgstr "承兑人信息"
+
+msgid "Acceptor Name"
+msgstr "承兑人名称"
+
+msgid "Acceptor Account"
+msgstr "承兑人账号"
+
+msgid "Acceptor Bank"
+msgstr "承兑人开户行"
+
+msgid "Payee and Holder"
+msgstr "收款与持票信息"
+
+msgid "Payee Name"
+msgstr "收款人名称"
+
+msgid "Current Holder"
+msgstr "当前持票人"
+
+msgid "Related Documents"
+msgstr "关联信息"
+
+msgid "Parent Bill"
+msgstr "父票据引用"
+
+msgid "Linked Sales Invoice"
+msgstr "关联销售发票"
+
+msgid "Linked Purchase Invoice"
+msgstr "关联采购发票"
+
+msgid "Sub Tickets"
+msgstr "子票记录"
+
+#. ---- Bill status values ----
+
+msgid "Issued"
+msgstr "已签发"
+
+msgid "Received - Circulating"
+msgstr "已收票-可流通"
+
+msgid "Endorsement Pending"
+msgstr "背书待签收"
+
+msgid "Endorsed"
+msgstr "已背书转让"
+
+msgid "Discount Pending"
+msgstr "贴现待确认"
+
+msgid "Discounted"
+msgstr "已贴现"
+
+msgid "Payment Pending"
+msgstr "提示付款中"
+
+msgid "Settled"
+msgstr "已结清-已结束"
+
+msgid "Split"
+msgstr "已拆分"
+
+#. ---- Circulation flag values ----
+
+msgid "Circulating"
+msgstr "可流通"
+
+msgid "Non-Transferable"
+msgstr "不可转让"
+
+msgid "Ended"
+msgstr "已结束"
+
+#. ---- Bill type values ----
+
+msgid "Bank Acceptance Bill"
+msgstr "银行承兑汇票"
+
+msgid "Commercial Acceptance Bill"
+msgstr "商业承兑汇票"
+
+msgid "Supply Chain Bank Bill"
+msgstr "供应链银票"
+
+msgid "Supply Chain Commercial Bill"
+msgstr "供应链商票"
+
+#. ---- Sub ticket status values ----
+
+msgid "Transferred"
+msgstr "已转让"
+
+msgid "Paid"
+msgstr "已兑付"
+
+#. ---- Endorsement type values ----
+
+msgid "Endorsement Received"
+msgstr "背书接收"
+
+msgid "Endorsement Transfer"
+msgstr "背书转让"
+
+#. ---- Payment status values ----
+
+msgid "Overdue - Unpaid"
+msgstr "逾期未兑付"
+
+#. ---- Dynamic party fields (Bill Receive / Bill Transfer) ----
+
+msgid "Party Type"
+msgstr "对手方类型"
+
+msgid "Party (Endorser)"
+msgstr "对手方（背书人）"
+
+msgid "Party (Endorsee)"
+msgstr "对手方（被背书人）"
+
+msgid "Linked Invoice Type"
+msgstr "关联发票类型"
+
+msgid "Linked Invoice"
+msgstr "关联发票"
+
+msgid "Journal Entry"
+msgstr "日记账分录"
+
+msgid "Journal Entry created: {0}"
+msgstr "已创建日记账分录：{0}"
+
+#. ---- Bill Receive field labels ----
+
+msgid "Basic Information"
+msgstr "基本信息"
+
+msgid "Customer (Endorser)"
+msgstr "客户（背书人）"
+
+msgid "Posting Date"
+msgstr "记账日期"
+
+msgid "Bill Images (OCR)"
+msgstr "票据图片（OCR识别）"
+
+msgid "Front Image"
+msgstr "票据正面图片"
+
+msgid "Back Image"
+msgstr "票据背面图片"
+
+msgid "Bill Information"
+msgstr "票据信息"
+
+msgid "Bill Dates"
+msgstr "票据日期"
+
+msgid "Accounting"
+msgstr "会计信息"
+
+msgid "Notes Receivable Account"
+msgstr "应收票据科目"
+
+msgid "Accounts Receivable Account"
+msgstr "应收账款科目"
+
+msgid "Result"
+msgstr "处理结果"
+
+msgid "Created Bill of Exchange"
+msgstr "创建的票据台账"
+
+#. ---- Bill Transfer field labels ----
+
+msgid "Supplier (Endorsee)"
+msgstr "供应商（被背书人）"
+
+msgid "Original Amount"
+msgstr "原票面金额"
+
+msgid "Transfer Date"
+msgstr "转让日期"
+
+msgid "Transfer Details"
+msgstr "转让信息"
+
+msgid "Transfer Amount"
+msgstr "转让金额"
+
+msgid "Is Partial Transfer"
+msgstr "是否部分转让"
+
+msgid "Sub Ticket Split"
+msgstr "子票拆分"
+
+msgid "Transfer Sub Start"
+msgstr "转让子票起始号"
+
+msgid "Transfer Sub End"
+msgstr "转让子票结束号"
+
+msgid "Remaining Sub Start"
+msgstr "剩余子票起始号"
+
+msgid "Remaining Sub End"
+msgstr "剩余子票结束号"
+
+msgid "Remaining Amount"
+msgstr "剩余金额"
+
+msgid "Accounts Payable Account"
+msgstr "应付账款科目"
+
+msgid "New Bill of Exchange"
+msgstr "拆分后新票据"
+
+#. ---- Bill Discount field labels ----
+
+msgid "Discount Details"
+msgstr "贴现信息"
+
+msgid "Discount Bank"
+msgstr "贴现银行"
+
+msgid "Discount Date"
+msgstr "贴现日期"
+
+msgid "Discount Rate (Annualized %)"
+msgstr "贴现利率（年化%）"
+
+msgid "Remaining Days"
+msgstr "剩余天数"
+
+msgid "Discount Sub Ticket Range (For Partial Discount)"
+msgstr "贴现子票区间（部分贴现时填写）"
+
+msgid "Discount Sub Start"
+msgstr "贴现子票起始号"
+
+msgid "Discount Sub End"
+msgstr "贴现子票结束号"
+
+msgid "Discount Amount"
+msgstr "贴现金额"
+
+msgid "Calculation Result"
+msgstr "计算结果"
+
+msgid "Discount Interest"
+msgstr "贴现利息"
+
+msgid "Actual Amount"
+msgstr "实际到账金额"
+
+msgid "Bank Account"
+msgstr "收款银行账户"
+
+msgid "Interest Account"
+msgstr "贴现利息科目"
+
+#. ---- Bill Payment field labels ----
+
+msgid "Payment Details"
+msgstr "兑付信息"
+
+msgid "Payment Date"
+msgstr "兑付日期"
+
+msgid "Payment Amount"
+msgstr "兑付金额"
+
+msgid "Payment Status"
+msgstr "兑付状态"
+
+#. ---- Endorsement Chain / Report field labels ----
+
+msgid "Endorsement Type"
+msgstr "背书类型"
+
+msgid "Endorsement Date"
+msgstr "背书日期"
+
+msgid "Endorsement Amount"
+msgstr "背书金额"
+
+msgid "Endorsement Parties"
+msgstr "背书人信息"
+
+msgid "Endorser Name"
+msgstr "背书人名称"
+
+msgid "Endorser Account"
+msgstr "背书人账号"
+
+msgid "Endorser Bank"
+msgstr "背书人开户行"
+
+msgid "Endorsee Name"
+msgstr "被背书人名称"
+
+msgid "Endorsee Account"
+msgstr "被背书人账号"
+
+msgid "Endorsee Bank"
+msgstr "被背书人开户行"
+
+#. ---- Bill Sub Ticket field labels ----
+
+msgid "Sub Start"
+msgstr "子票起始号"
+
+msgid "Sub End"
+msgstr "子票结束号"
+
+msgid "Sub Amount"
+msgstr "子票金额"
+
+msgid "Sub Status"
+msgstr "子票状态"
+
+msgid "Holder"
+msgstr "持票人"
+
+msgid "Related Doc Type"
+msgstr "关联单据类型"
+
+msgid "Related Doc Name"
+msgstr "关联单据编号"
+
+#. ---- Endorsement Chain field labels ----
+
+msgid "Sequence"
+msgstr "序号"
+
+msgid "Source DocType"
+msgstr "来源单据类型"
+
+msgid "Source Document"
+msgstr "来源单据"
+
+#. ---- OCR Settings field labels ----
+
+msgid "Enable OCR"
+msgstr "启用 OCR"
+
+msgid "Aliyun Credentials"
+msgstr "阿里云凭证"
+
+msgid "Back Recognition Settings"
+msgstr "背面识别配置"
+
+msgid "Enable Back Recognition"
+msgstr "启用背面识别"
+
+msgid "Back Recognition Keys (JSON Array)"
+msgstr "背面识别 Keys（JSON数组）"
+
+#. ---- Workspace card labels ----
+
+msgid "Bill Ledger"
+msgstr "票据台账"
+
+msgid "Bill Operations"
+msgstr "票据操作"
+
+msgid "Reports"
+msgstr "报表"
+
+msgid "Settings"
+msgstr "设置"
+
+#. ---- Description text ----
+
+msgid "30-digit number"
+msgstr "30位阿拉伯数字"
+
+msgid "0 means non-splittable"
+msgstr "0表示不可拆分"
+
+msgid "Auto-calculated = (End - Start + 1) x 0.01"
+msgstr "自动计算 = (结束号 - 起始号 + 1) × 0.01"
+
+#. ---- Validation messages (Python) ----
+
+msgid "Bill number must be 30 digits starting with 5 (bank), 6 (commercial), 7 (supply chain commercial) or 8 (supply chain bank)"
+msgstr "票据包号必须为30位数字，且首位为5（银票）、6（商票）、7（供应链商票）或8（供应链银票）"
+
+msgid "Bill number must be 30 digits starting with 5/6/7/8"
+msgstr "票据包号必须为30位数字，且首位为5/6/7/8"
+
+msgid "Due date must be after issue date"
+msgstr "到期日期必须晚于出票日期"
+
+msgid "This bill is non-splittable (sub ticket range is 0)"
+msgstr "该票据不可拆分（子票区间为0）"
+
+msgid "Split amount must be a multiple of 0.01"
+msgstr "拆分金额必须为0.01的整数倍"
+
+msgid "Split amount must be less than bill amount"
+msgstr "拆分金额必须小于票面金额"
+
+msgid "Split amount must be greater than 0"
+msgstr "拆分金额必须大于0"
+
+msgid "Total amount after split does not match original bill amount"
+msgstr "拆分后金额之和不等于原票面金额，请检查"
+
+msgid "Sub ticket range is 0, this bill is non-splittable"
+msgstr "子票区间为0，该票据不可拆分"
+
+msgid "Bill of Exchange created: {0}"
+msgstr "已创建票据台账：{0}"
+
+msgid "Only bills with status 'Received - Circulating' can be transferred, current status: {0}"
+msgstr "只能转让状态为「已收票-可流通」的票据，当前状态为：{0}"
+
+msgid "This bill is marked as 'No Transfer', endorsement transfer is not allowed"
+msgstr "该票据已标记「不得转让」，无法进行背书转让"
+
+msgid "Transfer amount cannot exceed bill amount"
+msgstr "转让金额不能大于票面金额"
+
+msgid "This bill is non-splittable, partial transfer is not allowed"
+msgstr "该票据不可拆分，无法部分转让"
+
+msgid "Only bills with status 'Received - Circulating' can be discounted, current status: {0}"
+msgstr "只能贴现状态为「已收票-可流通」的票据，当前状态为：{0}"
+
+msgid "Discount date must be before due date"
+msgstr "贴现日期必须早于到期日期"
+
+msgid "Only bills with status 'Received - Circulating' or 'Payment Pending' can be redeemed, current status: {0}"
+msgstr "只能兑付状态为「已收票-可流通」或「提示付款中」的票据，当前状态为：{0}"
+
+msgid "Payment amount must equal bill amount {0}"
+msgstr "兑付金额必须等于票面金额 {0}"
+
+msgid "OCR is not enabled, please configure in OCR Settings"
+msgstr "OCR 功能未启用，请在 OCR 设置中配置"
+
+#. ---- GL entry remarks (Python) ----
+
+msgid "Bill Receive - {0}"
+msgstr "票据接收 - {0}"
+
+msgid "Bill Transfer - {0}"
+msgstr "票据转让 - {0}"
+
+msgid "Bill Discount - {0}"
+msgstr "票据贴现 - {0}"
+
+msgid "Bill Discount Interest - {0}"
+msgstr "票据贴现利息 - {0}"
+
+msgid "Bill Payment - {0}"
+msgstr "票据兑付 - {0}"
+
+#. ---- Scheduler messages (Python) ----
+
+msgid "Bill {0} (Acceptor: {1}, Amount: {2}) will mature in {3} days"
+msgstr "票据 {0}（承兑人：{1}，金额：{2}）将在 {3} 天后到期"
+
+msgid "Bill Maturity Reminder"
+msgstr "票据到期提醒"
+
+#. ---- JavaScript UI strings ----
+
+msgid "Create"
+msgstr "创建"
+
+msgid "Tools"
+msgstr "工具"
+
+msgid "OCR Recognition"
+msgstr "OCR 识别"
+
+msgid "Front image uploaded. Run OCR recognition now?"
+msgstr "已上传票据正面图片，是否立即进行 OCR 识别？"
+
+msgid "Please upload front or back image first"
+msgstr "请先上传票据正面或背面图片"
+
+msgid "OCR Recognition..."
+msgstr "OCR 识别中..."
+
+msgid "Calling Aliyun OCR service"
+msgstr "正在调用阿里云 OCR 服务"
+
+msgid "Recognizing bill front"
+msgstr "正在识别票据正面"
+
+msgid "Front recognition complete, {0} fields filled"
+msgstr "正面识别完成，已填入 {0} 个字段"
+
+msgid "OCR Recognition Warning"
+msgstr "OCR 识别警告"
+
+msgid "Low OCR confidence ({0}%), please verify"
+msgstr "OCR 置信度较低 ({0}%)，请核对"
+
+msgid "Moderate OCR confidence ({0}%), verification recommended"
+msgstr "OCR 置信度一般 ({0}%)，建议核对"
+
+#. ---- Number Card labels ----
+
+msgid "Total Unexpired Bills"
+msgstr "未到期承兑总额"
+
+msgid "Bills Expiring in 7 Days"
+msgstr "7天内到期"
+
+msgid "Bills Expiring in 30 Days"
+msgstr "一月内到期"
+
+#. ---- Dashboard Chart labels ----
+
+msgid "From Date"
+msgstr "开始日期"
+
+msgid "To Date"
+msgstr "截止日期"
+
+msgid "Bill Maturity Distribution"
+msgstr "持有汇票到期分布"
+
+#. ---- Chart bucket labels ----
+
+msgid "Overdue"
+msgstr "已逾期"
+
+msgid "Within 7 Days"
+msgstr "7天内"
+
+msgid "8-30 Days"
+msgstr "8-30天"
+
+msgid "31-90 Days"
+msgstr "31-90天"
+
+msgid "Over 90 Days"
+msgstr "90天以上"

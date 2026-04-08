@@ -1,0 +1,346 @@
+{
+    "actions": [],
+    "allow_rename": 0,
+    "autoname": "BOE-.#####",
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "section_basic",
+        "bill_no",
+        "bill_type",
+        "column_break_basic",
+        "issue_date",
+        "due_date",
+        "company",
+        "section_sub_ticket",
+        "sub_ticket_start",
+        "sub_ticket_end",
+        "column_break_sub",
+        "bill_amount",
+        "is_splittable",
+        "section_drawer",
+        "drawer_name",
+        "drawer_account",
+        "drawer_bank",
+        "section_acceptor",
+        "acceptor_name",
+        "acceptor_account",
+        "acceptor_bank",
+        "section_holder",
+        "payee_name",
+        "current_holder",
+        "column_break_holder",
+        "bill_status",
+        "circulation_flag",
+        "no_transfer_mark",
+        "section_links",
+        "parent_bill",
+        "linked_sales_invoice",
+        "column_break_links",
+        "linked_purchase_invoice",
+        "section_sub_tickets",
+        "sub_tickets",
+        "section_endorsement",
+        "endorsement_chain",
+        "section_remarks",
+        "amended_from",
+        "remarks"
+    ],
+    "fields": [
+        {
+            "fieldname": "section_basic",
+            "fieldtype": "Section Break",
+            "label": "Bill Details"
+        },
+        {
+            "fieldname": "bill_no",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Bill No",
+            "reqd": 1,
+            "unique": 1,
+            "description": "30-digit number"
+        },
+        {
+            "fieldname": "bill_type",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Bill Type",
+            "options": "Bank Acceptance Bill\nCommercial Acceptance Bill\nSupply Chain Bank Bill\nSupply Chain Commercial Bill",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_basic",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "issue_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "Issue Date",
+            "reqd": 1
+        },
+        {
+            "fieldname": "due_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Due Date",
+            "reqd": 1
+        },
+        {
+            "fieldname": "company",
+            "fieldtype": "Link",
+            "label": "Company",
+            "options": "Company",
+            "reqd": 1
+        },
+        {
+            "fieldname": "section_sub_ticket",
+            "fieldtype": "Section Break",
+            "label": "Sub Ticket Range"
+        },
+        {
+            "fieldname": "sub_ticket_start",
+            "fieldtype": "Int",
+            "label": "Sub Ticket Start",
+            "reqd": 1,
+            "description": "0 means non-splittable"
+        },
+        {
+            "fieldname": "sub_ticket_end",
+            "fieldtype": "Int",
+            "label": "Sub Ticket End",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_sub",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "bill_amount",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "Bill Amount",
+            "read_only": 1,
+            "reqd": 1,
+            "description": "Auto-calculated = (End - Start + 1) x 0.01"
+        },
+        {
+            "default": "0",
+            "fieldname": "is_splittable",
+            "fieldtype": "Check",
+            "label": "Is Splittable",
+            "read_only": 1
+        },
+        {
+            "fieldname": "section_drawer",
+            "fieldtype": "Section Break",
+            "label": "Drawer Information"
+        },
+        {
+            "fieldname": "drawer_name",
+            "fieldtype": "Data",
+            "label": "Drawer Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "drawer_account",
+            "fieldtype": "Data",
+            "label": "Drawer Account"
+        },
+        {
+            "fieldname": "drawer_bank",
+            "fieldtype": "Data",
+            "label": "Drawer Bank"
+        },
+        {
+            "fieldname": "section_acceptor",
+            "fieldtype": "Section Break",
+            "label": "Acceptor Information"
+        },
+        {
+            "fieldname": "acceptor_name",
+            "fieldtype": "Data",
+            "in_standard_filter": 1,
+            "label": "Acceptor Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "acceptor_account",
+            "fieldtype": "Data",
+            "label": "Acceptor Account"
+        },
+        {
+            "fieldname": "acceptor_bank",
+            "fieldtype": "Data",
+            "label": "Acceptor Bank"
+        },
+        {
+            "fieldname": "section_holder",
+            "fieldtype": "Section Break",
+            "label": "Payee and Holder"
+        },
+        {
+            "fieldname": "payee_name",
+            "fieldtype": "Data",
+            "label": "Payee Name"
+        },
+        {
+            "fieldname": "current_holder",
+            "fieldtype": "Data",
+            "label": "Current Holder"
+        },
+        {
+            "fieldname": "column_break_holder",
+            "fieldtype": "Column Break"
+        },
+        {
+            "default": "Issued",
+            "fieldname": "bill_status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "in_standard_filter": 1,
+            "label": "Bill Status",
+            "options": "Issued\nReceived - Circulating\nEndorsement Pending\nEndorsed\nDiscount Pending\nDiscounted\nPayment Pending\nSettled\nSplit",
+            "reqd": 1
+        },
+        {
+            "default": "Circulating",
+            "fieldname": "circulation_flag",
+            "fieldtype": "Select",
+            "label": "Circulation Flag",
+            "options": "Circulating\nNon-Transferable\nEnded"
+        },
+        {
+            "default": "0",
+            "fieldname": "no_transfer_mark",
+            "fieldtype": "Check",
+            "label": "No Transfer Mark"
+        },
+        {
+            "fieldname": "section_links",
+            "fieldtype": "Section Break",
+            "label": "Related Documents"
+        },
+        {
+            "fieldname": "parent_bill",
+            "fieldtype": "Link",
+            "label": "Parent Bill",
+            "options": "Bill of Exchange"
+        },
+        {
+            "fieldname": "linked_sales_invoice",
+            "fieldtype": "Link",
+            "label": "Linked Sales Invoice",
+            "options": "Sales Invoice"
+        },
+        {
+            "fieldname": "column_break_links",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "linked_purchase_invoice",
+            "fieldtype": "Link",
+            "label": "Linked Purchase Invoice",
+            "options": "Purchase Invoice"
+        },
+        {
+            "fieldname": "section_sub_tickets",
+            "fieldtype": "Section Break",
+            "label": "Sub Tickets",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "sub_tickets",
+            "fieldtype": "Table",
+            "label": "Sub Tickets",
+            "options": "Bill Sub Ticket"
+        },
+        {
+            "fieldname": "section_endorsement",
+            "fieldtype": "Section Break",
+            "label": "Endorsement Chain",
+            "collapsible": 1
+        },
+        {
+            "fieldname": "endorsement_chain",
+            "fieldtype": "Table",
+            "label": "Endorsement Chain",
+            "options": "Endorsement Chain",
+            "allow_on_submit": 1
+        },
+        {
+            "fieldname": "section_remarks",
+            "fieldtype": "Section Break",
+            "label": "Remarks"
+        },
+        {
+            "fieldname": "amended_from",
+            "fieldtype": "Link",
+            "label": "Amended From",
+            "no_copy": 1,
+            "options": "Bill of Exchange",
+            "print_hide": 1,
+            "read_only": 1
+        },
+        {
+            "fieldname": "remarks",
+            "fieldtype": "Small Text",
+            "label": "Remarks"
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "is_submittable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Bill of Exchange",
+    "naming_rule": "Expression",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "cancel": 1,
+            "create": 1,
+            "delete": 0,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts User",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "amend": 1,
+            "cancel": 1,
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Accounts Manager",
+            "share": 1,
+            "submit": 1,
+            "write": 1
+        },
+        {
+            "read": 1,
+            "report": 1,
+            "role": "Auditor",
+            "export": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 1
+}

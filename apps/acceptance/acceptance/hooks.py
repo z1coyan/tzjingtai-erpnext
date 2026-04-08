@@ -1,0 +1,50 @@
+app_name = "acceptance"
+app_title = "Acceptance Bill Management"
+app_publisher = "台州京泰"
+app_description = "Full lifecycle management of electronic commercial acceptance bills based on the new-generation bill system"
+app_email = "dev@tzjingtai.com"
+app_license = "MIT"
+
+# 应用图标及颜色
+app_icon = "octicon octicon-note"
+app_color = "#3498db"
+
+# 应用依赖
+required_apps = ["frappe", "erpnext"]
+
+# Includes in <head>
+# ------------------
+
+# include js, css files in header of desk.html
+# app_include_css = "/assets/acceptance/css/acceptance.css"
+# app_include_js = "/assets/acceptance/js/acceptance.js"
+
+# include js in doctype views
+doctype_js = {
+	"Sales Invoice": "public/js/sales_invoice.js",
+	"Purchase Invoice": "public/js/purchase_invoice.js",
+}
+
+# Home Pages
+# ----------
+
+# application home page (will override Website Settings)
+# home_page = "login"
+
+# Generators
+# ----------
+
+# automatically create page for each record of this doctype
+# website_generators = ["Web Page"]
+
+# Scheduled Tasks
+# ---------------
+
+scheduler_events = {
+	"daily": [
+		"acceptance.acceptance.doctype.bill_of_exchange.bill_of_exchange.check_bill_maturity"
+	],
+}
+
+# Automatically update python controller files with type annotations for this app.
+# export_python_type_annotations = True

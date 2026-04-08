@@ -1,0 +1,103 @@
+{
+    "actions": [],
+    "creation": "2026-04-07 00:00:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "sequence",
+        "endorsement_type",
+        "endorser_name",
+        "endorsee_name",
+        "endorsement_date",
+        "column_break_1",
+        "sub_start",
+        "sub_end",
+        "endorsement_amount",
+        "source_doctype",
+        "source_docname"
+    ],
+    "fields": [
+        {
+            "fieldname": "sequence",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "Sequence",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorser_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Endorser Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorsee_name",
+            "fieldtype": "Data",
+            "in_list_view": 1,
+            "label": "Endorsee Name",
+            "reqd": 1
+        },
+        {
+            "fieldname": "endorsement_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "Endorsement Date",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "sub_start",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "Sub Start"
+        },
+        {
+            "fieldname": "sub_end",
+            "fieldtype": "Int",
+            "in_list_view": 1,
+            "label": "Sub End"
+        },
+        {
+            "fieldname": "endorsement_amount",
+            "fieldtype": "Currency",
+            "label": "Endorsement Amount"
+        },
+        {
+            "fieldname": "endorsement_type",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Endorsement Type",
+            "options": "\nEndorsement Received\nEndorsement Transfer"
+        },
+        {
+            "fieldname": "source_doctype",
+            "fieldtype": "Data",
+            "label": "Source DocType",
+            "read_only": 1
+        },
+        {
+            "fieldname": "source_docname",
+            "fieldtype": "Dynamic Link",
+            "label": "Source Document",
+            "options": "source_doctype",
+            "read_only": 1
+        }
+    ],
+    "index_web_pages_for_search": 0,
+    "istable": 1,
+    "links": [],
+    "modified": "2026-04-07 00:00:00.000000",
+    "modified_by": "Administrator",
+    "module": "Acceptance",
+    "name": "Endorsement Chain",
+    "owner": "Administrator",
+    "permissions": [],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": [],
+    "track_changes": 0
+}

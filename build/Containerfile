@@ -182,10 +182,11 @@ RUN cd /home/frappe/frappe-bench \
          echo "Installing local app: $app_name"; \
          cp -r "$app_dir" "apps/$app_name" \
          && /home/frappe/frappe-bench/env/bin/pip install -e "apps/$app_name" \
-         && echo "$app_name" >> sites/apps.txt; \
+         && printf '\n%s\n' "$app_name" >> sites/apps.txt; \
        fi; \
      done \
-  && bench build
+  && bench build \
+  && cp -r /home/frappe/frappe-bench/sites/assets /home/frappe/frappe-bench/sites-assets
 
 
 FROM base AS backend
@@ -198,7 +199,6 @@ WORKDIR /home/frappe/frappe-bench
 
 VOLUME [ \
   "/home/frappe/frappe-bench/sites", \
-  "/home/frappe/frappe-bench/sites/assets", \
   "/home/frappe/frappe-bench/logs" \
 ]
 

@@ -1,0 +1,19 @@
+{
+    "name": "Bills Expiring in 7 Days",
+    "label": "Bills Expiring in 7 Days",
+    "creation": "2026-04-08 00:00:00.000000",
+    "modified": "2026-04-08 00:00:00.000000",
+    "modified_by": "Administrator",
+    "owner": "Administrator",
+    "docstatus": 0,
+    "doctype": "Number Card",
+    "type": "Custom",
+    "method": "acceptance.acceptance.dashboard_stats.get_expiring_7days_amount",
+    "document_type": "",
+    "is_standard": 1,
+    "module": "Acceptance",
+    "color": "#e67e22",
+    "show_percentage_stats": 0,
+    "filters_json": "[]",
+    "dynamic_filters_json": "[]"
+}

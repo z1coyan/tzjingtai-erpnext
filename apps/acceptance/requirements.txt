@@ -1,0 +1,2 @@
+frappe
+alibabacloud_ocr_api20210707>=3.1.3
