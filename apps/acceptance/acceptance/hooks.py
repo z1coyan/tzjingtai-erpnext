@@ -1,7 +1,7 @@
 app_name = "acceptance"
-app_title = "承兑汇票管理"
+app_title = "Acceptance Bill Management"
 app_publisher = "台州京泰"
-app_description = "基于新一代票据系统的承兑汇票全生命周期管理"
+app_description = "Full lifecycle management of electronic commercial acceptance bills based on the new-generation bill system"
 app_email = "dev@tzjingtai.com"
 app_license = "MIT"
 

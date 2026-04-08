@@ -47,7 +47,7 @@ function calculate_discount(frm, due_date) {
 function do_calculate(frm, due_date) {
 	let remaining_days = frappe.datetime.get_diff(due_date, frm.doc.discount_date);
 	if (remaining_days <= 0) {
-		frappe.msgprint(__("贴现日期必须早于到期日期"));
+		frappe.msgprint(__("Discount date must be before due date"));
 		return;
 	}
 

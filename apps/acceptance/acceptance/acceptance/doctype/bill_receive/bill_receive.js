@@ -5,9 +5,9 @@ frappe.ui.form.on("Bill Receive", {
 	refresh(frm) {
 		// 草稿状态显示 OCR 识别按钮
 		if (frm.doc.docstatus === 0) {
-			frm.add_custom_button(__("OCR 识别"), function () {
+			frm.add_custom_button(__("OCR Recognition"), function () {
 				recognize_bill(frm);
-			}, __("工具"));
+			}, __("Tools"));
 		}
 	},
 
@@ -22,7 +22,7 @@ frappe.ui.form.on("Bill Receive", {
 	front_image(frm) {
 		if (frm.doc.front_image) {
 			frappe.confirm(
-				__("已上传票据正面图片，是否立即进行 OCR 识别？"),
+				__("Front image uploaded. Run OCR recognition now?"),
 				() => recognize_bill_front_only(frm)
 			);
 		}
@@ -40,11 +40,11 @@ function calculate_amount(frm) {
 
 function recognize_bill(frm) {
 	if (!frm.doc.front_image && !frm.doc.back_image) {
-		frappe.msgprint(__("请先上传票据正面或背面图片"));
+		frappe.msgprint(__("Please upload front or back image first"));
 		return;
 	}
 
-	frappe.show_progress(__("OCR 识别中..."), 0, 100, __("正在调用阿里云 OCR 服务"));
+	frappe.show_progress(__("OCR Recognition..."), 0, 100, __("Calling Aliyun OCR service"));
 
 	frappe.call({
 		method: "acceptance.acceptance.ocr_service.recognize_bill",
@@ -65,7 +65,7 @@ function recognize_bill(frm) {
 }
 
 function recognize_bill_front_only(frm) {
-	frappe.show_progress(__("OCR 识别中..."), 0, 100, __("正在识别票据正面"));
+	frappe.show_progress(__("OCR Recognition..."), 0, 100, __("Recognizing bill front"));
 
 	frappe.call({
 		method: "acceptance.acceptance.ocr_service.recognize_bill",
@@ -123,7 +123,7 @@ function fill_form_from_ocr(frm, data) {
 		}
 
 		frappe.show_alert({
-			message: __("正面识别完成，已填入 {0} 个字段", [filled_count]),
+			message: __("Front recognition complete, {0} fields filled", [filled_count]),
 			indicator: "green",
 		});
 	}
@@ -132,7 +132,7 @@ function fill_form_from_ocr(frm, data) {
 	if (data.errors && data.errors.length > 0) {
 		data.errors.forEach((err) => {
 			frappe.msgprint({
-				title: __("OCR 识别警告"),
+				title: __("OCR Recognition Warning"),
 				message: err.message,
 				indicator: "orange",
 			});
@@ -168,10 +168,10 @@ function highlight_low_confidence_fields(frm, confidence) {
 		const $field = frm.fields_dict[fieldname].$wrapper;
 		if (prob < DANGER_THRESHOLD) {
 			$field.css("background-color", "#ffcccc");
-			$field.attr("title", __("OCR 置信度较低 ({0}%)，请核对", [prob]));
+			$field.attr("title", __("Low OCR confidence ({0}%), please verify", [prob]));
 		} else if (prob < WARN_THRESHOLD) {
 			$field.css("background-color", "#ffffcc");
-			$field.attr("title", __("OCR 置信度一般 ({0}%)，建议核对", [prob]));
+			$field.attr("title", __("Moderate OCR confidence ({0}%), verification recommended", [prob]));
 		}
 	}
 }

@@ -17,24 +17,24 @@ class BillTransfer(AccountsController):
 	def validate_bill_status(self):
 		"""校验票据状态必须为可流通"""
 		boe = frappe.get_doc("Bill of Exchange", self.bill_of_exchange)
-		if boe.bill_status != "已收票-可流通":
-			frappe.throw(_("只能转让状态为「已收票-可流通」的票据，当前状态为：{0}").format(boe.bill_status))
+		if boe.bill_status != "Received - Circulating":
+			frappe.throw(_("Only bills with status 'Received - Circulating' can be transferred, current status: {0}").format(boe.bill_status))
 
 		if boe.no_transfer_mark:
-			frappe.throw(_("该票据已标记「不得转让」，无法进行背书转让"))
+			frappe.throw(_("This bill is marked as 'No Transfer', endorsement transfer is not allowed"))
 
 	def validate_transfer_amount(self):
 		"""校验转让金额"""
 		boe = frappe.get_doc("Bill of Exchange", self.bill_of_exchange)
 
 		if self.transfer_amount > boe.bill_amount:
-			frappe.throw(_("转让金额不能大于票面金额"))
+			frappe.throw(_("Transfer amount cannot exceed bill amount"))
 
 		if self.transfer_amount < boe.bill_amount:
 			# 部分转让
 			self.is_partial_transfer = 1
 			if not boe.is_splittable:
-				frappe.throw(_("该票据不可拆分，无法部分转让"))
+				frappe.throw(_("This bill is non-splittable, partial transfer is not allowed"))
 		else:
 			self.is_partial_transfer = 0
 
@@ -65,8 +65,8 @@ class BillTransfer(AccountsController):
 
 	def execute_full_transfer(self, boe):
 		"""整票转让"""
-		boe.update_status("已背书转让")
-		boe.update_circulation_flag("已结束")
+		boe.update_status("Endorsed")
+		boe.update_circulation_flag("Ended")
 		boe.db_set("current_holder", frappe.get_value("Supplier", self.supplier, "supplier_name") or self.supplier)
 
 	def execute_split(self, boe):
@@ -76,7 +76,7 @@ class BillTransfer(AccountsController):
 			"sub_start": self.transfer_sub_start,
 			"sub_end": self.transfer_sub_end,
 			"sub_amount": self.transfer_amount,
-			"sub_status": "已转让",
+			"sub_status": "Transferred",
 			"holder": frappe.get_value("Supplier", self.supplier, "supplier_name") or self.supplier,
 			"related_doc_type": "Bill Transfer",
 			"related_doc_name": self.name,
@@ -85,12 +85,12 @@ class BillTransfer(AccountsController):
 			"sub_start": self.remaining_sub_start,
 			"sub_end": self.remaining_sub_end,
 			"sub_amount": self.remaining_amount,
-			"sub_status": "可流通",
+			"sub_status": "Circulating",
 			"holder": self.company,
 		})
 
 		# 标记原票据为已拆分
-		boe.update_status("已拆分")
+		boe.update_status("Split")
 		boe.save(ignore_permissions=True)
 
 		# 创建新票据（剩余部分，保持可流通）
@@ -110,8 +110,8 @@ class BillTransfer(AccountsController):
 		new_boe.acceptor_bank = boe.acceptor_bank
 		new_boe.payee_name = boe.payee_name
 		new_boe.current_holder = self.company
-		new_boe.bill_status = "已收票-可流通"
-		new_boe.circulation_flag = "可流通"
+		new_boe.bill_status = "Received - Circulating"
+		new_boe.circulation_flag = "Circulating"
 		new_boe.company = self.company
 		new_boe.parent_bill = boe.name
 		new_boe.insert(ignore_permissions=True)
@@ -124,7 +124,7 @@ class BillTransfer(AccountsController):
 		log = frappe.new_doc("Endorsement Log")
 		log.bill_of_exchange = self.bill_of_exchange
 		log.bill_no = self.bill_no or boe.bill_no
-		log.endorsement_type = "背书转让"
+		log.endorsement_type = "Endorsement Transfer"
 		log.endorser_name = self.company
 		log.endorsee_name = frappe.get_value("Supplier", self.supplier, "supplier_name") or self.supplier
 		log.endorsement_amount = self.transfer_amount
@@ -155,7 +155,7 @@ class BillTransfer(AccountsController):
 					"against": self.notes_receivable_account,
 					"party_type": "Supplier",
 					"party": self.supplier,
-					"remarks": _("票据转让 - {0}").format(self.bill_no),
+					"remarks": _("Bill Transfer - {0}").format(self.bill_no),
 				}
 			)
 		)
@@ -168,7 +168,7 @@ class BillTransfer(AccountsController):
 					"credit_in_account_currency": self.transfer_amount,
 					"credit": self.transfer_amount,
 					"against": self.accounts_payable_account,
-					"remarks": _("票据转让 - {0}").format(self.bill_no),
+					"remarks": _("Bill Transfer - {0}").format(self.bill_no),
 				}
 			)
 		)
@@ -181,5 +181,5 @@ class BillTransfer(AccountsController):
 		# 恢复票据状态
 		boe = frappe.get_doc("Bill of Exchange", self.bill_of_exchange)
 		if not self.is_partial_transfer:
-			boe.update_status("已收票-可流通")
-			boe.update_circulation_flag("可流通")
+			boe.update_status("Received - Circulating")
+			boe.update_circulation_flag("Circulating")

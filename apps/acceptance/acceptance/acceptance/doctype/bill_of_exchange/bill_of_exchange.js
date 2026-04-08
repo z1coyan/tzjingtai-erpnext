@@ -4,8 +4,8 @@
 frappe.ui.form.on("Bill of Exchange", {
 	refresh(frm) {
 		// 已提交且可流通状态下显示操作按钮
-		if (frm.doc.docstatus === 1 && frm.doc.bill_status === "已收票-可流通") {
-			frm.add_custom_button(__("票据转让"), function () {
+		if (frm.doc.docstatus === 1 && frm.doc.bill_status === "Received - Circulating") {
+			frm.add_custom_button(__("Bill Transfer"), function () {
 				frappe.model.open_mapped_doc({
 					method: "",
 					frm: frm,
@@ -14,21 +14,21 @@ frappe.ui.form.on("Bill of Exchange", {
 					bill_of_exchange: frm.doc.name,
 					company: frm.doc.company,
 				});
-			}, __("创建"));
+			}, __("Create"));
 
-			frm.add_custom_button(__("提前贴现"), function () {
+			frm.add_custom_button(__("Bill Discount"), function () {
 				frappe.new_doc("Bill Discount", {
 					bill_of_exchange: frm.doc.name,
 					company: frm.doc.company,
 				});
-			}, __("创建"));
+			}, __("Create"));
 
-			frm.add_custom_button(__("到期兑付"), function () {
+			frm.add_custom_button(__("Bill Payment"), function () {
 				frappe.new_doc("Bill Payment", {
 					bill_of_exchange: frm.doc.name,
 					company: frm.doc.company,
 				});
-			}, __("创建"));
+			}, __("Create"));
 		}
 	},
 

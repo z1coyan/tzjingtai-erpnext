@@ -21,12 +21,12 @@
             "default": "0",
             "fieldname": "enabled",
             "fieldtype": "Check",
-            "label": "启用 OCR"
+            "label": "Enable OCR"
         },
         {
             "fieldname": "section_credentials",
             "fieldtype": "Section Break",
-            "label": "阿里云凭证",
+            "label": "Aliyun Credentials",
             "depends_on": "enabled"
         },
         {
@@ -61,14 +61,14 @@
         {
             "fieldname": "section_back",
             "fieldtype": "Section Break",
-            "label": "背面识别配置",
+            "label": "Back Recognition Settings",
             "depends_on": "enabled"
         },
         {
             "default": "0",
             "fieldname": "back_recognition_enabled",
             "fieldtype": "Check",
-            "label": "启用背面识别"
+            "label": "Enable Back Recognition"
         },
         {
             "fieldname": "column_break_back",
@@ -78,7 +78,7 @@
             "default": "[\"背书人名称\", \"被背书人名称\", \"背书日期\"]",
             "fieldname": "back_recognition_keys",
             "fieldtype": "Small Text",
-            "label": "背面识别 Keys（JSON数组）",
+            "label": "Back Recognition Keys (JSON Array)",
             "depends_on": "back_recognition_enabled"
         }
     ],

@@ -17,8 +17,8 @@ class BillDiscount(AccountsController):
 	def validate_bill_status(self):
 		"""校验票据状态"""
 		boe = frappe.get_doc("Bill of Exchange", self.bill_of_exchange)
-		if boe.bill_status != "已收票-可流通":
-			frappe.throw(_("只能贴现状态为「已收票-可流通」的票据，当前状态为：{0}").format(boe.bill_status))
+		if boe.bill_status != "Received - Circulating":
+			frappe.throw(_("Only bills with status 'Received - Circulating' can be discounted, current status: {0}").format(boe.bill_status))
 
 	def calculate_discount(self):
 		"""计算贴现利息和实际到账金额"""
@@ -27,7 +27,7 @@ class BillDiscount(AccountsController):
 		# 计算剩余天数
 		self.remaining_days = date_diff(boe.due_date, getdate(self.discount_date))
 		if self.remaining_days <= 0:
-			frappe.throw(_("贴现日期必须早于到期日期"))
+			frappe.throw(_("Discount date must be before due date"))
 
 		# 如果未指定贴现金额，默认为票面金额（整票贴现）
 		if not self.discount_amount:
@@ -43,8 +43,8 @@ class BillDiscount(AccountsController):
 		boe = frappe.get_doc("Bill of Exchange", self.bill_of_exchange)
 
 		# 更新票据状态
-		boe.update_status("已贴现")
-		boe.update_circulation_flag("已结束")
+		boe.update_status("Discounted")
+		boe.update_circulation_flag("Ended")
 
 		self.create_gl_entries()
 
@@ -52,8 +52,8 @@ class BillDiscount(AccountsController):
 		self.create_gl_entries(cancel=True)
 		# 恢复票据状态
 		boe = frappe.get_doc("Bill of Exchange", self.bill_of_exchange)
-		boe.update_status("已收票-可流通")
-		boe.update_circulation_flag("可流通")
+		boe.update_status("Received - Circulating")
+		boe.update_circulation_flag("Circulating")
 
 	def create_gl_entries(self, cancel=False):
 		"""生成会计凭证：借 银行存款 + 借 财务费用-贴现利息 / 贷 应收票据"""
@@ -70,7 +70,7 @@ class BillDiscount(AccountsController):
 					"debit_in_account_currency": self.actual_amount,
 					"debit": self.actual_amount,
 					"against": self.notes_receivable_account,
-					"remarks": _("票据贴现 - {0}").format(self.bill_no),
+					"remarks": _("Bill Discount - {0}").format(self.bill_no),
 				}
 			)
 		)
@@ -83,7 +83,7 @@ class BillDiscount(AccountsController):
 					"debit_in_account_currency": self.discount_interest,
 					"debit": self.discount_interest,
 					"against": self.notes_receivable_account,
-					"remarks": _("票据贴现利息 - {0}").format(self.bill_no),
+					"remarks": _("Bill Discount Interest - {0}").format(self.bill_no),
 				}
 			)
 		)
@@ -96,7 +96,7 @@ class BillDiscount(AccountsController):
 					"credit_in_account_currency": self.discount_amount,
 					"credit": self.discount_amount,
 					"against": self.bank_account,
-					"remarks": _("票据贴现 - {0}").format(self.bill_no),
+					"remarks": _("Bill Discount - {0}").format(self.bill_no),
 				}
 			)
 		)

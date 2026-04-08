@@ -41,12 +41,12 @@
         {
             "fieldname": "section_basic",
             "fieldtype": "Section Break",
-            "label": "基本信息"
+            "label": "Basic Information"
         },
         {
             "fieldname": "company",
             "fieldtype": "Link",
-            "label": "公司",
+            "label": "Company",
             "options": "Company",
             "reqd": 1
         },
@@ -54,7 +54,7 @@
             "fieldname": "bill_of_exchange",
             "fieldtype": "Link",
             "in_list_view": 1,
-            "label": "关联票据",
+            "label": "Bill of Exchange",
             "options": "Bill of Exchange",
             "reqd": 1
         },
@@ -63,14 +63,14 @@
             "fieldname": "bill_no",
             "fieldtype": "Data",
             "in_list_view": 1,
-            "label": "票据包号",
+            "label": "Bill No",
             "read_only": 1
         },
         {
             "fetch_from": "bill_of_exchange.bill_amount",
             "fieldname": "original_amount",
             "fieldtype": "Currency",
-            "label": "原票面金额",
+            "label": "Original Amount",
             "read_only": 1
         },
         {
@@ -81,40 +81,40 @@
             "fieldname": "supplier",
             "fieldtype": "Link",
             "in_list_view": 1,
-            "label": "供应商（被背书人）",
+            "label": "Supplier (Endorsee)",
             "options": "Supplier",
             "reqd": 1
         },
         {
             "fieldname": "linked_purchase_invoice",
             "fieldtype": "Link",
-            "label": "关联采购发票",
+            "label": "Linked Purchase Invoice",
             "options": "Purchase Invoice"
         },
         {
             "default": "Today",
             "fieldname": "transfer_date",
             "fieldtype": "Date",
-            "label": "转让日期",
+            "label": "Transfer Date",
             "reqd": 1
         },
         {
             "fieldname": "section_transfer",
             "fieldtype": "Section Break",
-            "label": "转让信息"
+            "label": "Transfer Details"
         },
         {
             "fieldname": "transfer_amount",
             "fieldtype": "Currency",
             "in_list_view": 1,
-            "label": "转让金额",
+            "label": "Transfer Amount",
             "reqd": 1
         },
         {
             "default": "0",
             "fieldname": "is_partial_transfer",
             "fieldtype": "Check",
-            "label": "是否部分转让"
+            "label": "Is Partial Transfer"
         },
         {
             "fieldname": "column_break_transfer",
@@ -124,23 +124,23 @@
             "default": "0",
             "fieldname": "no_transfer_mark",
             "fieldtype": "Check",
-            "label": "不得转让标记"
+            "label": "No Transfer Mark"
         },
         {
             "fieldname": "section_split",
             "fieldtype": "Section Break",
-            "label": "子票拆分",
+            "label": "Sub Ticket Split",
             "depends_on": "is_partial_transfer"
         },
         {
             "fieldname": "transfer_sub_start",
             "fieldtype": "Int",
-            "label": "转让子票起始号"
+            "label": "Transfer Sub Start"
         },
         {
             "fieldname": "transfer_sub_end",
             "fieldtype": "Int",
-            "label": "转让子票结束号"
+            "label": "Transfer Sub End"
         },
         {
             "fieldname": "column_break_split",
@@ -149,30 +149,30 @@
         {
             "fieldname": "remaining_sub_start",
             "fieldtype": "Int",
-            "label": "剩余子票起始号",
+            "label": "Remaining Sub Start",
             "read_only": 1
         },
         {
             "fieldname": "remaining_sub_end",
             "fieldtype": "Int",
-            "label": "剩余子票结束号",
+            "label": "Remaining Sub End",
             "read_only": 1
         },
         {
             "fieldname": "remaining_amount",
             "fieldtype": "Currency",
-            "label": "剩余金额",
+            "label": "Remaining Amount",
             "read_only": 1
         },
         {
             "fieldname": "section_accounting",
             "fieldtype": "Section Break",
-            "label": "会计信息"
+            "label": "Accounting"
         },
         {
             "fieldname": "accounts_payable_account",
             "fieldtype": "Link",
-            "label": "应付账款科目",
+            "label": "Accounts Payable Account",
             "options": "Account"
         },
         {
@@ -182,30 +182,30 @@
         {
             "fieldname": "notes_receivable_account",
             "fieldtype": "Link",
-            "label": "应收票据科目",
+            "label": "Notes Receivable Account",
             "options": "Account"
         },
         {
             "fieldname": "section_result",
             "fieldtype": "Section Break",
-            "label": "处理结果"
+            "label": "Result"
         },
         {
             "fieldname": "new_bill_of_exchange",
             "fieldtype": "Link",
-            "label": "拆分后新票据",
+            "label": "New Bill of Exchange",
             "options": "Bill of Exchange",
             "read_only": 1
         },
         {
             "fieldname": "section_remarks",
             "fieldtype": "Section Break",
-            "label": "备注"
+            "label": "Remarks"
         },
         {
             "fieldname": "amended_from",
             "fieldtype": "Link",
-            "label": "修正来源",
+            "label": "Amended From",
             "no_copy": 1,
             "options": "Bill Transfer",
             "print_hide": 1,
@@ -214,7 +214,7 @@
         {
             "fieldname": "remarks",
             "fieldtype": "Small Text",
-            "label": "备注"
+            "label": "Remarks"
         }
     ],
     "index_web_pages_for_search": 0,

@@ -19,15 +19,15 @@ class BillofExchange(Document):
 	def validate_bill_no(self):
 		"""校验票据包号：30位数字，首位为5/6/7/8"""
 		if not re.match(r"^[5678]\d{29}$", self.bill_no):
-			frappe.throw(_("票据包号必须为30位数字，且首位为5（银票）、6（商票）、7（供应链商票）或8（供应链银票）"))
+			frappe.throw(_("Bill number must be 30 digits starting with 5 (bank), 6 (commercial), 7 (supply chain commercial) or 8 (supply chain bank)"))
 
 	def set_bill_type_from_no(self):
 		"""根据票据包号首位自动设置票据种类"""
 		type_map = {
-			"5": "银行承兑汇票",
-			"6": "商业承兑汇票",
-			"7": "供应链商票",
-			"8": "供应链银票",
+			"5": "Bank Acceptance Bill",
+			"6": "Commercial Acceptance Bill",
+			"7": "Supply Chain Commercial Bill",
+			"8": "Supply Chain Bank Bill",
 		}
 		first_digit = self.bill_no[0] if self.bill_no else ""
 		if first_digit in type_map:
@@ -46,7 +46,7 @@ class BillofExchange(Document):
 		"""校验到期日期必须晚于出票日期"""
 		if self.issue_date and self.due_date:
 			if getdate(self.due_date) <= getdate(self.issue_date):
-				frappe.throw(_("到期日期必须晚于出票日期"))
+				frappe.throw(_("Due date must be after issue date"))
 
 	def update_status(self, new_status):
 		"""更新票据状态（由业务操作单据调用）"""
@@ -88,18 +88,18 @@ class BillofExchange(Document):
 			子票A = 拆分部分, 子票B = 剩余部分
 		"""
 		if not self.is_splittable:
-			frappe.throw(_("该票据不可拆分（子票区间为0）"))
+			frappe.throw(_("This bill is non-splittable (sub ticket range is 0)"))
 
 		# 校验金额为0.01的整数倍
 		split_count = round(split_amount / 0.01)
 		if abs(split_count * 0.01 - split_amount) > 0.001:
-			frappe.throw(_("拆分金额必须为0.01的整数倍"))
+			frappe.throw(_("Split amount must be a multiple of 0.01"))
 
 		total_count = self.sub_ticket_end - self.sub_ticket_start + 1
 		if split_count >= total_count:
-			frappe.throw(_("拆分金额必须小于票面金额"))
+			frappe.throw(_("Split amount must be less than bill amount"))
 		if split_count <= 0:
-			frappe.throw(_("拆分金额必须大于0"))
+			frappe.throw(_("Split amount must be greater than 0"))
 
 		# 生成两个子票区间
 		sub_a_start = self.sub_ticket_start
@@ -111,7 +111,7 @@ class BillofExchange(Document):
 		amount_a = (sub_a_end - sub_a_start + 1) * 0.01
 		amount_b = (sub_b_end - sub_b_start + 1) * 0.01
 		if abs(amount_a + amount_b - self.bill_amount) > 0.001:
-			frappe.throw(_("拆分后金额之和不等于原票面金额，请检查"))
+			frappe.throw(_("Total amount after split does not match original bill amount"))
 
 		return (
 			{"start": sub_a_start, "end": sub_a_end, "amount": amount_a},
@@ -130,7 +130,7 @@ def check_bill_maturity():
 		filters={
 			"due_date": ["<=", target_date],
 			"due_date": [">=", today()],
-			"bill_status": ["in", ["已收票-可流通"]],
+			"bill_status": ["in", ["Received - Circulating"]],
 			"docstatus": 1,
 		},
 		fields=["name", "bill_no", "due_date", "bill_amount", "acceptor_name", "company"],
@@ -150,10 +150,10 @@ def check_bill_maturity():
 			frappe.publish_realtime(
 				"msgprint",
 				{
-					"message": _("票据 {0}（承兑人：{1}，金额：{2}）将在 {3} 天后到期").format(
+					"message": _("Bill {0} (Acceptor: {1}, Amount: {2}) will mature in {3} days").format(
 						bill.bill_no, bill.acceptor_name, bill.bill_amount, days_remaining
 					),
-					"title": _("票据到期提醒"),
+					"title": _("Bill Maturity Reminder"),
 					"indicator": "orange",
 				},
 				user=user.parent,

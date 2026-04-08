@@ -12,7 +12,7 @@
 ```
 acceptance/
 ├── hooks.py                          # doctype_js(SI/PI按钮)、scheduler(到期提醒)
-├── acceptance/workspace/承兑汇票/承兑汇票.json  # Workspace导航（Desk首页入口）
+├── acceptance/workspace/acceptance_bill/acceptance_bill.json  # Workspace导航（Desk首页入口）
 ├── public/js/
 │   ├── sales_invoice.js              # 销售发票→创建票据接收
 │   └── purchase_invoice.js           # 采购发票→创建票据转让
@@ -32,12 +32,12 @@ acceptance/
 
 ## DocType 关系与数据流
 ```
-Sales Invoice ──→ Bill Receive ──→ Bill of Exchange(状态=已收票-可流通)
+Sales Invoice ──→ Bill Receive ──→ Bill of Exchange(status=Received - Circulating)
                                         │
                    ┌────────────┬────────┴────────┬──────────┐
                    ↓            ↓                 ↓          ↓
-            Bill Transfer  Bill Discount    Bill Payment   子票拆分
-            (背书转让)      (提前贴现)       (到期兑付)    (Sub Ticket)
+            Bill Transfer  Bill Discount    Bill Payment   Sub Ticket Split
+            (Endorsed)     (Discounted)     (Settled)
                    ↓            ↓                 ↓
            Purchase Invoice  Bank Entry      Bank Entry
 ```
@@ -54,10 +54,10 @@ Sales Invoice ──→ Bill Receive ──→ Bill of Exchange(状态=已收票
 
 ### 状态机（controller代码控制，非Workflow）
 ```
-已签发 → 已收票-可流通 → 背书待签收 → 已背书转让
-                       → 贴现待确认 → 已贴现
-                       → 提示付款中 → 已结清-已结束
-                       → 已拆分
+Issued → Received - Circulating → Endorsement Pending → Endorsed
+                                → Discount Pending → Discounted
+                                → Payment Pending → Settled
+                                → Split
 ```
 
 ### 会计分录

@@ -22,7 +22,7 @@ def _get_ocr_client():
 
 	settings = frappe.get_single("OCR Settings")
 	if not settings.enabled:
-		frappe.throw(_("OCR 功能未启用，请在 OCR Settings 中配置"))
+		frappe.throw(_("OCR is not enabled, please configure in OCR Settings"))
 
 	access_key_id = settings.aliyun_access_key_id
 	access_key_secret = settings.get_password(
@@ -63,7 +63,7 @@ def recognize_bill(front_image=None, back_image=None):
 		try:
 			result["front"] = recognize_bill_front(front_image)
 		except Exception as e:
-			frappe.log_error(title="OCR 正面识别失败", message=frappe.get_traceback())
+			frappe.log_error(title="OCR front recognition failed", message=frappe.get_traceback())
 			result["errors"].append({"side": "front", "message": str(e)})
 
 	if back_image:
@@ -72,7 +72,7 @@ def recognize_bill(front_image=None, back_image=None):
 			try:
 				result["back"] = recognize_bill_back(back_image)
 			except Exception as e:
-				frappe.log_error(title="OCR 背面识别失败", message=frappe.get_traceback())
+				frappe.log_error(title="OCR back recognition failed", message=frappe.get_traceback())
 				result["errors"].append({"side": "back", "message": str(e)})
 
 	return result
@@ -128,10 +128,10 @@ def _map_front_fields(data):
 	# 从票据包号首位推断票据种类
 	draft_number = fields.get("draftNumber", "")
 	bill_type_map = {
-		"5": "银行承兑汇票",
-		"6": "商业承兑汇票",
-		"7": "供应链商票",
-		"8": "供应链银票",
+		"5": "Bank Acceptance Bill",
+		"6": "Commercial Acceptance Bill",
+		"7": "Supply Chain Commercial Bill",
+		"8": "Supply Chain Bank Bill",
 	}
 	bill_type = bill_type_map.get(draft_number[0], "") if draft_number else ""
 

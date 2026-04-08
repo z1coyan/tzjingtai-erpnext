@@ -31,13 +31,13 @@
         {
             "fieldname": "section_basic",
             "fieldtype": "Section Break",
-            "label": "基本信息"
+            "label": "Basic Information"
         },
         {
             "fieldname": "bill_of_exchange",
             "fieldtype": "Link",
             "in_list_view": 1,
-            "label": "关联票据",
+            "label": "Bill of Exchange",
             "options": "Bill of Exchange",
             "reqd": 1
         },
@@ -46,21 +46,21 @@
             "fieldname": "bill_no",
             "fieldtype": "Data",
             "in_list_view": 1,
-            "label": "票据包号",
+            "label": "Bill No",
             "read_only": 1
         },
         {
             "fetch_from": "bill_of_exchange.bill_amount",
             "fieldname": "bill_amount",
             "fieldtype": "Currency",
-            "label": "票面金额",
+            "label": "Bill Amount",
             "read_only": 1
         },
         {
             "fetch_from": "bill_of_exchange.bill_type",
             "fieldname": "bill_type",
             "fieldtype": "Data",
-            "label": "票据种类",
+            "label": "Bill Type",
             "read_only": 1
         },
         {
@@ -70,7 +70,7 @@
         {
             "fieldname": "company",
             "fieldtype": "Link",
-            "label": "公司",
+            "label": "Company",
             "options": "Company",
             "reqd": 1
         },
@@ -78,26 +78,26 @@
             "fetch_from": "bill_of_exchange.due_date",
             "fieldname": "due_date",
             "fieldtype": "Date",
-            "label": "到期日期",
+            "label": "Due Date",
             "read_only": 1
         },
         {
             "fieldname": "section_payment",
             "fieldtype": "Section Break",
-            "label": "兑付信息"
+            "label": "Payment Details"
         },
         {
             "default": "Today",
             "fieldname": "payment_date",
             "fieldtype": "Date",
-            "label": "兑付日期",
+            "label": "Payment Date",
             "reqd": 1
         },
         {
             "fieldname": "payment_amount",
             "fieldtype": "Currency",
             "in_list_view": 1,
-            "label": "兑付金额",
+            "label": "Payment Amount",
             "reqd": 1
         },
         {
@@ -105,23 +105,23 @@
             "fieldtype": "Column Break"
         },
         {
-            "default": "提示付款中",
+            "default": "Payment Pending",
             "fieldname": "payment_status",
             "fieldtype": "Select",
             "in_list_view": 1,
-            "label": "兑付状态",
-            "options": "提示付款中\n已兑付\n逾期未兑付",
+            "label": "Payment Status",
+            "options": "Payment Pending\nPaid\nOverdue - Unpaid",
             "reqd": 1
         },
         {
             "fieldname": "section_accounting",
             "fieldtype": "Section Break",
-            "label": "会计信息"
+            "label": "Accounting"
         },
         {
             "fieldname": "bank_account",
             "fieldtype": "Link",
-            "label": "收款银行账户",
+            "label": "Bank Account",
             "options": "Account"
         },
         {
@@ -131,18 +131,18 @@
         {
             "fieldname": "notes_receivable_account",
             "fieldtype": "Link",
-            "label": "应收票据科目",
+            "label": "Notes Receivable Account",
             "options": "Account"
         },
         {
             "fieldname": "section_remarks",
             "fieldtype": "Section Break",
-            "label": "备注"
+            "label": "Remarks"
         },
         {
             "fieldname": "amended_from",
             "fieldtype": "Link",
-            "label": "修正来源",
+            "label": "Amended From",
             "no_copy": 1,
             "options": "Bill Payment",
             "print_hide": 1,
@@ -151,7 +151,7 @@
         {
             "fieldname": "remarks",
             "fieldtype": "Small Text",
-            "label": "备注"
+            "label": "Remarks"
         }
     ],
     "index_web_pages_for_search": 0,

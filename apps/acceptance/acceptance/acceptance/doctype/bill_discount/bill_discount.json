@@ -42,13 +42,13 @@
         {
             "fieldname": "section_basic",
             "fieldtype": "Section Break",
-            "label": "基本信息"
+            "label": "Basic Information"
         },
         {
             "fieldname": "bill_of_exchange",
             "fieldtype": "Link",
             "in_list_view": 1,
-            "label": "关联票据",
+            "label": "Bill of Exchange",
             "options": "Bill of Exchange",
             "reqd": 1
         },
@@ -57,14 +57,14 @@
             "fieldname": "bill_no",
             "fieldtype": "Data",
             "in_list_view": 1,
-            "label": "票据包号",
+            "label": "Bill No",
             "read_only": 1
         },
         {
             "fetch_from": "bill_of_exchange.bill_amount",
             "fieldname": "bill_amount",
             "fieldtype": "Currency",
-            "label": "票面金额",
+            "label": "Bill Amount",
             "read_only": 1
         },
         {
@@ -74,7 +74,7 @@
         {
             "fieldname": "company",
             "fieldtype": "Link",
-            "label": "公司",
+            "label": "Company",
             "options": "Company",
             "reqd": 1
         },
@@ -82,26 +82,26 @@
             "default": "Today",
             "fieldname": "posting_date",
             "fieldtype": "Date",
-            "label": "记账日期",
+            "label": "Posting Date",
             "reqd": 1
         },
         {
             "fieldname": "section_discount",
             "fieldtype": "Section Break",
-            "label": "贴现信息"
+            "label": "Discount Details"
         },
         {
             "fieldname": "discount_bank",
             "fieldtype": "Data",
             "in_list_view": 1,
-            "label": "贴现银行",
+            "label": "Discount Bank",
             "reqd": 1
         },
         {
             "default": "Today",
             "fieldname": "discount_date",
             "fieldtype": "Date",
-            "label": "贴现日期",
+            "label": "Discount Date",
             "reqd": 1
         },
         {
@@ -111,30 +111,30 @@
         {
             "fieldname": "discount_rate",
             "fieldtype": "Percent",
-            "label": "贴现利率（年化%）",
+            "label": "Discount Rate (Annualized %)",
             "reqd": 1
         },
         {
             "fieldname": "remaining_days",
             "fieldtype": "Int",
-            "label": "剩余天数",
+            "label": "Remaining Days",
             "read_only": 1
         },
         {
             "fieldname": "section_sub_ticket",
             "fieldtype": "Section Break",
-            "label": "贴现子票区间（部分贴现时填写）",
+            "label": "Discount Sub Ticket Range (For Partial Discount)",
             "collapsible": 1
         },
         {
             "fieldname": "sub_ticket_start",
             "fieldtype": "Int",
-            "label": "贴现子票起始号"
+            "label": "Discount Sub Start"
         },
         {
             "fieldname": "sub_ticket_end",
             "fieldtype": "Int",
-            "label": "贴现子票结束号"
+            "label": "Discount Sub End"
         },
         {
             "fieldname": "column_break_sub",
@@ -144,18 +144,18 @@
             "fieldname": "discount_amount",
             "fieldtype": "Currency",
             "in_list_view": 1,
-            "label": "贴现金额",
+            "label": "Discount Amount",
             "reqd": 1
         },
         {
             "fieldname": "section_result",
             "fieldtype": "Section Break",
-            "label": "计算结果"
+            "label": "Calculation Result"
         },
         {
             "fieldname": "discount_interest",
             "fieldtype": "Currency",
-            "label": "贴现利息",
+            "label": "Discount Interest",
             "read_only": 1
         },
         {
@@ -165,18 +165,18 @@
         {
             "fieldname": "actual_amount",
             "fieldtype": "Currency",
-            "label": "实际到账金额",
+            "label": "Actual Amount",
             "read_only": 1
         },
         {
             "fieldname": "section_accounting",
             "fieldtype": "Section Break",
-            "label": "会计信息"
+            "label": "Accounting"
         },
         {
             "fieldname": "bank_account",
             "fieldtype": "Link",
-            "label": "收款银行账户",
+            "label": "Bank Account",
             "options": "Account"
         },
         {
@@ -186,7 +186,7 @@
         {
             "fieldname": "notes_receivable_account",
             "fieldtype": "Link",
-            "label": "应收票据科目",
+            "label": "Notes Receivable Account",
             "options": "Account"
         },
         {
@@ -196,18 +196,18 @@
         {
             "fieldname": "interest_account",
             "fieldtype": "Link",
-            "label": "贴现利息科目",
+            "label": "Interest Account",
             "options": "Account"
         },
         {
             "fieldname": "section_remarks",
             "fieldtype": "Section Break",
-            "label": "备注"
+            "label": "Remarks"
         },
         {
             "fieldname": "amended_from",
             "fieldtype": "Link",
-            "label": "修正来源",
+            "label": "Amended From",
             "no_copy": 1,
             "options": "Bill Discount",
             "print_hide": 1,
@@ -216,7 +216,7 @@
         {
             "fieldname": "remarks",
             "fieldtype": "Small Text",
-            "label": "备注"
+            "label": "Remarks"
         }
     ],
     "index_web_pages_for_search": 0,

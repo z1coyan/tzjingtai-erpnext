@@ -19,28 +19,28 @@
             "fieldname": "sequence",
             "fieldtype": "Int",
             "in_list_view": 1,
-            "label": "序号",
+            "label": "Sequence",
             "reqd": 1
         },
         {
             "fieldname": "endorser_name",
             "fieldtype": "Data",
             "in_list_view": 1,
-            "label": "背书人",
+            "label": "Endorser Name",
             "reqd": 1
         },
         {
             "fieldname": "endorsee_name",
             "fieldtype": "Data",
             "in_list_view": 1,
-            "label": "被背书人",
+            "label": "Endorsee Name",
             "reqd": 1
         },
         {
             "fieldname": "endorsement_date",
             "fieldtype": "Date",
             "in_list_view": 1,
-            "label": "背书日期",
+            "label": "Endorsement Date",
             "reqd": 1
         },
         {
@@ -51,23 +51,23 @@
             "fieldname": "sub_start",
             "fieldtype": "Int",
             "in_list_view": 1,
-            "label": "子票起始号"
+            "label": "Sub Start"
         },
         {
             "fieldname": "sub_end",
             "fieldtype": "Int",
             "in_list_view": 1,
-            "label": "子票结束号"
+            "label": "Sub End"
         },
         {
             "fieldname": "endorsement_amount",
             "fieldtype": "Currency",
-            "label": "背书金额"
+            "label": "Endorsement Amount"
         },
         {
             "fieldname": "endorsement_log",
             "fieldtype": "Link",
-            "label": "背书记录",
+            "label": "Endorsement Log",
             "options": "Endorsement Log"
         }
     ],

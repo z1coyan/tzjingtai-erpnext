@@ -51,25 +51,25 @@
         {
             "fieldname": "section_basic",
             "fieldtype": "Section Break",
-            "label": "票据基本信息"
+            "label": "Bill Details"
         },
         {
             "fieldname": "bill_no",
             "fieldtype": "Data",
             "in_list_view": 1,
             "in_standard_filter": 1,
-            "label": "票据包号",
+            "label": "Bill No",
             "reqd": 1,
             "unique": 1,
-            "description": "30位阿拉伯数字"
+            "description": "30-digit number"
         },
         {
             "fieldname": "bill_type",
             "fieldtype": "Select",
             "in_list_view": 1,
             "in_standard_filter": 1,
-            "label": "票据种类",
-            "options": "银行承兑汇票\n商业承兑汇票\n供应链银票\n供应链商票",
+            "label": "Bill Type",
+            "options": "Bank Acceptance Bill\nCommercial Acceptance Bill\nSupply Chain Bank Bill\nSupply Chain Commercial Bill",
             "reqd": 1
         },
         {
@@ -80,7 +80,7 @@
             "fieldname": "issue_date",
             "fieldtype": "Date",
             "in_list_view": 1,
-            "label": "出票日期",
+            "label": "Issue Date",
             "reqd": 1
         },
         {
@@ -88,32 +88,32 @@
             "fieldtype": "Date",
             "in_list_view": 1,
             "in_standard_filter": 1,
-            "label": "到期日期",
+            "label": "Due Date",
             "reqd": 1
         },
         {
             "fieldname": "company",
             "fieldtype": "Link",
-            "label": "公司",
+            "label": "Company",
             "options": "Company",
             "reqd": 1
         },
         {
             "fieldname": "section_sub_ticket",
             "fieldtype": "Section Break",
-            "label": "子票区间"
+            "label": "Sub Ticket Range"
         },
         {
             "fieldname": "sub_ticket_start",
             "fieldtype": "Int",
-            "label": "子票区间起始号",
+            "label": "Sub Ticket Start",
             "reqd": 1,
-            "description": "0表示不可拆分"
+            "description": "0 means non-splittable"
         },
         {
             "fieldname": "sub_ticket_end",
             "fieldtype": "Int",
-            "label": "子票区间结束号",
+            "label": "Sub Ticket End",
             "reqd": 1
         },
         {
@@ -124,118 +124,118 @@
             "fieldname": "bill_amount",
             "fieldtype": "Currency",
             "in_list_view": 1,
-            "label": "票面金额",
+            "label": "Bill Amount",
             "read_only": 1,
             "reqd": 1,
-            "description": "自动计算 = (结束号 - 起始号 + 1) × 0.01"
+            "description": "Auto-calculated = (End - Start + 1) x 0.01"
         },
         {
             "default": "0",
             "fieldname": "is_splittable",
             "fieldtype": "Check",
-            "label": "是否可拆分",
+            "label": "Is Splittable",
             "read_only": 1
         },
         {
             "fieldname": "section_drawer",
             "fieldtype": "Section Break",
-            "label": "出票人信息"
+            "label": "Drawer Information"
         },
         {
             "fieldname": "drawer_name",
             "fieldtype": "Data",
-            "label": "出票人名称",
+            "label": "Drawer Name",
             "reqd": 1
         },
         {
             "fieldname": "drawer_account",
             "fieldtype": "Data",
-            "label": "出票人账号"
+            "label": "Drawer Account"
         },
         {
             "fieldname": "drawer_bank",
             "fieldtype": "Data",
-            "label": "出票人开户行"
+            "label": "Drawer Bank"
         },
         {
             "fieldname": "section_acceptor",
             "fieldtype": "Section Break",
-            "label": "承兑人信息"
+            "label": "Acceptor Information"
         },
         {
             "fieldname": "acceptor_name",
             "fieldtype": "Data",
             "in_standard_filter": 1,
-            "label": "承兑人名称",
+            "label": "Acceptor Name",
             "reqd": 1
         },
         {
             "fieldname": "acceptor_account",
             "fieldtype": "Data",
-            "label": "承兑人账号"
+            "label": "Acceptor Account"
         },
         {
             "fieldname": "acceptor_bank",
             "fieldtype": "Data",
-            "label": "承兑人开户行"
+            "label": "Acceptor Bank"
         },
         {
             "fieldname": "section_holder",
             "fieldtype": "Section Break",
-            "label": "收款与持票信息"
+            "label": "Payee and Holder"
         },
         {
             "fieldname": "payee_name",
             "fieldtype": "Data",
-            "label": "收款人名称"
+            "label": "Payee Name"
         },
         {
             "fieldname": "current_holder",
             "fieldtype": "Data",
-            "label": "当前持票人"
+            "label": "Current Holder"
         },
         {
             "fieldname": "column_break_holder",
             "fieldtype": "Column Break"
         },
         {
-            "default": "已签发",
+            "default": "Issued",
             "fieldname": "bill_status",
             "fieldtype": "Select",
             "in_list_view": 1,
             "in_standard_filter": 1,
-            "label": "票据状态",
-            "options": "已签发\n已收票-可流通\n背书待签收\n已背书转让\n贴现待确认\n已贴现\n提示付款中\n已结清-已结束\n已拆分",
+            "label": "Bill Status",
+            "options": "Issued\nReceived - Circulating\nEndorsement Pending\nEndorsed\nDiscount Pending\nDiscounted\nPayment Pending\nSettled\nSplit",
             "reqd": 1
         },
         {
-            "default": "可流通",
+            "default": "Circulating",
             "fieldname": "circulation_flag",
             "fieldtype": "Select",
-            "label": "流通标志",
-            "options": "可流通\n不可转让\n已结束"
+            "label": "Circulation Flag",
+            "options": "Circulating\nNon-Transferable\nEnded"
         },
         {
             "default": "0",
             "fieldname": "no_transfer_mark",
             "fieldtype": "Check",
-            "label": "不得转让标记"
+            "label": "No Transfer Mark"
         },
         {
             "fieldname": "section_links",
             "fieldtype": "Section Break",
-            "label": "关联信息"
+            "label": "Related Documents"
         },
         {
             "fieldname": "parent_bill",
             "fieldtype": "Link",
-            "label": "父票据引用",
+            "label": "Parent Bill",
             "options": "Bill of Exchange"
         },
         {
             "fieldname": "linked_sales_invoice",
             "fieldtype": "Link",
-            "label": "关联销售发票",
+            "label": "Linked Sales Invoice",
             "options": "Sales Invoice"
         },
         {
@@ -245,43 +245,43 @@
         {
             "fieldname": "linked_purchase_invoice",
             "fieldtype": "Link",
-            "label": "关联采购发票",
+            "label": "Linked Purchase Invoice",
             "options": "Purchase Invoice"
         },
         {
             "fieldname": "section_sub_tickets",
             "fieldtype": "Section Break",
-            "label": "子票记录",
+            "label": "Sub Tickets",
             "collapsible": 1
         },
         {
             "fieldname": "sub_tickets",
             "fieldtype": "Table",
-            "label": "子票记录",
+            "label": "Sub Tickets",
             "options": "Bill Sub Ticket"
         },
         {
             "fieldname": "section_endorsement",
             "fieldtype": "Section Break",
-            "label": "背书链条",
+            "label": "Endorsement Chain",
             "collapsible": 1
         },
         {
             "fieldname": "endorsement_chain",
             "fieldtype": "Table",
-            "label": "背书链条",
+            "label": "Endorsement Chain",
             "options": "Endorsement Chain",
             "allow_on_submit": 1
         },
         {
             "fieldname": "section_remarks",
             "fieldtype": "Section Break",
-            "label": "备注"
+            "label": "Remarks"
         },
         {
             "fieldname": "amended_from",
             "fieldtype": "Link",
-            "label": "修正来源",
+            "label": "Amended From",
             "no_copy": 1,
             "options": "Bill of Exchange",
             "print_hide": 1,
@@ -290,7 +290,7 @@
         {
             "fieldname": "remarks",
             "fieldtype": "Small Text",
-            "label": "备注"
+            "label": "Remarks"
         }
     ],
     "index_web_pages_for_search": 0,

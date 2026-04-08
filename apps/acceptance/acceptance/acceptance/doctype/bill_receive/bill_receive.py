@@ -20,11 +20,11 @@ class BillReceive(AccountsController):
 	def validate_bill_no(self):
 		"""校验票据包号格式"""
 		if not re.match(r"^[5678]\d{29}$", self.bill_no):
-			frappe.throw(_("票据包号必须为30位数字，且首位为5/6/7/8"))
+			frappe.throw(_("Bill number must be 30 digits starting with 5/6/7/8"))
 
 		# 校验子票区间
 		if self.sub_ticket_start == 0 and self.sub_ticket_end == 0:
-			frappe.msgprint(_("子票区间为0，该票据不可拆分"))
+			frappe.msgprint(_("Sub ticket range is 0, this bill is non-splittable"))
 
 	def calculate_bill_amount(self):
 		"""根据子票区间计算票面金额"""
@@ -37,7 +37,7 @@ class BillReceive(AccountsController):
 		"""校验到期日期必须晚于出票日期"""
 		if self.issue_date and self.due_date:
 			if getdate(self.due_date) <= getdate(self.issue_date):
-				frappe.throw(_("到期日期必须晚于出票日期"))
+				frappe.throw(_("Due date must be after issue date"))
 
 	def on_submit(self):
 		self.create_bill_of_exchange()
@@ -52,10 +52,10 @@ class BillReceive(AccountsController):
 		"""创建票据台账记录"""
 		# 根据票据包号首位确定票据种类
 		type_map = {
-			"5": "银行承兑汇票",
-			"6": "商业承兑汇票",
-			"7": "供应链商票",
-			"8": "供应链银票",
+			"5": "Bank Acceptance Bill",
+			"6": "Commercial Acceptance Bill",
+			"7": "Supply Chain Commercial Bill",
+			"8": "Supply Chain Bank Bill",
 		}
 
 		boe = frappe.new_doc("Bill of Exchange")
@@ -74,15 +74,15 @@ class BillReceive(AccountsController):
 		boe.acceptor_bank = self.acceptor_bank
 		boe.payee_name = self.customer
 		boe.current_holder = self.company
-		boe.bill_status = "已收票-可流通"
-		boe.circulation_flag = "可流通"
+		boe.bill_status = "Received - Circulating"
+		boe.circulation_flag = "Circulating"
 		boe.company = self.company
 		boe.linked_sales_invoice = self.linked_sales_invoice
 		boe.insert(ignore_permissions=True)
 		boe.submit()
 
 		self.db_set("bill_of_exchange", boe.name)
-		frappe.msgprint(_("已创建票据台账：{0}").format(boe.name))
+		frappe.msgprint(_("Bill of Exchange created: {0}").format(boe.name))
 
 	def cancel_bill_of_exchange(self):
 		"""取消关联的票据台账"""
@@ -96,7 +96,7 @@ class BillReceive(AccountsController):
 		log = frappe.new_doc("Endorsement Log")
 		log.bill_of_exchange = self.bill_of_exchange
 		log.bill_no = self.bill_no
-		log.endorsement_type = "背书接收"
+		log.endorsement_type = "Endorsement Received"
 		log.endorser_name = frappe.get_value("Customer", self.customer, "customer_name") or self.customer
 		log.endorsee_name = self.company
 		log.sub_ticket_start = self.sub_ticket_start
@@ -121,7 +121,7 @@ class BillReceive(AccountsController):
 					"debit_in_account_currency": self.bill_amount,
 					"debit": self.bill_amount,
 					"against": self.accounts_receivable_account,
-					"remarks": _("票据接收 - {0}").format(self.bill_no),
+					"remarks": _("Bill Receive - {0}").format(self.bill_no),
 				}
 			)
 		)
@@ -136,7 +136,7 @@ class BillReceive(AccountsController):
 					"against": self.notes_receivable_account,
 					"party_type": "Customer",
 					"party": self.customer,
-					"remarks": _("票据接收 - {0}").format(self.bill_no),
+					"remarks": _("Bill Receive - {0}").format(self.bill_no),
 				}
 			)
 		)

@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"acc_card_1\",\"type\":\"card\",\"data\":{\"card_name\":\"票据台账\",\"col\":4}},{\"id\":\"acc_card_2\",\"type\":\"card\",\"data\":{\"card_name\":\"票据操作\",\"col\":4}},{\"id\":\"acc_card_3\",\"type\":\"card\",\"data\":{\"card_name\":\"背书管理\",\"col\":4}},{\"id\":\"acc_card_4\",\"type\":\"card\",\"data\":{\"card_name\":\"设置\",\"col\":4}}]",
+ "content": "[{\"id\":\"acc_card_1\",\"type\":\"card\",\"data\":{\"card_name\":\"Bill Ledger\",\"col\":4}},{\"id\":\"acc_card_2\",\"type\":\"card\",\"data\":{\"card_name\":\"Bill Operations\",\"col\":4}},{\"id\":\"acc_card_3\",\"type\":\"card\",\"data\":{\"card_name\":\"Endorsement\",\"col\":4}},{\"id\":\"acc_card_4\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}}]",
  "creation": "2026-04-07 00:00:00.000000",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,12 +13,12 @@
  "indicator_color": "blue",
  "is_hidden": 0,
  "is_standard": 1,
- "label": "承兑汇票",
+ "label": "Acceptance Bill",
  "links": [
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "票据台账",
+   "label": "Bill Ledger",
    "link_count": 1,
    "link_type": "DocType",
    "onboard": 0,
@@ -27,7 +27,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "票据台账",
+   "label": "Bill of Exchange",
    "link_count": 0,
    "link_to": "Bill of Exchange",
    "link_type": "DocType",
@@ -37,7 +37,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "票据操作",
+   "label": "Bill Operations",
    "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
@@ -46,7 +46,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "票据接收",
+   "label": "Bill Receive",
    "link_count": 0,
    "link_to": "Bill Receive",
    "link_type": "DocType",
@@ -56,7 +56,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "票据转让",
+   "label": "Bill Transfer",
    "link_count": 0,
    "link_to": "Bill Transfer",
    "link_type": "DocType",
@@ -66,7 +66,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "提前贴现",
+   "label": "Bill Discount",
    "link_count": 0,
    "link_to": "Bill Discount",
    "link_type": "DocType",
@@ -76,7 +76,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "到期兑付",
+   "label": "Bill Payment",
    "link_count": 0,
    "link_to": "Bill Payment",
    "link_type": "DocType",
@@ -86,7 +86,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "背书管理",
+   "label": "Endorsement",
    "link_count": 1,
    "link_type": "DocType",
    "onboard": 0,
@@ -95,7 +95,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "背书记录",
+   "label": "Endorsement Log",
    "link_count": 0,
    "link_to": "Endorsement Log",
    "link_type": "DocType",
@@ -105,7 +105,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "设置",
+   "label": "Settings",
    "link_count": 1,
    "link_type": "DocType",
    "onboard": 0,
@@ -114,7 +114,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "OCR 设置",
+   "label": "OCR Settings",
    "link_count": 0,
    "link_to": "OCR Settings",
    "link_type": "DocType",
@@ -125,7 +125,7 @@
  "modified": "2026-04-07 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Acceptance",
- "name": "承兑汇票",
+ "name": "Acceptance Bill",
  "number_cards": [],
  "owner": "Administrator",
  "parent_page": "",
@@ -134,5 +134,5 @@
  "roles": [],
  "sequence_id": 30.0,
  "shortcuts": [],
- "title": "承兑汇票"
+ "title": "Acceptance Bill"
 }

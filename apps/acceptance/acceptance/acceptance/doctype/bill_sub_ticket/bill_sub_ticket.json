@@ -19,21 +19,21 @@
             "fieldname": "sub_start",
             "fieldtype": "Int",
             "in_list_view": 1,
-            "label": "子票起始号",
+            "label": "Sub Start",
             "reqd": 1
         },
         {
             "fieldname": "sub_end",
             "fieldtype": "Int",
             "in_list_view": 1,
-            "label": "子票结束号",
+            "label": "Sub End",
             "reqd": 1
         },
         {
             "fieldname": "sub_amount",
             "fieldtype": "Currency",
             "in_list_view": 1,
-            "label": "子票金额",
+            "label": "Sub Amount",
             "reqd": 1
         },
         {
@@ -41,18 +41,18 @@
             "fieldtype": "Column Break"
         },
         {
-            "default": "可流通",
+            "default": "Circulating",
             "fieldname": "sub_status",
             "fieldtype": "Select",
             "in_list_view": 1,
-            "label": "子票状态",
-            "options": "可流通\n已转让\n已贴现\n已兑付"
+            "label": "Sub Status",
+            "options": "Circulating\nTransferred\nDiscounted\nPaid"
         },
         {
             "fieldname": "holder",
             "fieldtype": "Data",
             "in_list_view": 1,
-            "label": "持票人"
+            "label": "Holder"
         },
         {
             "fieldname": "column_break_2",
@@ -61,12 +61,12 @@
         {
             "fieldname": "related_doc_type",
             "fieldtype": "Data",
-            "label": "关联单据类型"
+            "label": "Related Doc Type"
         },
         {
             "fieldname": "related_doc_name",
             "fieldtype": "Data",
-            "label": "关联单据编号"
+            "label": "Related Doc Name"
         }
     ],
     "index_web_pages_for_search": 0,
