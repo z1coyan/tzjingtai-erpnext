@@ -137,6 +137,7 @@
             "fieldname": "sub_ticket_end",
             "fieldtype": "Int",
             "label": "Sub Ticket End",
+            "read_only": 1,
             "reqd": 1
         },
         {
@@ -144,7 +145,6 @@
             "fieldtype": "Currency",
             "in_list_view": 1,
             "label": "Bill Amount",
-            "read_only": 1,
             "reqd": 1
         },
         {

@@ -11,12 +11,12 @@ frappe.ui.form.on("Bill Receive", {
 		}
 	},
 
-	sub_ticket_start(frm) {
-		calculate_amount(frm);
+	bill_amount(frm) {
+		calculate_sub_ticket_end(frm);
 	},
 
-	sub_ticket_end(frm) {
-		calculate_amount(frm);
+	sub_ticket_start(frm) {
+		calculate_sub_ticket_end(frm);
 	},
 
 	front_image(frm) {
@@ -29,12 +29,14 @@ frappe.ui.form.on("Bill Receive", {
 	},
 });
 
-function calculate_amount(frm) {
-	if (frm.doc.sub_ticket_start === 0 && frm.doc.sub_ticket_end === 0) {
-		// 不可拆分，金额手动输入
-	} else if (frm.doc.sub_ticket_start > 0 && frm.doc.sub_ticket_end >= frm.doc.sub_ticket_start) {
-		let amount = (frm.doc.sub_ticket_end - frm.doc.sub_ticket_start + 1) * 0.01;
-		frm.set_value("bill_amount", amount);
+function calculate_sub_ticket_end(frm) {
+	// 不可拆分票据（起始号为0），不自动计算
+	if (!frm.doc.sub_ticket_start || frm.doc.sub_ticket_start === 0) {
+		return;
+	}
+	if (frm.doc.bill_amount && frm.doc.sub_ticket_start > 0) {
+		let count = Math.round(frm.doc.bill_amount / 0.01);
+		frm.set_value("sub_ticket_end", frm.doc.sub_ticket_start + count - 1);
 	}
 }
 
@@ -102,7 +104,6 @@ function fill_form_from_ocr(frm, data) {
 			acceptor_account: front.acceptor_account,
 			acceptor_bank: front.acceptor_bank,
 			sub_ticket_start: front.sub_ticket_start,
-			sub_ticket_end: front.sub_ticket_end,
 		};
 
 		for (const [fieldname, value] of Object.entries(field_map)) {
@@ -112,9 +113,14 @@ function fill_form_from_ocr(frm, data) {
 			}
 		}
 
-		// 如果有金额但没有子票区间，直接设置金额
-		if (front.amount && (!frm.doc.sub_ticket_start && !frm.doc.sub_ticket_end)) {
+		// 设置金额：优先使用 OCR 返回的金额，其次从子票区间计算
+		if (front.amount) {
 			frm.set_value("bill_amount", front.amount);
+			filled_count++;
+		} else if (front.sub_ticket_start && front.sub_ticket_end) {
+			let amount = (front.sub_ticket_end - front.sub_ticket_start + 1) * 0.01;
+			frm.set_value("bill_amount", amount);
+			filled_count++;
 		}
 
 		// 标记低置信度字段

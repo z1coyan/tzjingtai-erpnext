@@ -133,6 +133,7 @@
             "depends_on": "is_partial_transfer"
         },
         {
+            "fetch_from": "bill_of_exchange.sub_ticket_start",
             "fieldname": "transfer_sub_start",
             "fieldtype": "Int",
             "label": "Transfer Sub Start"
@@ -140,7 +141,8 @@
         {
             "fieldname": "transfer_sub_end",
             "fieldtype": "Int",
-            "label": "Transfer Sub End"
+            "label": "Transfer Sub End",
+            "read_only": 1
         },
         {
             "fieldname": "column_break_split",
