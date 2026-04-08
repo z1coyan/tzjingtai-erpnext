@@ -198,7 +198,7 @@ def _parse_sub_ticket(range_str, index):
 		return 0
 	parts = range_str.split("-", 1)
 	try:
-		return parts[index]
+		return int(parts[index])
 	except (ValueError, IndexError):
 		return 0
 
