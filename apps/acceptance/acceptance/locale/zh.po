@@ -48,6 +48,9 @@ msgstr "子票记录"
 msgid "OCR Settings"
 msgstr "OCR 设置"
 
+msgid "Acceptance Bill Settings"
+msgstr "承兑汇票设置"
+
 #. ---- Common field labels ----
 
 msgid "Bill No"
@@ -589,3 +592,36 @@ msgstr "OCR 置信度较低 ({0}%)，请核对"
 
 msgid "Moderate OCR confidence ({0}%), verification recommended"
 msgstr "OCR 置信度一般 ({0}%)，建议核对"
+
+#. ---- Number Card labels ----
+
+msgid "Total Unexpired Bills"
+msgstr "未到期承兑总额"
+
+msgid "Bills Expiring in 7 Days"
+msgstr "7天内到期"
+
+msgid "Bills Expiring in 30 Days"
+msgstr "一月内到期"
+
+#. ---- Dashboard Chart labels ----
+
+msgid "Bill Maturity Distribution"
+msgstr "持有汇票到期分布"
+
+#. ---- Chart bucket labels ----
+
+msgid "Overdue"
+msgstr "已逾期"
+
+msgid "Within 7 Days"
+msgstr "7天内"
+
+msgid "8-30 Days"
+msgstr "8-30天"
+
+msgid "31-90 Days"
+msgstr "31-90天"
+
+msgid "Over 90 Days"
+msgstr "90天以上"
