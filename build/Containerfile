@@ -172,7 +172,10 @@ RUN if [ -n "${NPM_REGISTRY}" ]; then \
 
 ARG FRAPPE_BRANCH=version-16
 ARG FRAPPE_PATH=https://github.com/frappe/frappe
-RUN bench init \
+# cache mount: 即使 Docker 层缓存失效，pip/yarn 下载缓存仍然保留
+RUN --mount=type=cache,target=/home/frappe/.cache/pip,uid=1000 \
+    --mount=type=cache,target=/home/frappe/.cache/yarn,uid=1000 \
+    bench init \
     --apps_path=/opt/frappe/apps.json \
     --frappe-branch=${FRAPPE_BRANCH} \
     --frappe-path=${GITHUB_PROXY:+${GITHUB_PROXY}}${FRAPPE_PATH} \
@@ -189,7 +192,9 @@ RUN bench init \
 COPY --chown=frappe:frappe apps/ /opt/frappe/local-apps/
 
 # Install each local custom app into the bench, then build frontend assets
-RUN cd /home/frappe/frappe-bench \
+RUN --mount=type=cache,target=/home/frappe/.cache/pip,uid=1000 \
+    --mount=type=cache,target=/home/frappe/.cache/yarn,uid=1000 \
+    cd /home/frappe/frappe-bench \
   && for app_dir in /opt/frappe/local-apps/*/; do \
        app_name=$(basename "$app_dir"); \
        if [ -f "$app_dir/setup.py" ] || [ -f "$app_dir/pyproject.toml" ]; then \
