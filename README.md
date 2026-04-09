@@ -48,9 +48,9 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
 
 | 命令                                          | 说明                                                    |
 | --------------------------------------------- | ------------------------------------------------------- |
-| `make build`                                  | 构建 Docker 镜像，tag 取 git short hash                 |
-| `make push`                                   | 通过 SSH 推送镜像到生产服务器                           |
-| `make release`                                | 构建 + 推送镜像 + git push（一键发布）                  |
+| `make build`                                  | 构建 Docker 镜像（本地开发用）                          |
+| `make push`                                   | 通过 SSH 推送镜像到生产服务器（备用方案）               |
+| `make release`                                | build + push + git push（备用方案）                     |
 | `make gen`                                    | 生成 docker-compose.yaml（默认 overlay: mariadb,redis） |
 | `make gen OVERLAYS=mariadb,redis,https`       | 指定 overlay 组合                                       |
 | `make deploy`                                 | 启动/更新服务                                           |
@@ -68,41 +68,29 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
 ### 部署架构
 
 ```
-本地机: 改代码 → make release（构建镜像 + SSH 推送到服务器 + git push）
-                        ↓                                ↓
-              服务器本地 Docker 镜像              Dokploy 检测 git push
-                                                         ↓
-                                          Dokploy: docker compose up -d
+本地机: 改代码 → git push
+                    ↓
+Dokploy: 检测 git push → git pull → docker compose build → docker compose up -d
+                                          ↓
+                              configurator 自动同步静态资源
 ```
 
 项目支持两种部署方式：
 
-| 方式 | 使用的 compose 文件 | 镜像来源 | 适用场景 |
+| 方式 | 使用的 compose 文件 | 构建位置 | 适用场景 |
 | ---- | ------------------- | -------- | -------- |
-| **Dokploy（推荐）** | `compose.yaml`（已提交到 Git） | 本地机构建，SSH 推送到服务器 | 生产环境 |
+| **Dokploy（推荐）** | `compose.yaml`（已提交到 Git） | 服务器上构建 | 生产环境 |
 | **手动部署** | `docker-compose.yaml`（由 `make gen` 生成） | 本地构建 | 本地开发 |
 
 ---
 
 ### Dokploy 部署（推荐）
 
-#### 前置：配置 SSH 免密登录
-
-```bash
-# 本地机配置 SSH 密钥登录到生产服务器
-ssh-copy-id root@your-server
-
-# 在 .env 中设置服务器地址
-echo 'DEPLOY_HOST=root@your-server' >> .env
-```
-
 #### 首次配置
 
-1. **本地机** — 构建并推送镜像
+1. **本地机** — 推送代码
 
    ```bash
-   make build    # 构建镜像
-   make push     # 通过 SSH 推送到服务器（docker save | gzip | ssh docker load）
    git push origin main
    ```
 
@@ -113,9 +101,18 @@ echo 'DEPLOY_HOST=root@your-server' >> .env
 
    ```
    DB_PASSWORD=<数据库密码>
+
+   # 国内镜像加速（推荐）
+   GITHUB_PROXY=https://ghfast.top/
+   APT_MIRROR=mirrors.aliyun.com
+   PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
+   PIP_TRUSTED_HOST=mirrors.aliyun.com
+   NPM_REGISTRY=https://registry.npmmirror.com
+   NODE_MIRROR=https://npmmirror.com/mirrors/node/
+   WKHTMLTOPDF_MIRROR=https://ghfast.top/https://github.com/wkhtmltopdf/packaging/releases/download
    ```
 
-3. **Dokploy 控制台** — 点击 **Deploy**
+3. **Dokploy 控制台** — 点击 **Deploy**（首次构建约 15-30 分钟，后续有 Docker 层缓存会快很多）
 
 4. **Dokploy 终端**（或 SSH） — 创建站点（首次唯一需要手动执行的步骤）：
 
@@ -134,19 +131,15 @@ echo 'DEPLOY_HOST=root@your-server' >> .env
 
 #### 日常更新上线
 
-本地机一条命令完成所有事：
+本地机只做一件事：**修改代码 → `git push`**。
 
-```bash
-make release   # = make build + make push + git push
-```
-
-`make push` 通过 `docker save | gzip | ssh docker load` 将镜像直接推送到服务器，不依赖任何镜像仓库。Dokploy 检测到 git push 后使用服务器上已有的镜像重启服务。
+Dokploy 检测到推送后自动拉取代码、构建镜像、重启服务。
 
 | 场景 | 本地机 | Dokploy | 手动操作 |
 | ---- | :----: | :-----: | :------: |
-| 框架小版本更新 | 改 `build/apps.json` → `make release` | 自动部署 | 无 |
-| 自定义 app 代码更新 | 改 `apps/` 下代码 → `make release` | 自动部署 | 无 |
-| 新增 app | 加 app → `make release` | 自动部署 | Dokploy 终端执行 `bench install-app`（仅一次） |
+| 框架小版本更新 | 改 `build/apps.json` → `git push` | 自动构建 + 部署 | 无 |
+| 自定义 app 代码更新 | 改 `apps/` 下代码 → `git push` | 自动构建 + 部署 | 无 |
+| 新增 app | 加 app → `git push` | 自动构建 + 部署 | Dokploy 终端执行 `bench install-app`（仅一次） |
 
 > **注意**：小版本更新如果涉及 DB schema 变更（DocType 字段变化），需要评估影响。因为不执行 `bench migrate`，schema 不会自动更新。如确有 schema 变更，需考虑重建站点或编写自定义迁移脚本。
 

@@ -1,7 +1,9 @@
 # 生产部署用 compose 文件（合并 base + mariadb + redis）
-# Dokploy / docker compose 可直接使用此文件
-# 镜像由本地机构建，通过 make push（docker save + ssh）推送到服务器
+# Dokploy 可直接使用此文件，在服务器上构建镜像并部署
 # 所有配置通过环境变量（.env 或 Dokploy UI）注入
+#
+# 注意：build 只定义在 configurator 上，其他服务共享同名镜像，
+# 避免 BuildKit 并行构建同一镜像时报 "already exists" 错误。
 
 x-customizable-image: &customizable_image
   image: ${CUSTOM_IMAGE:-tzjingtai-erpnext}:${CUSTOM_TAG:-latest}
@@ -21,6 +23,20 @@ x-backend-defaults: &backend_defaults
 services:
   configurator:
     <<: *backend_defaults
+    build:
+      context: .
+      dockerfile: build/Containerfile
+      args:
+        FRAPPE_BRANCH: ${FRAPPE_BRANCH:-version-16}
+        GITHUB_PROXY: ${GITHUB_PROXY:-}
+        APT_MIRROR: ${APT_MIRROR:-}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-}
+        PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST:-}
+        NPM_REGISTRY: ${NPM_REGISTRY:-}
+        NVM_INSTALL_SCRIPT: ${NVM_SOURCE:-https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh}
+        NODE_MIRROR: ${NODE_MIRROR:-}
+        WKHTMLTOPDF_MIRROR: ${WKHTMLTOPDF_MIRROR:-https://github.com/wkhtmltopdf/packaging/releases/download}
+        REGISTRY_MIRROR: ${REGISTRY_MIRROR:-}
     entrypoint:
       - bash
       - -c
