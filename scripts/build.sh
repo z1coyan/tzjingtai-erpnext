@@ -7,12 +7,13 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # shellcheck disable=SC1091
 [ -f "${REPO_ROOT}/.env" ] && source "${REPO_ROOT}/.env"
 
-CUSTOM_IMAGE="${CUSTOM_IMAGE:-synie-erpnext}"
+LOCAL_IMAGE="${CUSTOM_IMAGE:-synie-erpnext}"
+REMOTE_IMAGE="${REMOTE_IMAGE:-ghcr.io/z1coyan/synie-erpnext}"
 FRAPPE_BRANCH="${FRAPPE_BRANCH:-version-16}"
 GIT_HASH="$(git -C "${REPO_ROOT}" rev-parse --short HEAD 2>/dev/null || echo 'dev')"
 CUSTOM_TAG="${CUSTOM_TAG:-${GIT_HASH}}"
 
-echo "==> Building image: ${CUSTOM_IMAGE}:${CUSTOM_TAG}"
+echo "==> Building image: ${LOCAL_IMAGE}:${CUSTOM_TAG}"
 echo "    Frappe branch:  ${FRAPPE_BRANCH}"
 
 # Collect optional mirror build args
@@ -34,9 +35,12 @@ fi
 docker build \
   --build-arg="FRAPPE_BRANCH=${FRAPPE_BRANCH}" \
   ${MIRROR_ARGS[@]+"${MIRROR_ARGS[@]}"} \
-  --tag="${CUSTOM_IMAGE}:${CUSTOM_TAG}" \
-  --tag="${CUSTOM_IMAGE}:latest" \
+  --tag="${LOCAL_IMAGE}:${CUSTOM_TAG}" \
+  --tag="${LOCAL_IMAGE}:latest" \
+  --tag="${REMOTE_IMAGE}:${CUSTOM_TAG}" \
+  --tag="${REMOTE_IMAGE}:latest" \
   --file="${REPO_ROOT}/build/Containerfile" \
   "${REPO_ROOT}"
 
-echo "==> Done: ${CUSTOM_IMAGE}:${CUSTOM_TAG}"
+echo "==> Done: ${LOCAL_IMAGE}:${CUSTOM_TAG}"
+echo "    Remote tags: ${REMOTE_IMAGE}:${CUSTOM_TAG}, ${REMOTE_IMAGE}:latest"

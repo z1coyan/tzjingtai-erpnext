@@ -49,6 +49,8 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
 | 命令                                          | 说明                                                    |
 | --------------------------------------------- | ------------------------------------------------------- |
 | `make build`                                  | 构建 Docker 镜像，tag 取 git short hash                 |
+| `make push`                                   | 推送镜像到远程仓库（ghcr.io）                           |
+| `make release`                                | 构建 + 推送镜像 + git push（一键发布）                  |
 | `make gen`                                    | 生成 docker-compose.yaml（默认 overlay: mariadb,redis） |
 | `make gen OVERLAYS=mariadb,redis,https`       | 指定 overlay 组合                                       |
 | `make deploy`                                 | 启动/更新服务                                           |
@@ -63,47 +65,61 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
 
 > **铁律**：镜像是唯一可信来源。所有代码和静态资源变更只通过重新构建镜像生效。运行中的容器内**绝不允许**执行 `bench build`、`bench migrate`、`bench clear-cache` 等命令，否则极有可能打挂 CSS/JS 静态资源导致线上故障。
 
-### 部署方式说明
+### 部署架构
+
+```
+本地机: 改代码 → make release（构建镜像 + 推送 ghcr.io + git push）
+                        ↓                           ↓
+                   ghcr.io 镜像仓库           Dokploy 检测 git push
+                        ↓                           ↓
+                  Dokploy: docker compose pull → docker compose up -d
+```
 
 项目支持两种部署方式：
 
-| 方式 | 使用的 compose 文件 | 适用场景 |
-| ---- | ------------------- | -------- |
-| **Dokploy（推荐）** | `compose.yaml`（已提交到 Git） | 生产环境，自动化部署 |
-| **手动部署** | `docker-compose.yaml`（由 `make gen` 生成，不入 Git） | 本地开发、自定义 overlay 组合 |
-
-两种方式共享同一个 `build/Containerfile`，构建出的镜像完全一致。
+| 方式 | 使用的 compose 文件 | 镜像来源 | 适用场景 |
+| ---- | ------------------- | -------- | -------- |
+| **Dokploy（推荐）** | `compose.yaml`（已提交到 Git） | 从 ghcr.io 拉取 | 生产环境 |
+| **手动部署** | `docker-compose.yaml`（由 `make gen` 生成） | 本地构建 | 本地开发 |
 
 ---
 
 ### Dokploy 部署（推荐）
 
+#### 前置：本地机登录 ghcr.io
+
+```bash
+# 使用 GitHub Personal Access Token（需 write:packages 权限）
+echo <YOUR_GITHUB_TOKEN> | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
+```
+
 #### 首次配置
 
-1. **本地机** — 推送代码到 Git 仓库
+1. **本地机** — 构建并推送镜像
+
+   ```bash
+   make build    # 构建镜像
+   make push     # 推送到 ghcr.io
+   git push origin main
+   ```
 
 2. **Dokploy 控制台** — 创建 Compose 项目
    - 数据源选择 **Git**，填入仓库地址
    - Compose 文件路径填 `compose.yaml`
-   - 在环境变量中配置（对应 `.env.example`）：
+   - 在环境变量中配置：
 
    ```
    DB_PASSWORD=<数据库密码>
-   FRAPPE_BRANCH=version-16
 
-   # 国内镜像加速（推荐）
-   GITHUB_PROXY=https://ghfast.top/
-   APT_MIRROR=mirrors.aliyun.com
-   PIP_INDEX_URL=https://mirrors.aliyun.com/pypi/simple/
-   PIP_TRUSTED_HOST=mirrors.aliyun.com
-   NPM_REGISTRY=https://registry.npmmirror.com
-   NODE_MIRROR=https://npmmirror.com/mirrors/node/
-   WKHTMLTOPDF_MIRROR=https://ghfast.top/https://github.com/wkhtmltopdf/packaging/releases/download
+   # 如果服务器在国内，使用 ghcr 镜像加速拉取（推送始终走真实 ghcr.io）
+   CUSTOM_IMAGE=ghcr.m.daocloud.io/z1coyan/synie-erpnext
    ```
 
-3. **Dokploy 控制台** — 点击 **Deploy**，等待构建完成
+3. **Dokploy 控制台** — 如果 ghcr.io 仓库是 private，需在 Dokploy 中配置 Docker Registry 认证（ghcr.io / 镜像站 + GitHub Token）
 
-4. **Dokploy 终端**（或 SSH） — 创建站点（首次唯一需要手动执行的步骤）：
+4. **Dokploy 控制台** — 点击 **Deploy**
+
+5. **Dokploy 终端**（或 SSH） — 创建站点（首次唯一需要手动执行的步骤）：
 
    ```bash
    docker compose -f compose.yaml exec backend \
@@ -120,15 +136,19 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
 
 #### 日常更新上线
 
-所有场景在**本地机**只做一件事：**修改代码 → `git push`**。
+本地机一条命令完成所有事：
 
-Dokploy 检测到推送后自动拉取代码、重新构建镜像、重启服务。`configurator` 服务每次启动时自动同步静态资源。
+```bash
+make release   # = make build + make push + git push
+```
+
+Dokploy 检测到 git push 后自动拉取最新镜像并重启服务。`configurator` 服务每次启动时自动同步静态资源。
 
 | 场景 | 本地机 | Dokploy | 手动操作 |
 | ---- | :----: | :-----: | :------: |
-| 框架小版本更新 | 改 `build/apps.json` → `git push` | 自动构建 + 部署 | 无 |
-| 自定义 app 代码更新 | 改 `apps/` 下代码 → `git push` | 自动构建 + 部署 | 无 |
-| 新增 app | 加 app 到 `apps.json` 或 `apps/` → `git push` | 自动构建 + 部署 | Dokploy 终端执行 `bench install-app`（仅一次） |
+| 框架小版本更新 | 改 `build/apps.json` → `make release` | 自动拉取镜像 + 部署 | 无 |
+| 自定义 app 代码更新 | 改 `apps/` 下代码 → `make release` | 自动拉取镜像 + 部署 | 无 |
+| 新增 app | 加 app → `make release` | 自动拉取镜像 + 部署 | Dokploy 终端执行 `bench install-app`（仅一次） |
 
 > **注意**：小版本更新如果涉及 DB schema 变更（DocType 字段变化），需要评估影响。因为不执行 `bench migrate`，schema 不会自动更新。如确有 schema 变更，需考虑重建站点或编写自定义迁移脚本。
 

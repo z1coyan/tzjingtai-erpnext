@@ -1,4 +1,4 @@
-.PHONY: build gen deploy dev logs ps down clean site
+.PHONY: build push release gen deploy dev logs ps down clean site
 
 OVERLAYS  ?= mariadb,redis
 PROJECT   ?= synie-erpnext
@@ -6,6 +6,15 @@ PROJECT   ?= synie-erpnext
 ## Build the custom Docker image
 build:
 	@bash scripts/build.sh
+
+## Push image to remote registry (ghcr.io)
+push:
+	@bash scripts/push.sh
+
+## Build + push + git push (one-command release)
+release: build push
+	@git push origin main
+	@echo "==> Release complete. Dokploy will auto-deploy."
 
 ## Generate docker-compose.yaml from base + overlays
 gen:
