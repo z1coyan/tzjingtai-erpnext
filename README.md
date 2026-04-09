@@ -49,7 +49,7 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
 | 命令                                          | 说明                                                    |
 | --------------------------------------------- | ------------------------------------------------------- |
 | `make build`                                  | 构建 Docker 镜像，tag 取 git short hash                 |
-| `make push`                                   | 推送镜像到远程仓库（ghcr.io）                           |
+| `make push`                                   | 通过 SSH 推送镜像到生产服务器                           |
 | `make release`                                | 构建 + 推送镜像 + git push（一键发布）                  |
 | `make gen`                                    | 生成 docker-compose.yaml（默认 overlay: mariadb,redis） |
 | `make gen OVERLAYS=mariadb,redis,https`       | 指定 overlay 组合                                       |
@@ -68,29 +68,32 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
 ### 部署架构
 
 ```
-本地机: 改代码 → make release（构建镜像 + 推送 ghcr.io + git push）
-                        ↓                           ↓
-                   ghcr.io 镜像仓库           Dokploy 检测 git push
-                        ↓                           ↓
-                  Dokploy: docker compose pull → docker compose up -d
+本地机: 改代码 → make release（构建镜像 + SSH 推送到服务器 + git push）
+                        ↓                                ↓
+              服务器本地 Docker 镜像              Dokploy 检测 git push
+                                                         ↓
+                                          Dokploy: docker compose up -d
 ```
 
 项目支持两种部署方式：
 
 | 方式 | 使用的 compose 文件 | 镜像来源 | 适用场景 |
 | ---- | ------------------- | -------- | -------- |
-| **Dokploy（推荐）** | `compose.yaml`（已提交到 Git） | 从 ghcr.io 拉取 | 生产环境 |
+| **Dokploy（推荐）** | `compose.yaml`（已提交到 Git） | 本地机构建，SSH 推送到服务器 | 生产环境 |
 | **手动部署** | `docker-compose.yaml`（由 `make gen` 生成） | 本地构建 | 本地开发 |
 
 ---
 
 ### Dokploy 部署（推荐）
 
-#### 前置：本地机登录 ghcr.io
+#### 前置：配置 SSH 免密登录
 
 ```bash
-# 使用 GitHub Personal Access Token（需 write:packages 权限）
-echo <YOUR_GITHUB_TOKEN> | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin
+# 本地机配置 SSH 密钥登录到生产服务器
+ssh-copy-id root@your-server
+
+# 在 .env 中设置服务器地址
+echo 'DEPLOY_HOST=root@your-server' >> .env
 ```
 
 #### 首次配置
@@ -99,7 +102,7 @@ echo <YOUR_GITHUB_TOKEN> | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --pass
 
    ```bash
    make build    # 构建镜像
-   make push     # 推送到 ghcr.io
+   make push     # 通过 SSH 推送到服务器（docker save | gzip | ssh docker load）
    git push origin main
    ```
 
@@ -110,16 +113,11 @@ echo <YOUR_GITHUB_TOKEN> | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --pass
 
    ```
    DB_PASSWORD=<数据库密码>
-
-   # 如果服务器在国内，使用 ghcr 镜像加速拉取（推送始终走真实 ghcr.io）
-   CUSTOM_IMAGE=ghcr.m.daocloud.io/z1coyan/synie-erpnext
    ```
 
-3. **Dokploy 控制台** — 如果 ghcr.io 仓库是 private，需在 Dokploy 中配置 Docker Registry 认证（ghcr.io / 镜像站 + GitHub Token）
+3. **Dokploy 控制台** — 点击 **Deploy**
 
-4. **Dokploy 控制台** — 点击 **Deploy**
-
-5. **Dokploy 终端**（或 SSH） — 创建站点（首次唯一需要手动执行的步骤）：
+4. **Dokploy 终端**（或 SSH） — 创建站点（首次唯一需要手动执行的步骤）：
 
    ```bash
    docker compose -f compose.yaml exec backend \
@@ -142,13 +140,13 @@ echo <YOUR_GITHUB_TOKEN> | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --pass
 make release   # = make build + make push + git push
 ```
 
-Dokploy 检测到 git push 后自动拉取最新镜像并重启服务。`configurator` 服务每次启动时自动同步静态资源。
+`make push` 通过 `docker save | gzip | ssh docker load` 将镜像直接推送到服务器，不依赖任何镜像仓库。Dokploy 检测到 git push 后使用服务器上已有的镜像重启服务。
 
 | 场景 | 本地机 | Dokploy | 手动操作 |
 | ---- | :----: | :-----: | :------: |
-| 框架小版本更新 | 改 `build/apps.json` → `make release` | 自动拉取镜像 + 部署 | 无 |
-| 自定义 app 代码更新 | 改 `apps/` 下代码 → `make release` | 自动拉取镜像 + 部署 | 无 |
-| 新增 app | 加 app → `make release` | 自动拉取镜像 + 部署 | Dokploy 终端执行 `bench install-app`（仅一次） |
+| 框架小版本更新 | 改 `build/apps.json` → `make release` | 自动部署 | 无 |
+| 自定义 app 代码更新 | 改 `apps/` 下代码 → `make release` | 自动部署 | 无 |
+| 新增 app | 加 app → `make release` | 自动部署 | Dokploy 终端执行 `bench install-app`（仅一次） |
 
 > **注意**：小版本更新如果涉及 DB schema 变更（DocType 字段变化），需要评估影响。因为不执行 `bench migrate`，schema 不会自动更新。如确有 schema 变更，需考虑重建站点或编写自定义迁移脚本。
 

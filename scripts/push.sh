@@ -7,14 +7,11 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # shellcheck disable=SC1091
 [ -f "${REPO_ROOT}/.env" ] && source "${REPO_ROOT}/.env"
 
-REMOTE_IMAGE="${REMOTE_IMAGE:-ghcr.io/z1coyan/synie-erpnext}"
-GIT_HASH="$(git -C "${REPO_ROOT}" rev-parse --short HEAD 2>/dev/null || echo 'dev')"
-CUSTOM_TAG="${CUSTOM_TAG:-${GIT_HASH}}"
+CUSTOM_IMAGE="${CUSTOM_IMAGE:-tzjingtai-erpnext}"
+CUSTOM_TAG="${CUSTOM_TAG:-latest}"
+DEPLOY_HOST="${DEPLOY_HOST:?ERROR: 请在 .env 中设置 DEPLOY_HOST（如 root@your-server）}"
 
-echo "==> Pushing: ${REMOTE_IMAGE}:${CUSTOM_TAG}"
-docker push "${REMOTE_IMAGE}:${CUSTOM_TAG}"
-
-echo "==> Pushing: ${REMOTE_IMAGE}:latest"
-docker push "${REMOTE_IMAGE}:latest"
+echo "==> Pushing ${CUSTOM_IMAGE}:${CUSTOM_TAG} to ${DEPLOY_HOST}"
+docker save "${CUSTOM_IMAGE}:${CUSTOM_TAG}" | gzip | ssh "${DEPLOY_HOST}" 'gunzip | docker load'
 
 echo "==> Done"

@@ -1,11 +1,11 @@
 # 生产部署用 compose 文件（合并 base + mariadb + redis）
 # Dokploy / docker compose 可直接使用此文件
-# 镜像由本地机构建并推送到 ghcr.io，Dokploy 只负责拉取和部署
+# 镜像由本地机构建，通过 make push（docker save + ssh）推送到服务器
 # 所有配置通过环境变量（.env 或 Dokploy UI）注入
 
 x-customizable-image: &customizable_image
-  image: ${CUSTOM_IMAGE:-ghcr.io/z1coyan/synie-erpnext}:${CUSTOM_TAG:-latest}
-  pull_policy: ${PULL_POLICY:-always}
+  image: ${CUSTOM_IMAGE:-tzjingtai-erpnext}:${CUSTOM_TAG:-latest}
+  pull_policy: ${PULL_POLICY:-never}
   restart: ${RESTART_POLICY:-unless-stopped}
 
 x-depends-on-configurator: &depends_on_configurator
