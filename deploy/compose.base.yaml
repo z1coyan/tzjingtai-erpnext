@@ -33,17 +33,37 @@ services:
     entrypoint:
       - bash
       - -c
+    # 说明：这里的 command 只允许做"不会打挂 CSS/JS 静态资源"的幂等操作。
+    # - set-config / 拷贝 sites/assets：纯文件/JSON 操作，安全。
+    # - 拉齐 installed_apps：仅对已存在的 site，把 sites/apps.txt 里有但 site
+    #   尚未安装的 app 跑一次 install-app。这是"新 app 首次安装"这一一次性事件，
+    #   符合 CLAUDE.md 铁律。已安装的 app 会被 grep 跳过，不会重复跑 migrate。
+    # - 严禁在此追加 bench build / bench migrate / bench clear-cache 等命令。
     command:
-      - >
-        ls -1 apps > sites/apps.txt;
-        rm -rf sites/assets && cp -r /home/frappe/frappe-bench/sites-assets sites/assets;
-        bench set-config -g db_host $$DB_HOST;
-        bench set-config -gp db_port $$DB_PORT;
-        bench set-config -g redis_cache "redis://$$REDIS_CACHE";
-        bench set-config -g redis_queue "redis://$$REDIS_QUEUE";
-        bench set-config -g redis_socketio "redis://$$REDIS_QUEUE";
-        bench set-config -gp socketio_port $$SOCKETIO_PORT;
-        bench set-config -g chromium_path /usr/bin/chromium-headless-shell;
+      - |
+        set -e
+        ls -1 apps > sites/apps.txt
+        rm -rf sites/assets && cp -r /home/frappe/frappe-bench/sites-assets sites/assets
+        bench set-config -g db_host $$DB_HOST
+        bench set-config -gp db_port $$DB_PORT
+        bench set-config -g redis_cache "redis://$$REDIS_CACHE"
+        bench set-config -g redis_queue "redis://$$REDIS_QUEUE"
+        bench set-config -g redis_socketio "redis://$$REDIS_QUEUE"
+        bench set-config -gp socketio_port $$SOCKETIO_PORT
+        bench set-config -g chromium_path /usr/bin/chromium-headless-shell
+        # 拉齐 site.installed_apps 与 bench apps.txt：幂等，仅对缺失的 app 首装一次
+        for site_dir in sites/*/; do
+          site="$$(basename "$$site_dir")"
+          [ -f "sites/$$site/site_config.json" ] || continue
+          installed="$$(bench --site "$$site" list-apps 2>/dev/null | awk '{print $$1}')"
+          while read -r app; do
+            [ -z "$$app" ] && continue
+            if ! echo "$$installed" | grep -qx "$$app"; then
+              echo "[configurator] installing $$app into $$site"
+              bench --site "$$site" install-app "$$app"
+            fi
+          done < sites/apps.txt
+        done
     environment:
       DB_HOST: ${DB_HOST:-}
       DB_PORT: ${DB_PORT:-}

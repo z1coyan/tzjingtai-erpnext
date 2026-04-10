@@ -1,0 +1,18 @@
+[project]
+name = "tzjingtai_core"
+authors = [
+    { name = "台州京泰", email = "dev@tzjingtai.com"}
+]
+description = "台州京泰 ERPNext 通用定制（物料编码、流程扩展等非专项业务的公共容器）"
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    "frappe",
+]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.dev-dependencies]
