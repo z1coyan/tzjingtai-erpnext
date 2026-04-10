@@ -137,7 +137,7 @@ Dokploy 检测到推送后自动拉取代码、构建镜像、重启服务。
 | ---- | :----: | :-----: | :------: |
 | 框架小版本更新 | 改 `build/apps.json` → `git push` | 自动构建 + 部署 | 无 |
 | 自定义 app 代码更新 | 改 `apps/` 下代码 → `git push` | 自动构建 + 部署 | 无 |
-| 新增 app | 加 app → `git push` | 自动构建 + 部署 | Dokploy 终端执行 `bench install-app`（仅一次） |
+| 新增 app | 加 app → `git push` | 自动构建 + 部署（configurator 自动安装） | 无 |
 
 > **注意**：小版本更新如果涉及 DB schema 变更（DocType 字段变化），需要评估影响。因为不执行 `bench migrate`，schema 不会自动更新。如确有 schema 变更，需考虑重建站点或编写自定义迁移脚本。
 
@@ -215,11 +215,12 @@ git pull origin main && make build && make deploy
 
 ```bash
 git pull origin main && make build && make deploy
-
-# 在站点上安装新 app（仅一次，用于创建数据库表结构）
-docker compose -p synie-erpnext exec backend \
-  bench --site erp.example.com install-app new-app
 ```
+
+不需要手工执行 `bench install-app` —— `configurator` 一次性容器会在每次 deploy
+时自动对比 `sites/apps.txt` 与各 site 的 `installed_apps`，把缺失的 app 用
+`--skip-assets` 装上，同时 flushall redis-cache 清掉旧的 asset 清单缓存。
+细节见 `build/resources/configurator-init.sh`。
 
 #### 流程对照表
 
@@ -228,7 +229,7 @@ docker compose -p synie-erpnext exec backend \
 | 首次上线 | `git push` | `make build` → `make gen` → `make deploy` → `make site` | `make site`（含 install-app） |
 | 框架小版本更新 | 改 `apps.json` → `git push` | `git pull` → `make build` → `make deploy` | **禁止** |
 | 自定义 app 代码更新 | 改代码 → `git push` | `git pull` → `make build` → `make deploy` | **禁止** |
-| 新增 app | 加 app → `git push` | `git pull` → `make build` → `make deploy` → `bench install-app` | `bench install-app`（仅一次） |
+| 新增 app | 加 app → `git push` | `git pull` → `make build` → `make deploy` | **禁止**（configurator 自动装） |
 
 ## 技术栈
 

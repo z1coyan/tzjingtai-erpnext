@@ -10,6 +10,9 @@ services:
   redis-cache:
     image: ${REGISTRY_MIRROR:-}redis:6.2-alpine
     restart: unless-stopped
+    # 纯缓存实例：关闭所有持久化。任何重启/recreate 都应是干净空库，
+    # 避免旧镜像的 assets_json / bootinfo 缓存跨 deploy 复活引用不存在的 bundle。
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
 
   redis-queue:
     image: ${REGISTRY_MIRROR:-}redis:6.2-alpine

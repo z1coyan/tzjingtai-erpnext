@@ -8,19 +8,27 @@
 - 所有数据库变更（DocType schema、Workspace、fixtures 等）必须在 `bench install-app` 首次安装时一次性完成。后续代码更新只允许通过重新 build 镜像 + deploy 生效，不得依赖运行时 migrate。
 - Containerfile 中 `bench build` 生成的静态资源是唯一可信来源，deploy 时只做文件复制，不做任何编译或数据库操作。
 
-### 唯一放开的通道：给已有站点追加 app
+### app 安装完全由 configurator 自动完成
 
-以下**仅**为"给一个已经在跑的 site 追加一个新 app"这一场景放开，其他任何 bench 子命令仍然禁止。
+**禁止任何人工介入**。追加 app 的完整流程只有两步：
 
-必须严格按以下顺序执行，否则视为违反铁律：
+1. 把 app 加进 `build/apps.json`（远程 app）或 `apps/` 目录（本地 app），`git commit && git push`。
+2. 在 Dokploy 控制台点 **Deploy**。完。
 
-1. 在 `build/apps.json` 里加上新 app（或把本地 app 放进 `apps/`），然后 `make build && make deploy`。**新镜像里必须已 baked-in 该 app 的源码及其预编译前端资源**。严禁在运行中的容器里 `bench get-app`。
-2. 确认新镜像已 deploy 完毕、backend/frontend 容器已重启到新镜像后，执行一次性命令：
-   ```
-   docker compose exec backend bench --site <site> install-app <app> --skip-assets
-   ```
-   必须带 `--skip-assets`，禁止任何形式的运行时 asset rebuild。
-3. 立刻 `docker compose restart backend frontend`，让 nginx 重新挂载镜像内的可信静态资源。
-4. 该通道**只允许 `install-app` 一个子命令**。`bench migrate`、`bench build`、`bench clear-cache`、`bench get-app`、`bench update` 等在任何情况下仍然禁止。
+Dokploy deploy 会触发：
+- 重新 build 镜像（app 源码 + 预编译 CSS/JS 被 baked-in）
+- 起 `configurator` 一次性容器，由 `build/resources/configurator-init.sh` 执行：
+  1. 把镜像里的 `sites-assets` 同步到 sites volume（保证资源永远和镜像一致）
+  2. 写入 common_site_config（db、redis、socketio 配置）
+  3. **flushall redis-cache** —— 清掉上一轮镜像的 `assets_json` / `bootinfo` / 页面缓存，避免浏览器拉 404 的老 bundle hash
+  4. 遍历所有已存在的 site，比对 `sites/apps.txt` 与 `site_config.json.installed_apps`，对缺失的 app 自动 `bench --site <site> install-app <app> --skip-assets`
+- configurator 跑完后 backend / frontend / workers 才启动，拿到的就是已经配置好、app 已安装、缓存已清空的干净状态
 
-脚本实现见 `scripts/install-app.sh`，优先使用脚本而不是手敲命令。
+`configurator-init.sh` 是这条通道的**唯一实现**。在任何时候、任何情况下：
+
+- 禁止手工 `docker compose exec backend bench ...`（包括 install-app）
+- 禁止 `bench migrate` / `bench build` / `bench clear-cache` / `bench get-app` / `bench update`
+- 禁止写 `scripts/install-app.sh` 之类的外挂脚本绕过 configurator
+- 添加新 app 只改 `apps.json` + git push + Dokploy Deploy，绝无其他姿势
+
+`redis-cache` 容器在 compose 里显式关闭了 RDB/AOF 持久化（`--save "" --appendonly no`），配合 configurator 的 flushall，双重保证任何 deploy 都从干净的缓存状态起步。
