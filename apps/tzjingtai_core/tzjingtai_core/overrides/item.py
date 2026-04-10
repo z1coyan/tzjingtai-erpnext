@@ -3,17 +3,28 @@
 # 业务规则：
 #   - item_group = "F(P) 客户产品"：由用户手填，必须以 F(P) 开头
 #   - 其它叶子分组（F(BG)、F(BXGJ)、E(L)、M(S)、P(FC) 等）：自动生成 <prefix>-<N>
-#     其中 prefix 从 item_group 名字里抠括号段，N = 该 prefix 现有最大序号 + 1
+#     其中 prefix 从 item_group 名字里抠括号段，N 由 Frappe 原生 tabSeries 计数器递增
 #
-# 之所以不用 ERPNext 的 Naming Series：
+# 编号机制（懒 seed + 原子递增）：
+#   - 复用 Frappe 的 `tabSeries` 表和 `getseries` 底层 primitive，每个前缀对应一行
+#     计数器（key = "F(BG)-"），递增走 "SELECT ... FOR UPDATE" + "UPDATE current + 1"，
+#     依赖 InnoDB 行锁保证并发下不撞号。这是 ERPNext 所有 naming series 背后的机制。
+#   - 首次用到某个前缀时，因为 tabSeries.current 初始为 0 会跟历史数据撞车，需要先扫
+#     一次 tabItem 把 current 初始化为历史 max —— 此即 _ensure_series_seeded。seed 只
+#     在每个前缀生命周期内跑一次，之后每次新建只是 O(1) 的行锁递增。
+#   - 不用 make_autoname("prefix-.#####") 因为 # 个数固定了补零宽度，历史数据是变宽
+#     格式（F(BG)-1 到 F(BG)-50），改定宽会风格断裂；因此直接调 getseries(key, 0)，
+#     digits=0 时返回不补零的纯十进制串。
+#
+# 为什么不用 ERPNext Item 的 Naming Series 字段：
 #   1. Stock Settings.item_naming_by 是全局单选，无法按 item_group 分流
-#   2. make_autoname 基于 tabSeries 独立计数，历史数据不是用它生成的，直接用会撞号
-# 因此采用 before_insert 钩子，查当前最大尾号 + 1，简单可控。
+#   2. 即使开了 Naming Series，模板是 Item DocType 级别的单一模板，同样无法分组切换
 
 import re
 
 import frappe
 from frappe import _
+from frappe.model.naming import getseries
 
 # F(P) 组需要用户手填，其它组自动生成
 CUSTOMER_PRODUCT_GROUP = "F(P) 客户产品"
@@ -79,16 +90,47 @@ def _auto_generate_code(doc, item_group: str):
 
 
 def _next_code_for_prefix(prefix: str) -> str:
-	"""查该 prefix 下现存 item_code 的最大尾号 + 1。"""
-	like = f"{prefix}-%"
-	# 用 REGEXP 只取严格符合 "<prefix>-<digits>" 的行，避免 F(P)1-1 这类客户自定义编码干扰
+	"""从 Frappe 原生 tabSeries 取下一个序号，首次使用时自动用历史 max 初始化。"""
+	key = f"{prefix}-"
+	_ensure_series_seeded(prefix, key)
+	# digits=0 → 不补零，保持与历史数据 "F(BG)-50" 的变宽风格一致
+	num = getseries(key, 0)
+	return f"{prefix}-{num}"
+
+
+def _ensure_series_seeded(prefix: str, key: str) -> None:
+	"""懒初始化 tabSeries：首次遇到该前缀时，把 current 对齐到历史数据 max。
+
+	已 seed 过的前缀直接跳过，不再扫描 tabItem —— 这是本函数与"每次查 max"方案的
+	根本区别：tabItem 扫描只发生一次，之后每次新建 Item 是 O(1) 的行锁递增。
+	"""
+	if frappe.db.sql("SELECT 1 FROM `tabSeries` WHERE name=%s", key):
+		return
+
+	max_n = _find_max_existing_n(prefix)
+	# 并发下两个请求同时 seed：ON DUPLICATE KEY UPDATE 取较大者，保证不回退
+	frappe.db.sql(
+		"""
+		INSERT INTO `tabSeries` (name, `current`) VALUES (%s, %s)
+		ON DUPLICATE KEY UPDATE `current` = GREATEST(`current`, VALUES(`current`))
+		""",
+		(key, max_n),
+	)
+
+
+def _find_max_existing_n(prefix: str) -> int:
+	"""扫描 tabItem 找该 prefix 下"<prefix>-<纯数字>"格式的最大尾号。
+
+	仅在首次 seed 时调用一次。REGEXP 过滤掉 F(P)1-1、F(BG)-ABC 这类非规范编码，
+	确保自动序号只跟"规范编码"较劲，不被客户自定义编码污染。
+	"""
 	pattern = f"^{re.escape(prefix)}-[0-9]+$"
 	rows = frappe.db.sql(
 		"""
 		SELECT item_code FROM `tabItem`
 		WHERE item_code LIKE %s AND item_code REGEXP %s
 		""",
-		(like, pattern),
+		(f"{prefix}-%", pattern),
 	)
 	max_n = 0
 	tail_re = re.compile(r"-(\d+)$")
@@ -98,4 +140,4 @@ def _next_code_for_prefix(prefix: str) -> str:
 			n = int(m.group(1))
 			if n > max_n:
 				max_n = n
-	return f"{prefix}-{max_n + 1}"
+	return max_n
