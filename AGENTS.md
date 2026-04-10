@@ -14,7 +14,7 @@
 
 必须严格按以下顺序执行，否则视为违反铁律：
 
-1. 在 `build/apps.json` 里加上新 app（或把本地 app 放进 `apps/`），然后 `make build && make push && make deploy`。**新镜像里必须已 baked-in 该 app 的源码及其预编译前端资源**。严禁在运行中的容器里 `bench get-app`。
+1. 在 `build/apps.json` 里加上新 app（或把本地 app 放进 `apps/`），然后 `make build && make deploy`。**新镜像里必须已 baked-in 该 app 的源码及其预编译前端资源**。严禁在运行中的容器里 `bench get-app`。
 2. 确认新镜像已 deploy 完毕、backend/frontend 容器已重启到新镜像后，执行一次性命令：
    ```
    docker compose exec backend bench --site <site> install-app <app> --skip-assets

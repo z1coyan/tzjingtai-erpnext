@@ -6,7 +6,7 @@
 #
 # 前置条件（由调用者保证）：
 #   1. build/apps.json 已包含目标 app，或 apps/ 目录下已放好本地 app
-#   2. 已经 make build && make push && make deploy，新镜像 baked-in 该 app
+#   2. 已经在服务端 make build && make deploy，新镜像 baked-in 该 app
 #   3. backend / frontend 容器已经切到新镜像
 #
 # 用法：
@@ -49,7 +49,7 @@ echo "==> 校验镜像内已 baked-in app: ${APP}"
 # 否则会退化成运行时 get-app，触发 yarn/npm 拉依赖，打挂前端资源。
 if ! compose exec -T backend test -d "apps/${APP}"; then
   echo "ERROR: apps/${APP} 不在镜像里。" >&2
-  echo "       先把 ${APP} 加进 build/apps.json 或 apps/，然后 make build && make push && make deploy。" >&2
+  echo "       先把 ${APP} 加进 build/apps.json 或 apps/，然后在服务端 make build && make deploy。" >&2
   echo "       严禁在运行中的容器里 bench get-app。" >&2
   exit 1
 fi

@@ -48,9 +48,7 @@ scripts/              自动化脚本（build.sh, gen-compose.sh, deploy.sh）
 
 | 命令                                          | 说明                                                    |
 | --------------------------------------------- | ------------------------------------------------------- |
-| `make build`                                  | 构建 Docker 镜像（本地开发用）                          |
-| `make push`                                   | 通过 SSH 推送镜像到生产服务器（备用方案）               |
-| `make release`                                | build + push + git push（备用方案）                     |
+| `make build`                                  | 构建 Docker 镜像（在服务端执行）                        |
 | `make gen`                                    | 生成 docker-compose.yaml（默认 overlay: mariadb,redis） |
 | `make gen OVERLAYS=mariadb,redis,https`       | 指定 overlay 组合                                       |
 | `make deploy`                                 | 启动/更新服务                                           |
