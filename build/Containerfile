@@ -176,13 +176,18 @@ RUN if [ -n "${NPM_REGISTRY}" ]; then \
 
 ARG FRAPPE_BRANCH=version-16
 ARG FRAPPE_PATH=https://github.com/frappe/frappe
+# frappe-path 不再手工拼 GITHUB_PROXY 前缀：
+#   1) ${GITHUB_PROXY:+...} 是 shell 语法，docker ARG 不会自动导出到 shell 环境，
+#      以前这里其实一直为空，直连 github 全靠 BuildKit 层缓存兜底，缓存失效即挂。
+#   2) 上面第 152 行已经设了 git config --global url.insteadOf，bench init 内部
+#      跑的 git ls-remote / git clone 会被自动重写到代理，无需在 URL 上再拼前缀。
 # cache mount: 即使 Docker 层缓存失效，pip/yarn 下载缓存仍然保留
 RUN --mount=type=cache,target=/home/frappe/.cache/pip,uid=1000 \
     --mount=type=cache,target=/home/frappe/.cache/yarn,uid=1000 \
     bench init \
     --apps_path=/opt/frappe/apps.json \
     --frappe-branch=${FRAPPE_BRANCH} \
-    --frappe-path=${GITHUB_PROXY:+${GITHUB_PROXY}}${FRAPPE_PATH} \
+    --frappe-path=${FRAPPE_PATH} \
     --no-procfile \
     --no-backups \
     --skip-redis-config-generation \
