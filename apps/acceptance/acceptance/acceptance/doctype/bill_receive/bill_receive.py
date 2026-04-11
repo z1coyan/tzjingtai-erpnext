@@ -19,26 +19,31 @@ class BillReceive(AccountsController):
 		self.set_linked_invoice_type()
 
 	def validate_bill_no(self):
-		"""校验票据包号格式"""
-		if not re.match(r"^[5678]\d{29}$", self.bill_no):
-			frappe.throw(_("Bill number must be 30 digits starting with 5/6/7/8"))
+		"""校验票据包号格式。
+		标准格式为 30 位数字、首位 5/6/7/8；为兼容期初历史数据导入，仅要求非空。"""
+		if not self.bill_no:
+			frappe.throw(_("Bill number is required"))
 
 		# 校验子票区间
-		if self.sub_ticket_start == 0 and self.sub_ticket_end == 0:
+		if (self.sub_ticket_start or 0) == 0 and (self.sub_ticket_end or 0) == 0:
 			frappe.msgprint(_("Sub ticket range is 0, this bill is non-splittable"))
 
 	def calculate_bill_amount(self):
-		"""根据子票区间计算票面金额"""
-		if self.sub_ticket_start == 0 and self.sub_ticket_end == 0:
-			pass  # 不可拆分票据，金额由用户手动输入
+		"""根据子票区间计算票面金额；区间为 0/空则保留用户输入金额"""
+		ss = self.sub_ticket_start or 0
+		se = self.sub_ticket_end or 0
+		self.sub_ticket_start = ss
+		self.sub_ticket_end = se
+		if ss == 0 and se == 0:
+			pass  # 不可拆分票据或老票无子票，金额由用户手动输入
 		else:
-			self.bill_amount = (self.sub_ticket_end - self.sub_ticket_start + 1) * 0.01
+			self.bill_amount = (se - ss + 1) * 0.01
 
 	def validate_dates(self):
-		"""校验到期日期必须晚于出票日期"""
+		"""校验到期日期必须晚于出票日期（期初数据允许相等）"""
 		if self.issue_date and self.due_date:
-			if getdate(self.due_date) <= getdate(self.issue_date):
-				frappe.throw(_("Due date must be after issue date"))
+			if getdate(self.due_date) < getdate(self.issue_date):
+				frappe.throw(_("Due date must be on or after issue date"))
 
 	def set_linked_invoice_type(self):
 		"""根据 party_type 自动设置关联发票类型"""

@@ -60,8 +60,7 @@
             "in_standard_filter": 1,
             "label": "Bill No",
             "reqd": 1,
-            "unique": 1,
-            "description": "30-digit number"
+            "description": "30-digit number (legacy imports may differ)"
         },
         {
             "fieldname": "bill_type",

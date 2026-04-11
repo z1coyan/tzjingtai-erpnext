@@ -17,12 +17,15 @@ class BillofExchange(Document):
 		self.validate_dates()
 
 	def validate_bill_no(self):
-		"""校验票据包号：30位数字，首位为5/6/7/8"""
-		if not re.match(r"^[5678]\d{29}$", self.bill_no):
-			frappe.throw(_("Bill number must be 30 digits starting with 5 (bank), 6 (commercial), 7 (supply chain commercial) or 8 (supply chain bank)"))
+		"""校验票据包号：标准格式为 30 位数字、首位 5/6/7/8。
+		为兼容期初历史数据导入，仅要求非空；不符合新格式的票据不自动推断类型。"""
+		if not self.bill_no:
+			frappe.throw(_("Bill number is required"))
 
 	def set_bill_type_from_no(self):
-		"""根据票据包号首位自动设置票据种类"""
+		"""根据票据包号首位自动设置票据种类（仅在未显式指定 bill_type 时生效）"""
+		if self.bill_type:
+			return
 		type_map = {
 			"5": "Bank Acceptance Bill",
 			"6": "Commercial Acceptance Bill",
@@ -30,23 +33,25 @@ class BillofExchange(Document):
 			"8": "Supply Chain Bank Bill",
 		}
 		first_digit = self.bill_no[0] if self.bill_no else ""
-		if first_digit in type_map:
-			self.bill_type = type_map[first_digit]
+		self.bill_type = type_map.get(first_digit, "Bank Acceptance Bill")
 
 	def calculate_bill_amount(self):
-		"""根据子票区间计算票面金额"""
-		if self.sub_ticket_start == 0 and self.sub_ticket_end == 0:
-			# 不可拆分票据，金额由用户手动输入
+		"""根据子票区间计算票面金额；区间为 0/空表示不可拆分或老票无子票"""
+		ss = self.sub_ticket_start or 0
+		se = self.sub_ticket_end or 0
+		self.sub_ticket_start = ss
+		self.sub_ticket_end = se
+		if ss == 0 and se == 0:
 			self.is_splittable = 0
 		else:
-			self.bill_amount = (self.sub_ticket_end - self.sub_ticket_start + 1) * 0.01
+			self.bill_amount = (se - ss + 1) * 0.01
 			self.is_splittable = 1
 
 	def validate_dates(self):
-		"""校验到期日期必须晚于出票日期"""
+		"""校验到期日期不早于出票日期（期初数据允许相等）"""
 		if self.issue_date and self.due_date:
-			if getdate(self.due_date) <= getdate(self.issue_date):
-				frappe.throw(_("Due date must be after issue date"))
+			if getdate(self.due_date) < getdate(self.issue_date):
+				frappe.throw(_("Due date must be on or after issue date"))
 
 	def update_status(self, new_status):
 		"""更新票据状态（由业务操作单据调用）"""
