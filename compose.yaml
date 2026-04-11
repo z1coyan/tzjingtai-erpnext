@@ -28,7 +28,7 @@ services:
       dockerfile: build/Containerfile
       args:
         FRAPPE_BRANCH: ${FRAPPE_BRANCH:-version-16}
-        GITHUB_PROXY: ${GITHUB_PROXY:-https://ghfast.top/}
+        GITHUB_PROXY: ${GITHUB_PROXY:-}
         APT_MIRROR: ${APT_MIRROR:-}
         PIP_INDEX_URL: ${PIP_INDEX_URL:-}
         PIP_TRUSTED_HOST: ${PIP_TRUSTED_HOST:-}
