@@ -48,6 +48,8 @@ class BillPayment(AccountsController):
 		if not self.bank_account or not self.notes_receivable_account:
 			return
 
+		cost_center = self.get("cost_center") or frappe.db.get_value("Company", self.company, "cost_center")
+
 		gl_entries = []
 
 		# 借：银行存款
@@ -58,6 +60,7 @@ class BillPayment(AccountsController):
 					"debit_in_account_currency": self.payment_amount,
 					"debit": self.payment_amount,
 					"against": self.notes_receivable_account,
+					"cost_center": cost_center,
 					"remarks": _("Bill Payment - {0}").format(self.bill_no),
 				}
 			)
@@ -71,6 +74,7 @@ class BillPayment(AccountsController):
 					"credit_in_account_currency": self.payment_amount,
 					"credit": self.payment_amount,
 					"against": self.bank_account,
+					"cost_center": cost_center,
 					"remarks": _("Bill Payment - {0}").format(self.bill_no),
 				}
 			)

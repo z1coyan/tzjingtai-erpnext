@@ -60,6 +60,9 @@ class BillDiscount(AccountsController):
 		if not self.bank_account or not self.notes_receivable_account or not self.interest_account:
 			return
 
+		# 损益类科目必须带成本中心; 优先用单据上的, 否则取公司默认
+		cost_center = self.get("cost_center") or frappe.db.get_value("Company", self.company, "cost_center")
+
 		gl_entries = []
 
 		# 借：银行存款（实际到账金额）
@@ -70,6 +73,7 @@ class BillDiscount(AccountsController):
 					"debit_in_account_currency": self.actual_amount,
 					"debit": self.actual_amount,
 					"against": self.notes_receivable_account,
+					"cost_center": cost_center,
 					"remarks": _("Bill Discount - {0}").format(self.bill_no),
 				}
 			)
@@ -83,6 +87,7 @@ class BillDiscount(AccountsController):
 					"debit_in_account_currency": self.discount_interest,
 					"debit": self.discount_interest,
 					"against": self.notes_receivable_account,
+					"cost_center": cost_center,
 					"remarks": _("Bill Discount Interest - {0}").format(self.bill_no),
 				}
 			)
@@ -96,6 +101,7 @@ class BillDiscount(AccountsController):
 					"credit_in_account_currency": self.discount_amount,
 					"credit": self.discount_amount,
 					"against": self.bank_account,
+					"cost_center": cost_center,
 					"remarks": _("Bill Discount - {0}").format(self.bill_no),
 				}
 			)
