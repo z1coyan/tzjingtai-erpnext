@@ -6,7 +6,7 @@
 #   2. 把镜像内 baked-in 的 sites-assets 同步到共享 sites volume（保证 CSS/JS 永远是镜像版本）
 #   3. 清空 redis-cache —— 避免老的 assets_json / bootinfo / 页面缓存引用已经被新 hash 替换的旧 bundle
 #   4. 对每个已存在的 site，比对 sites/apps.txt 与 site_config.json.installed_apps，
-#      自动安装新加入的 app（--skip-assets，不触发 runtime asset rebuild）
+#      自动安装新加入的 app（install-app 只动 DB，不会重建 sites/assets）
 #
 # 这是 CLAUDE.md / AGENTS.md 容器化部署铁律里"唯一放开的通道"的**唯一实现**。
 # 禁止在这个脚本之外、在运行中的容器里手工跑任何 bench 子命令。
@@ -40,6 +40,10 @@ redis-cli -h "${REDIS_CACHE_HOST}" -p "${REDIS_CACHE_PORT}" flushall
 # 遍历所有已存在的 site，比对 sites/apps.txt (镜像里的 bench-level app 列表) 与
 # site 自己的 installed_apps，把差集自动 install 上去。
 #
+# bench install-app 在 v16 没有 --skip-assets 选项，也不需要 —— install-app
+# 只做 DB schema + fixtures，不触碰 sites/assets，所以镜像里 baked-in 的
+# 静态资源不会被重建、不会覆盖磁盘上的 hash 文件。
+#
 # 首次 deploy 时 sites/ 下可能没有任何站点（user 还没跑 make site），
 # 这段循环就是 no-op；不会阻塞 configurator。
 BENCH_APPS=$(cat sites/apps.txt)
@@ -69,8 +73,8 @@ except Exception as e:
     [ "$app" = "frappe" ] && continue
 
     if ! echo " $installed " | grep -q " $app "; then
-      echo "==> [configurator] ${site}: 安装 ${app} (--skip-assets)"
-      bench --site "$site" install-app "$app" --skip-assets
+      echo "==> [configurator] ${site}: 安装 ${app}"
+      bench --site "$site" install-app "$app"
     fi
   done
 done
