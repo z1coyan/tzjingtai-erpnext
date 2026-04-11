@@ -49,6 +49,9 @@ class BillDiscount(AccountsController):
 		self.create_gl_entries()
 
 	def on_cancel(self):
+		# 告诉 Frappe 忽略对 GL Entry / Payment Ledger Entry 的反向链接检查,
+		# 否则 "总账分录关联, 无法取消" 会拦住正常取消流程
+		self.ignore_linked_doctypes = ("GL Entry", "Payment Ledger Entry", "Stock Ledger Entry")
 		self.create_gl_entries(cancel=True)
 		# 恢复票据状态
 		boe = frappe.get_doc("Bill of Exchange", self.bill_of_exchange)

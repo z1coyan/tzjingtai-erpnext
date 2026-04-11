@@ -200,6 +200,7 @@ class BillTransfer(AccountsController):
 		if self.journal_entry:
 			je = frappe.get_doc("Journal Entry", self.journal_entry)
 			if je.docstatus == 1:
+				je.flags.ignore_links = True
 				je.cancel()
 
 	def on_cancel(self):

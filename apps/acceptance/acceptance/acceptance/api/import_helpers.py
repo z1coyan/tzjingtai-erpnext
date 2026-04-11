@@ -64,3 +64,86 @@ def drop_bill_no_unique_index():
 
 	frappe.db.commit()
 	return {"dropped_unique_indexes": dropped}
+
+
+@frappe.whitelist()
+def purge_acceptance_data():
+	"""清空所有 acceptance 业务单据以及它们产生的 GL/JE. 仅期初数据导入迭代使用.
+
+	直接走 SQL, 绕过所有 on_cancel/link 检查. 会:
+	- 删除 Bill Payment / Bill Transfer / Bill Discount / Bill Receive / Bill of Exchange
+	- 删除 tabBill Sub Ticket, tabEndorsement Chain 子表
+	- 删除 由 Bill Receive / Bill Transfer 产生的 Journal Entry (通过 user_remark 识别 "Bill Receive - " / "Bill Transfer - ")
+	- 删除 voucher_type 为上述 doctype 的 GL Entry 与 Payment Ledger Entry
+	- 删除 以那些 JE 为 voucher 的 GL Entry
+
+	幂等: 再次运行不报错.
+	"""
+	if "System Manager" not in frappe.get_roles(frappe.session.user) and frappe.session.user != "Administrator":
+		frappe.throw(_("Only System Manager or Administrator can run this"))
+
+	counts = {}
+
+	# 1. 找到待删的 JE (由 Bill Receive / Bill Transfer 产生)
+	je_rows = frappe.db.sql(
+		"""
+		SELECT name FROM `tabJournal Entry`
+		WHERE user_remark LIKE 'Bill Receive - %%' OR user_remark LIKE 'Bill Transfer - %%'
+		"""
+	)
+	je_names = [r[0] for r in je_rows]
+
+	# 2. 删 GL Entry - 既删 acceptance 自己生成的 (voucher_type 为 Bill Discount/Bill Payment),
+	#    也删 JE 绑的 (voucher_type=Journal Entry 且 voucher_no 属于 je_names)
+	counts["gl_from_discount_payment"] = frappe.db.sql(
+		"""DELETE FROM `tabGL Entry` WHERE voucher_type IN ('Bill Discount', 'Bill Payment')"""
+	)[0] if False else 0
+	# rowcount 取法
+	frappe.db.sql(
+		"""DELETE FROM `tabGL Entry` WHERE voucher_type IN ('Bill Discount', 'Bill Payment')"""
+	)
+	counts["gl_from_discount_payment"] = "deleted"
+
+	if je_names:
+		placeholders = ",".join(["%s"] * len(je_names))
+		frappe.db.sql(
+			f"""DELETE FROM `tabGL Entry` WHERE voucher_type='Journal Entry' AND voucher_no IN ({placeholders})""",
+			tuple(je_names),
+		)
+		frappe.db.sql(
+			f"""DELETE FROM `tabPayment Ledger Entry` WHERE voucher_type='Journal Entry' AND voucher_no IN ({placeholders})""",
+			tuple(je_names),
+		)
+	counts["gl_from_je"] = "deleted"
+
+	# 3. 删 JE 本体 + 其子表
+	if je_names:
+		placeholders = ",".join(["%s"] * len(je_names))
+		frappe.db.sql(
+			f"""DELETE FROM `tabJournal Entry Account` WHERE parent IN ({placeholders})""",
+			tuple(je_names),
+		)
+		frappe.db.sql(
+			f"""DELETE FROM `tabJournal Entry` WHERE name IN ({placeholders})""",
+			tuple(je_names),
+		)
+	counts["journal_entries"] = len(je_names)
+
+	# 4. 删 acceptance 子表
+	for child in ["tabBill Sub Ticket", "tabEndorsement Chain"]:
+		frappe.db.sql(f"DELETE FROM `{child}`")
+		counts[child] = "deleted"
+
+	# 5. 删 acceptance 业务单据
+	for t in [
+		"tabBill Payment",
+		"tabBill Transfer",
+		"tabBill Discount",
+		"tabBill Receive",
+		"tabBill of Exchange",
+	]:
+		frappe.db.sql(f"DELETE FROM `{t}`")
+		counts[t] = "deleted"
+
+	frappe.db.commit()
+	return counts

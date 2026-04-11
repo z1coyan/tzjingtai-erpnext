@@ -175,4 +175,6 @@ class BillReceive(AccountsController):
 		if self.journal_entry:
 			je = frappe.get_doc("Journal Entry", self.journal_entry)
 			if je.docstatus == 1:
+				# Bill Receive 本身还在 cancel 流程中, 它的 link 会让 JE 的 link check 失败; 绕过
+				je.flags.ignore_links = True
 				je.cancel()

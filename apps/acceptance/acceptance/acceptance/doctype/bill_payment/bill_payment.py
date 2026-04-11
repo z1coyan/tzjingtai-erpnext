@@ -37,6 +37,7 @@ class BillPayment(AccountsController):
 		self.create_gl_entries()
 
 	def on_cancel(self):
+		self.ignore_linked_doctypes = ("GL Entry", "Payment Ledger Entry", "Stock Ledger Entry")
 		self.create_gl_entries(cancel=True)
 		# 恢复票据状态
 		boe = frappe.get_doc("Bill of Exchange", self.bill_of_exchange)
