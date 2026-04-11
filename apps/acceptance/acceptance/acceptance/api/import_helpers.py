@@ -566,6 +566,34 @@ def _classify_remarks(remarks):
 	return (None, None)
 
 
+def _allocate_proportional(boes, total_actual, total_interest):
+	"""按 face 比例把 total_actual 和 total_interest 分摊到每个 BoE.
+
+	返回 [(boe_dict, alloc_actual, alloc_interest), ...], 最后一条吸收 2 位小数舍入差.
+	单条 BoE 的情况直接全额分配.
+	"""
+	n = len(boes)
+	if n == 1:
+		return [(boes[0], round(total_actual, 2), round(total_interest, 2))]
+
+	total_face = sum(b["face"] for b in boes)
+	allocs = []
+	acc_actual = 0.0
+	acc_interest = 0.0
+	for i, b in enumerate(boes):
+		if i < n - 1:
+			ratio = b["face"] / total_face
+			a = round(total_actual * ratio, 2)
+			ii = round(total_interest * ratio, 2)
+			acc_actual += a
+			acc_interest += ii
+			allocs.append((b, a, ii))
+		else:
+			# 末条吸收所有舍入差
+			allocs.append((b, round(total_actual - acc_actual, 2), round(total_interest - acc_interest, 2)))
+	return allocs
+
+
 def _delete_je_completely(je_name):
 	"""SQL 级别彻底删除一张 JE 及其所有伴生条目."""
 	frappe.db.sql(
@@ -663,19 +691,29 @@ def migrate_ningbo_bank_supplier(dry_run=1):
 	for r in gl_rows:
 		kind, bill_no = _classify_remarks(r["remarks"])
 		if kind in ("discount", "payment"):
-			boe_name = frappe.db.get_value("Bill of Exchange", {"bill_no": bill_no}, "name")
-			if not boe_name:
+			# 同票号可能存在多条 BoE (期初拆分导致), 全部取出按面值拆分迁移单据
+			boes = frappe.db.sql(
+				"""
+				SELECT name, bill_amount, due_date
+				FROM `tabBill of Exchange`
+				WHERE bill_no=%s
+				ORDER BY name
+				""",
+				(bill_no,),
+				as_dict=True,
+			)
+			if not boes:
 				plan["skipped"].append({"je": r["je_name"], "reason": f"BoE not found for {bill_no}", "remarks": r["remarks"]})
 				continue
-			bill_amount = frappe.db.get_value("Bill of Exchange", boe_name, "bill_amount")
+			total_face = sum(float(b["bill_amount"] or 0) for b in boes)
 			received = float(r["credit"] or 0)  # Cr 金额 = 银行实收
 			entry = {
 				"je": r["je_name"],
 				"gl": r["gl_name"],
 				"date": str(r["posting_date"]),
-				"boe": boe_name,
 				"bill_no": bill_no,
-				"bill_amount": float(bill_amount or 0),
+				"boes": [{"name": b["name"], "face": float(b["bill_amount"] or 0), "due_date": str(b["due_date"]) if b["due_date"] else None} for b in boes],
+				"total_face": total_face,
 				"received": received,
 				"cheque_no": r["cheque_no"],
 				"user_remark": r["user_remark"],
@@ -706,71 +744,82 @@ def migrate_ningbo_bank_supplier(dry_run=1):
 	# ---------------- 真正执行 ----------------
 	result = {"discount": [], "payment": [], "fix": [], "skipped": plan["skipped"]}
 
-	# 2. 处理贴现 — 删老 JE, 新建 Bill Discount
+	# 2. 处理贴现 — 删老 JE, 按面值拆分新建 Bill Discount(s)
 	for e in plan["discount"]:
-		face = e["bill_amount"]
-		actual = e["received"]
-		interest = round(face - actual, 2)
-		if interest < 0:
-			result["skipped"].append({"je": e["je"], "reason": f"interest negative: face={face}, actual={actual}"})
+		total_face = e["total_face"]
+		received = e["received"]
+		total_interest = round(total_face - received, 2)
+		if total_interest < 0:
+			result["skipped"].append({"je": e["je"], "reason": f"interest negative: face={total_face}, received={received}"})
 			continue
+
+		# 按面值比例分摊实收与利息, 最后一条吸收分位舍入差
+		allocs = _allocate_proportional(e["boes"], received, total_interest)
 
 		_delete_je_completely(e["je"])
 
-		# BoE 状态可能已经是 Discounted — Bill Discount.on_submit 会再次 db_set 回
-		# Discounted/Ended, 无所谓. update_status 内部只是 db_set 不做校验.
-		bd = frappe.new_doc("Bill Discount")
-		bd.flags.historical_import = True
-		bd.bill_of_exchange = e["boe"]
-		bd.company = _COMPANY
-		bd.posting_date = e["date"]
-		bd.discount_bank = "宁波银行"
-		bd.discount_date = e["date"]
-		# discount_rate 在 historical_import 分支被 validate() 整段跳过, 这里随便填
-		# 一个近似年化(back-calc), 纯作为审计参考, 不参与 GL 生成.
-		due_date = frappe.db.get_value("Bill of Exchange", e["boe"], "due_date")
-		remaining = max(date_diff(due_date, getdate(e["date"])), 1)
-		bd.remaining_days = remaining
-		bd.discount_rate = round(interest / (face * remaining / 360) * 100, 6) if face else 0
-		bd.discount_amount = face
-		bd.discount_interest = interest
-		bd.actual_amount = actual
-		bd.bank_account = _BANK_ACCOUNT
-		bd.notes_receivable_account = _NR_ACCOUNT
-		bd.interest_account = _INTEREST_ACCOUNT
-		bd.insert(ignore_permissions=True)
-		bd.submit()
+		bd_names = []
+		for boe, alloc_actual, alloc_interest in allocs:
+			face = boe["face"]
+			remaining = max(date_diff(boe["due_date"], getdate(e["date"])), 1) if boe["due_date"] else 1
+			bd = frappe.new_doc("Bill Discount")
+			bd.flags.historical_import = True
+			bd.bill_of_exchange = boe["name"]
+			bd.company = _COMPANY
+			bd.posting_date = e["date"]
+			bd.discount_bank = "宁波银行"
+			bd.discount_date = e["date"]
+			bd.remaining_days = remaining
+			bd.discount_rate = round(alloc_interest / (face * remaining / 360) * 100, 6) if face else 0
+			bd.discount_amount = face
+			bd.discount_interest = alloc_interest
+			bd.actual_amount = alloc_actual
+			bd.bank_account = _BANK_ACCOUNT
+			bd.notes_receivable_account = _NR_ACCOUNT
+			bd.interest_account = _INTEREST_ACCOUNT
+			bd.insert(ignore_permissions=True)
+			bd.submit()
+			bd_names.append({"bill_discount": bd.name, "boe": boe["name"], "face": face, "actual": alloc_actual, "interest": alloc_interest})
 
 		result["discount"].append({
-			"old_je": e["je"], "boe": e["boe"], "bill_discount": bd.name,
-			"face": face, "actual": actual, "interest": interest,
+			"old_je": e["je"], "bill_no": e["bill_no"],
+			"total_face": total_face, "total_received": received, "total_interest": total_interest,
+			"created": bd_names,
 		})
 
-	# 3. 处理到期兑付 — 删老 JE, 新建 Bill Payment
+	# 3. 处理到期兑付 — 删老 JE, 按面值拆分新建 Bill Payment(s)
 	for e in plan["payment"]:
-		face = e["bill_amount"]
-		actual = e["received"]
-		if abs(face - actual) > 0.01:
-			result["skipped"].append({"je": e["je"], "reason": f"payment amount mismatch face={face} received={actual}"})
+		total_face = e["total_face"]
+		received = e["received"]
+		if abs(total_face - received) > 0.01:
+			result["skipped"].append({"je": e["je"], "reason": f"payment amount mismatch total_face={total_face} received={received}"})
 			continue
+
+		# 兑付无贴现利息, 只按面值分到各 BoE (一般也只有 1 条)
+		allocs = _allocate_proportional(e["boes"], received, 0.0)
 
 		_delete_je_completely(e["je"])
 
-		bp = frappe.new_doc("Bill Payment")
-		bp.flags.historical_import = True
-		bp.bill_of_exchange = e["boe"]
-		bp.company = _COMPANY
-		bp.payment_date = e["date"]
-		bp.posting_date = e["date"]
-		bp.payment_amount = face
-		bp.payment_status = "Paid"
-		bp.bank_account = _BANK_ACCOUNT
-		bp.notes_receivable_account = _NR_ACCOUNT
-		bp.insert(ignore_permissions=True)
-		bp.submit()
+		bp_names = []
+		for boe, alloc_actual, _ in allocs:
+			bp = frappe.new_doc("Bill Payment")
+			bp.flags.historical_import = True
+			bp.bill_of_exchange = boe["name"]
+			bp.company = _COMPANY
+			bp.payment_date = e["date"]
+			bp.posting_date = e["date"]
+			bp.payment_amount = boe["face"]
+			bp.payment_status = "Paid"
+			bp.bank_account = _BANK_ACCOUNT
+			bp.notes_receivable_account = _NR_ACCOUNT
+			bp.insert(ignore_permissions=True)
+			bp.submit()
+			bp_names.append({"bill_payment": bp.name, "boe": boe["name"], "amount": boe["face"]})
 
 		result["payment"].append({
-			"old_je": e["je"], "boe": e["boe"], "bill_payment": bp.name, "amount": face,
+			"old_je": e["je"], "bill_no": e["bill_no"],
+			"total_face": total_face, "total_received": received,
+			"created": bp_names,
 		})
 
 	# 4. 处理金额修正 — 保留 JE, 把应付账款-结算 搬到 11215 票据清算中, 清空 party
