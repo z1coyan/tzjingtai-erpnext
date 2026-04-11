@@ -19,7 +19,11 @@ frappe.query_reports["Endorsement Record"] = {
 			fieldname: "endorsement_type",
 			label: __("Endorsement Type"),
 			fieldtype: "Select",
-			options: "\nEndorsement Received\nEndorsement Transfer",
+			options: [
+				{ value: "", label: "" },
+				{ value: "Endorsement Received", label: __("Endorsement Received") },
+				{ value: "Endorsement Transfer", label: __("Endorsement Transfer") },
+			],
 		},
 		{
 			fieldname: "from_date",
@@ -35,8 +39,20 @@ frappe.query_reports["Endorsement Record"] = {
 			fieldname: "bill_status",
 			label: __("Bill Status"),
 			fieldtype: "Select",
-			options:
-				"\nReceived - Circulating\nEndorsed\nDiscounted\nSettled\nSplit",
+			options: [
+				{ value: "", label: "" },
+				{ value: "Received - Circulating", label: __("Received - Circulating") },
+				{ value: "Endorsed", label: __("Endorsed") },
+				{ value: "Discounted", label: __("Discounted") },
+				{ value: "Settled", label: __("Settled") },
+				{ value: "Split", label: __("Split") },
+			],
 		},
 	],
+	formatter(value, row, column, data, default_formatter) {
+		if (value && ["endorsement_type", "bill_status", "source_doctype"].includes(column.fieldname)) {
+			return default_formatter(__(value), row, column, data);
+		}
+		return default_formatter(value, row, column, data);
+	},
 };
