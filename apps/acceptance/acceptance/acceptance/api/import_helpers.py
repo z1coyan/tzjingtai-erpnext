@@ -2063,3 +2063,188 @@ def create_bank_mirror_for_migrated_bills(
 		"created": created,
 		"skipped": skipped,
 	}
+
+
+@frappe.whitelist()
+def redirect_discount_bank_journal_counter_to_clearing(plan_json, dry_run=1):
+	"""把"贴现收入"银行流水 JE 的对方科目从 from_account 改回 11215 清算中.
+
+	HOTFIX 2026-04-12 一次性修数工具 — 清算中账户修数专用, 2025 贴现回款专用.
+	该函数会直接修改已 submit 的 Journal Entry Account 与 GL Entry 的 account/party 字段,
+	**绕过了 submittable 不可篡改原则**, 仅允许财务主管授权下 ad-hoc 调用, 严禁接入自动化流程.
+
+	使用场景:
+	- 历史 2025 银行流水导入时, "贴现收入" 类 JE 的对方科目被错识别为 22410 其他应付款
+	- 正确对方科目应是 11215 清算中 (对冲 DISC-* 的 DR)
+	- 本函数按 (je_name, expected_bill_no, from_account) 列表逐条修正
+
+	参数:
+	- plan_json: JSON 数组, 每项包含
+	    - je_name: Journal Entry.name (必填)
+	    - expected_bill_no: 30 位票号, 会校验 user_remark 是否匹配 (必填)
+	    - from_account: 当前的错方科目, 默认 "22410 - 其他应付款 - 台州京泰"
+	- dry_run: 默认 1, 仅输出修正计划
+	"""
+	_require_admin()
+	dry_run = _parse_flag(dry_run, default=True)
+	plan_in = frappe.parse_json(plan_json) if isinstance(plan_json, str) else plan_json
+	plan_in = plan_in or []
+
+	default_from = "22410 - 其他应付款 - 台州京泰"
+	target_account = _CLEARING_ACCOUNT
+
+	plan = []
+	seen_je = set()
+	for item in plan_in:
+		je_name = str(item.get("je_name") or "").strip()
+		expected_bill_no = str(item.get("expected_bill_no") or "").strip()
+		from_account = str(item.get("from_account") or default_from).strip()
+		if not je_name or not expected_bill_no:
+			plan.append({"action": "skip", "reason": "missing je_name or expected_bill_no", "item": item})
+			continue
+		if je_name in seen_je:
+			plan.append({"je": je_name, "action": "skip", "reason": "duplicate in plan"})
+			continue
+		seen_je.add(je_name)
+
+		je = frappe.db.get_value(
+			"Journal Entry",
+			je_name,
+			["name", "docstatus", "posting_date", "user_remark", "title"],
+			as_dict=True,
+		)
+		if not je:
+			plan.append({"je": je_name, "action": "skip", "reason": "JE not found"})
+			continue
+		if je.docstatus != 1:
+			plan.append({"je": je_name, "action": "skip", "reason": f"docstatus={je.docstatus}"})
+			continue
+		if expected_bill_no not in (je.user_remark or ""):
+			plan.append({
+				"je": je_name,
+				"action": "skip",
+				"reason": "bill_no not in user_remark",
+				"user_remark": _short_text(je.user_remark, 120),
+			})
+			continue
+
+		child_rows = frappe.db.sql(
+			"""
+			SELECT name, idx, account, debit, credit, party_type, party
+			FROM `tabJournal Entry Account`
+			WHERE parent=%s
+			ORDER BY idx
+			""",
+			(je_name,),
+			as_dict=True,
+		)
+		credit_on_from = [
+			row for row in child_rows
+			if float(row.credit or 0) > 0 and row.account == from_account
+		]
+		credit_on_target = [
+			row for row in child_rows
+			if float(row.credit or 0) > 0 and row.account == target_account
+		]
+		if credit_on_target and not credit_on_from:
+			plan.append({"je": je_name, "action": "skip", "reason": "already on target account"})
+			continue
+		if len(credit_on_from) != 1:
+			plan.append({
+				"je": je_name,
+				"action": "skip",
+				"reason": f"expected exactly 1 credit leg on {from_account}, got {len(credit_on_from)}",
+				"child_rows": [
+					{"acct": r.account, "dr": float(r.debit or 0), "cr": float(r.credit or 0)}
+					for r in child_rows
+				],
+			})
+			continue
+
+		counter_child = credit_on_from[0]
+		gl_match = frappe.db.sql(
+			"""
+			SELECT name, account, debit, credit
+			FROM `tabGL Entry`
+			WHERE voucher_type='Journal Entry'
+			  AND voucher_no=%s
+			  AND is_cancelled=0
+			  AND account=%s
+			  AND credit=%s
+			""",
+			(je_name, from_account, counter_child.credit),
+			as_dict=True,
+		)
+		if len(gl_match) != 1:
+			plan.append({
+				"je": je_name,
+				"action": "skip",
+				"reason": f"GL Entry match count={len(gl_match)} for ({from_account}, credit={counter_child.credit})",
+			})
+			continue
+
+		plan.append({
+			"je": je_name,
+			"action": "update",
+			"bill_no": expected_bill_no,
+			"posting_date": str(je.posting_date),
+			"amount": float(counter_child.credit or 0),
+			"from_account": from_account,
+			"to_account": target_account,
+			"child_row": counter_child.name,
+			"gl_row": gl_match[0].name,
+			"user_remark": _short_text(je.user_remark, 160),
+		})
+
+	update_count = len([p for p in plan if p["action"] == "update"])
+	skip_count = len([p for p in plan if p["action"] == "skip"])
+	total_amount = round(sum(p.get("amount", 0) for p in plan if p["action"] == "update"), 2)
+
+	if dry_run:
+		return {
+			"dry_run": True,
+			"update_count": update_count,
+			"skip_count": skip_count,
+			"total_amount": total_amount,
+			"plan": plan,
+		}
+
+	updated = []
+	skipped = [p for p in plan if p["action"] != "update"]
+	for item in plan:
+		if item["action"] != "update":
+			continue
+		frappe.db.sql(
+			"""
+			UPDATE `tabJournal Entry Account`
+			SET account=%s, party_type=NULL, party=NULL
+			WHERE name=%s
+			""",
+			(item["to_account"], item["child_row"]),
+		)
+		frappe.db.sql(
+			"""
+			UPDATE `tabGL Entry`
+			SET account=%s, party_type=NULL, party=NULL
+			WHERE name=%s
+			""",
+			(item["to_account"], item["gl_row"]),
+		)
+		frappe.clear_document_cache("Journal Entry", item["je"])
+		updated.append({
+			"je": item["je"],
+			"bill_no": item["bill_no"],
+			"amount": item["amount"],
+			"from_account": item["from_account"],
+			"to_account": item["to_account"],
+		})
+
+	frappe.db.commit()
+	return {
+		"dry_run": False,
+		"updated_count": len(updated),
+		"skipped_count": len(skipped),
+		"total_amount": round(sum(u["amount"] for u in updated), 2),
+		"updated": updated,
+		"skipped": skipped,
+	}
