@@ -15,6 +15,11 @@ class BillPayment(AccountsController):
 		# 避免 meta 未同步时 getattr 抛 AttributeError.
 		if not self.get("posting_date"):
 			self.set("posting_date", self.payment_date)
+		# 历史数据迁移通道: flags.historical_import=True 时,跳过状态/金额校验,
+		# 直接信任迁移工具传入的 payment_amount. 用于把老系统里借壳"宁波银行供应商"
+		# 收到的承兑到期兑付款正规化为 Bill Payment 单据.
+		if self.flags.get("historical_import"):
+			return
 		self.validate_bill_status()
 		self.validate_payment_amount()
 

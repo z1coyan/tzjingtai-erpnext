@@ -11,6 +11,11 @@ from erpnext.controllers.accounts_controller import AccountsController
 
 class BillDiscount(AccountsController):
 	def validate(self):
+		# 历史数据迁移通道: flags.historical_import=True 时,跳过状态校验并信任
+		# 外部传入的 discount_amount / discount_interest / actual_amount / remaining_days,
+		# 避免 controller 按利率反算覆盖导致 1 分钱级别的浮点偏差与历史银行流水不符.
+		if self.flags.get("historical_import"):
+			return
 		self.validate_bill_status()
 		self.calculate_discount()
 
