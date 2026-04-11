@@ -8,6 +8,12 @@ from frappe.utils import date_diff, getdate
 from erpnext.accounts.general_ledger import make_gl_entries
 from erpnext.controllers.accounts_controller import AccountsController
 
+from acceptance.acceptance.accounting_defaults import (
+	CLEARING_ACCOUNT,
+	DISCOUNT_INTEREST_ACCOUNT,
+	NOTES_RECEIVABLE_ACCOUNT,
+)
+
 
 class BillDiscount(AccountsController):
 	def validate(self):
@@ -16,8 +22,42 @@ class BillDiscount(AccountsController):
 		# 避免 controller 按利率反算覆盖导致 1 分钱级别的浮点偏差与历史银行流水不符.
 		if self.flags.get("historical_import"):
 			return
+		self._autofill_accounts()
+		self._reject_real_bank_leaf()
 		self.validate_bill_status()
 		self.calculate_discount()
+
+	def _autofill_accounts(self):
+		"""未填写科目时自动带出默认值.
+
+		bank_account 字段语义是"结算过渡账户", 强制默认为 11215 票据清算中
+		而不是真正的银行叶子账户. 理由见 accounting_defaults.py 模块注释.
+		"""
+		if not self.bank_account:
+			self.bank_account = CLEARING_ACCOUNT
+		if not self.notes_receivable_account:
+			self.notes_receivable_account = NOTES_RECEIVABLE_ACCOUNT
+		if not self.interest_account:
+			self.interest_account = DISCOUNT_INTEREST_ACCOUNT
+
+	def _reject_real_bank_leaf(self):
+		"""禁止把 bank_account 指向真实银行叶子账户 (account_type=Bank).
+
+		如果允许, 本单据生成的 GL 会在银行科目上记一次, 后续每周导入的银行流水
+		又会再记一次, 导致银行科目重复计账. 统一走清算中 → 银行流水导入阶段
+		再从清算中贷方冲销, 自然对冲, 不会重复.
+		"""
+		if not self.bank_account:
+			return
+		acc_type = frappe.db.get_value("Account", self.bank_account, "account_type")
+		if acc_type == "Bank":
+			frappe.throw(
+				_(
+					"Bill Discount 的结算账户不能直接写真实银行叶子账户 {0}. "
+					"请改成清算中账户 {1}, 等每周银行流水导入时再从清算中冲减, "
+					"否则会与银行流水重复记账."
+				).format(self.bank_account, CLEARING_ACCOUNT)
+			)
 
 	def validate_bill_status(self):
 		"""校验票据状态"""
