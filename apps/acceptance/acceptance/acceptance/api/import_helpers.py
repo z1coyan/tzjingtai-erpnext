@@ -1009,6 +1009,298 @@ def annotate_clearing_bank_journal_bill_no(annotations_json, dry_run=1):
 	}
 
 
+def _resolve_restore_target_from_bank_against(bank_against, title=None, pay_to_recd_from=None):
+	"""根据银行侧残留 against_account 反推误迁移 JE 应恢复到的对方科目.
+
+	优先级:
+	1. against_account 本身就是合法总账科目 -> 直接恢复到该科目
+	2. against_account 是 Customer.name -> 恢复到应收账款并回填 party
+	3. against_account 是 Supplier.name -> 恢复到应付账款并回填 party
+
+	仅返回"可无歧义恢复"的结果；否则返回 (None, reason).
+	"""
+	bank_against = (bank_against or "").strip()
+	if not bank_against:
+		return None, "bank against_account 为空"
+
+	account_row = frappe.db.get_value(
+		"Account",
+		bank_against,
+		["name", "is_group"],
+		as_dict=True,
+	)
+	if account_row:
+		if account_row.is_group:
+			return None, f"against_account={bank_against} 是 group 科目"
+		return {
+			"account": account_row.name,
+			"party_type": None,
+			"party": None,
+			"source": "account",
+			"matched_name": bank_against,
+		}, f"按原 against_account 恢复为科目 {bank_against}"
+
+	counterparty = (pay_to_recd_from or title or "").strip()
+	customer_row = frappe.db.get_value(
+		"Customer",
+		bank_against,
+		["name", "customer_name", "default_receivable_account"],
+		as_dict=True,
+	)
+	if customer_row:
+		if counterparty and counterparty not in (customer_row.customer_name, customer_row.name):
+			return None, (
+				f"Customer {customer_row.name} 名称不匹配: "
+				f"counterparty={counterparty}, customer_name={customer_row.customer_name}"
+			)
+		target_account = customer_row.default_receivable_account or frappe.db.get_value(
+			"Company", _COMPANY, "default_receivable_account"
+		)
+		if not target_account:
+			return None, f"Customer {customer_row.name} 没有可用应收科目"
+		target_account_row = frappe.db.get_value("Account", target_account, ["name", "is_group"], as_dict=True)
+		if not target_account_row or target_account_row.is_group:
+			return None, f"Customer {customer_row.name} 的应收科目 {target_account} 非法"
+		return {
+			"account": target_account_row.name,
+			"party_type": "Customer",
+			"party": customer_row.name,
+			"source": "customer",
+			"matched_name": customer_row.customer_name or customer_row.name,
+		}, f"按 Customer {customer_row.name} 恢复到 {target_account_row.name}"
+
+	supplier_row = frappe.db.get_value(
+		"Supplier",
+		bank_against,
+		["name", "supplier_name", "default_payable_account"],
+		as_dict=True,
+	)
+	if supplier_row:
+		if counterparty and counterparty not in (supplier_row.supplier_name, supplier_row.name):
+			return None, (
+				f"Supplier {supplier_row.name} 名称不匹配: "
+				f"counterparty={counterparty}, supplier_name={supplier_row.supplier_name}"
+			)
+		target_account = (
+			supplier_row.default_payable_account
+			or frappe.db.get_value("Company", _COMPANY, "default_payable_account")
+			or _PAYABLE_SETTLEMENT
+		)
+		if not target_account:
+			return None, f"Supplier {supplier_row.name} 没有可用应付科目"
+		target_account_row = frappe.db.get_value("Account", target_account, ["name", "is_group"], as_dict=True)
+		if not target_account_row or target_account_row.is_group:
+			return None, f"Supplier {supplier_row.name} 的应付科目 {target_account} 非法"
+		return {
+			"account": target_account_row.name,
+			"party_type": "Supplier",
+			"party": supplier_row.name,
+			"source": "supplier",
+			"matched_name": supplier_row.supplier_name or supplier_row.name,
+		}, f"按 Supplier {supplier_row.name} 恢复到 {target_account_row.name}"
+
+	return None, f"against_account={bank_against} 既不是科目也不是客户/供应商"
+
+
+@frappe.whitelist()
+def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_run=1):
+	"""把误迁移到 11215 的银行流水 JE 对方科目恢复回原始 against_account 所指向的对象.
+
+	使用场景:
+	- 历史 `migrate_bill_bank_to_clearing` 把普通银行回款/杂项入账一并迁进了 11215
+	- 但银行侧分录的 against_account 仍残留了原始科目/客户/供应商线索
+	- 本函数仅对"可无歧义恢复"的 JE 生效
+
+	参数:
+	- je_names_json: JSON 数组，Journal Entry.name 列表
+	- dry_run: 默认 1，仅输出恢复计划
+	"""
+	_require_admin()
+	dry_run = _parse_flag(dry_run, default=True)
+	je_names = frappe.parse_json(je_names_json) if isinstance(je_names_json, str) else je_names_json
+	je_names = [str(name).strip() for name in (je_names or []) if str(name or "").strip()]
+	if not je_names:
+		return {"dry_run": dry_run, "updated": 0, "skipped": 0, "plan": []}
+
+	plan = []
+	seen = set()
+	for je_name in je_names:
+		if je_name in seen:
+			continue
+		seen.add(je_name)
+
+		je = frappe.db.get_value(
+			"Journal Entry",
+			je_name,
+			["name", "docstatus", "posting_date", "title", "pay_to_recd_from", "user_remark", "cheque_no"],
+			as_dict=True,
+		)
+		if not je:
+			plan.append({"je": je_name, "action": "skip", "reason": "JE 不存在"})
+			continue
+		if je.docstatus != 1:
+			plan.append({"je": je_name, "action": "skip", "reason": f"docstatus={je.docstatus}"})
+			continue
+		if _extract_bill_no(je.user_remark):
+			plan.append({"je": je_name, "action": "skip", "reason": "user_remark 已带票号，不做恢复"})
+			continue
+
+		child_rows = frappe.db.sql(
+			"""
+			SELECT
+				name, idx, account, debit, credit, party_type, party, against_account
+			FROM `tabJournal Entry Account`
+			WHERE parent=%s
+			ORDER BY idx
+			""",
+			(je_name,),
+			as_dict=True,
+		)
+		gl_rows = frappe.db.sql(
+			"""
+			SELECT
+				name, account, debit, credit, party_type, party, against
+			FROM `tabGL Entry`
+			WHERE voucher_type='Journal Entry'
+			  AND voucher_no=%s
+			  AND is_cancelled=0
+			ORDER BY creation, name
+			""",
+			(je_name,),
+			as_dict=True,
+		)
+		bank_child = next((row for row in child_rows if float(row.debit or 0) > 0 and row.account != _CLEARING_ACCOUNT), None)
+		counter_child = next((row for row in child_rows if float(row.credit or 0) > 0 and row.account != (bank_child.account if bank_child else None)), None)
+		bank_gl = next((row for row in gl_rows if float(row.debit or 0) > 0 and row.account == (bank_child.account if bank_child else None)), None)
+		counter_gl = next((row for row in gl_rows if float(row.credit or 0) > 0 and row.account == (counter_child.account if counter_child else None)), None)
+
+		if not bank_child or not counter_child or not bank_gl or not counter_gl:
+			plan.append({
+				"je": je_name,
+				"action": "skip",
+				"reason": "无法唯一定位 bank/counter 分录",
+			})
+			continue
+
+		target, reason = _resolve_restore_target_from_bank_against(
+			bank_child.against_account,
+			title=je.title,
+			pay_to_recd_from=je.pay_to_recd_from,
+		)
+		if not target:
+			plan.append({
+				"je": je_name,
+				"action": "skip",
+				"reason": reason,
+				"bank_account": bank_child.account,
+				"bank_against": bank_child.against_account,
+				"title": je.title,
+				"pay_to_recd_from": je.pay_to_recd_from,
+			})
+			continue
+
+		current_party_type = counter_child.party_type or None
+		current_party = counter_child.party or None
+		if (
+			counter_child.account == target["account"]
+			and current_party_type == target["party_type"]
+			and current_party == target["party"]
+		):
+			plan.append({
+				"je": je_name,
+				"action": "skip",
+				"reason": "已经恢复完成",
+				"from_account": counter_child.account,
+				"to_account": target["account"],
+			})
+			continue
+
+		if counter_child.account != _CLEARING_ACCOUNT:
+			plan.append({
+				"je": je_name,
+				"action": "skip",
+				"reason": f"counter 科目当前不是 {_CLEARING_ACCOUNT}: {counter_child.account}",
+				"bank_account": bank_child.account,
+				"bank_against": bank_child.against_account,
+			})
+			continue
+
+		plan.append({
+			"je": je_name,
+			"action": "update",
+			"posting_date": str(je.posting_date),
+			"amount": float(counter_child.credit or 0),
+			"cheque_no": je.cheque_no,
+			"title": je.title,
+			"pay_to_recd_from": je.pay_to_recd_from,
+			"user_remark": _short_text(je.user_remark, 160),
+			"bank_account": bank_child.account,
+			"bank_against": bank_child.against_account,
+			"source": target["source"],
+			"matched_name": target["matched_name"],
+			"from_account": counter_child.account,
+			"to_account": target["account"],
+			"to_party_type": target["party_type"],
+			"to_party": target["party"],
+			"child_row": counter_child.name,
+			"gl_row": counter_gl.name,
+			"reason": reason,
+		})
+
+	if dry_run:
+		return {
+			"dry_run": True,
+			"update_count": len([item for item in plan if item["action"] == "update"]),
+			"skip_count": len([item for item in plan if item["action"] == "skip"]),
+			"total_amount": round(sum(item.get("amount", 0) for item in plan if item["action"] == "update"), 2),
+			"plan": plan,
+		}
+
+	updated = []
+	skipped = []
+	for item in plan:
+		if item["action"] != "update":
+			skipped.append(item)
+			continue
+
+		frappe.db.sql(
+			"""
+			UPDATE `tabJournal Entry Account`
+			SET account=%s, party_type=%s, party=%s
+			WHERE name=%s
+			""",
+			(item["to_account"], item["to_party_type"], item["to_party"], item["child_row"]),
+		)
+		frappe.db.sql(
+			"""
+			UPDATE `tabGL Entry`
+			SET account=%s, party_type=%s, party=%s
+			WHERE name=%s
+			""",
+			(item["to_account"], item["to_party_type"], item["to_party"], item["gl_row"]),
+		)
+		frappe.clear_document_cache("Journal Entry", item["je"])
+		updated.append({
+			"je": item["je"],
+			"amount": item["amount"],
+			"from_account": item["from_account"],
+			"to_account": item["to_account"],
+			"to_party_type": item["to_party_type"],
+			"to_party": item["to_party"],
+			"reason": item["reason"],
+		})
+
+	frappe.db.commit()
+	return {
+		"dry_run": False,
+		"updated_count": len(updated),
+		"skipped_count": len(skipped),
+		"total_amount": round(sum(item["amount"] for item in updated), 2),
+		"updated": updated,
+		"skipped": skipped,
+	}
+
+
 def _allocate_proportional(boes, total_actual, total_interest):
 	"""按 face 比例把 total_actual 和 total_interest 分摊到每个 BoE.
 
