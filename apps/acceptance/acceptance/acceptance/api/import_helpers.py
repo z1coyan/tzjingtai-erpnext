@@ -1071,3 +1071,200 @@ def normalize_bill_settlement_to_clearing(dry_run=1):
 		"remaining_on_bank_leaf": remaining,
 		"detail": moved_docs_detail,
 	}
+
+
+# ---------------------------------------------------------------------------
+# 为历史迁移出来的 Bill Discount/Payment 补一条配对的银行流水 JE
+# ---------------------------------------------------------------------------
+#
+# 背景:
+#   migrate_ningbo_bank_supplier 用 _delete_je_completely 把原始的"借壳供应商"
+#   JE 整个删掉, 包括银行侧的 Dr 10022 京泰宁波 行. 随后创建 Bill Discount 时,
+#   controller 内部又会生成一条 Dr 10022 凭空"补"出银行入账. 再之后跑
+#   normalize_bill_settlement_to_clearing 把这条 Dr 从 10022 搬到 11215 清算中,
+#   结果: 10022 京泰宁波账户上那 3.72M 实际收到的承兑资金凭空消失了, 与宁波
+#   银行真实对账单不一致.
+#
+#   正确做法: 独立创建一条银行流水镜像 JE, Dr 10022 / Cr 11215, 金额 = 单据
+#   在 11215 上的 Dr (即贴现实收 / 兑付面值). 补完后 10022 余额回正, 11215
+#   清算中借贷自然对冲.
+#
+#   本函数以 cheque_no='MIRROR-<doc_name>' 做幂等标记, 重复跑不会创建重复 JE.
+# ---------------------------------------------------------------------------
+
+
+@frappe.whitelist()
+def create_bank_mirror_for_migrated_bills(
+	dry_run=1,
+	bank_account="10022 - 京泰宁波 - 台州京泰",
+	target_doc_names_json=None,
+):
+	"""为指定的 Bill Discount/Payment 单据补一条配对的银行流水 JE.
+
+	参数:
+		dry_run: 默认 1 只打印计划.
+		bank_account: 镜像 JE 的 Dr 侧账户, 默认 10022 京泰宁波 (宁波银行迁移场景).
+		target_doc_names_json: JSON 数组, 指定单据列表. 默认 None 时自动选取
+			"今天迁移的 37 张" — 具体识别逻辑: 所有 docstatus=1 的 Bill Discount/
+			Payment 中, 其 11215 Dr 的 GL Entry 尚未有对应的 JE Cr 11215
+			配对 (按 voucher_no='MIRROR-<name>' 检查).
+	"""
+	_require_admin()
+	if isinstance(dry_run, str):
+		dry_run = dry_run.lower() not in ("0", "false", "no", "")
+
+	# 校验账户
+	acc = frappe.db.get_value("Account", bank_account, ["is_group", "account_type"], as_dict=True)
+	if not acc:
+		frappe.throw(f"Bank account {bank_account} not found")
+	if acc.is_group:
+		frappe.throw(f"{bank_account} is a group account")
+
+	# 1. 筛选目标单据
+	if target_doc_names_json:
+		names = frappe.parse_json(target_doc_names_json) if isinstance(target_doc_names_json, str) else target_doc_names_json
+	else:
+		# 默认: 所有已经把 bank_account 搬到 11215 清算中但还没有 MIRROR JE 的 BD/BP
+		names = []
+		for dt in ("Bill Discount", "Bill Payment"):
+			rows = frappe.db.sql(
+				f"""
+				SELECT d.name
+				FROM `tab{dt}` d
+				WHERE d.docstatus=1
+				  AND d.bank_account=%s
+				  AND NOT EXISTS (
+					SELECT 1 FROM `tabJournal Entry` je
+					WHERE je.cheque_no = CONCAT('MIRROR-', d.name)
+					  AND je.docstatus=1
+				  )
+				""",
+				(_CLEARING_ACCOUNT,),
+			)
+			names.extend([(dt, r[0]) for r in rows])
+	# 格式化为 (dt, name) 元组
+	if names and isinstance(names[0], str):
+		# 用户只传了名字, 按前缀猜 doctype
+		names = [("Bill Discount" if n.startswith("DISC-") else "Bill Payment", n) for n in names]
+
+	# 2. 对每张单据: 读 11215 Dr 金额 + 日期, 组装镜像 JE
+	plan = []
+	for dt, doc_name in names:
+		gl = frappe.db.sql(
+			"""
+			SELECT posting_date, debit, remarks
+			FROM `tabGL Entry`
+			WHERE voucher_type=%s AND voucher_no=%s
+			  AND account=%s
+			  AND is_cancelled=0
+			LIMIT 1
+			""",
+			(dt, doc_name, _CLEARING_ACCOUNT),
+			as_dict=True,
+		)
+		if not gl:
+			continue
+		amount = float(gl[0]["debit"] or 0)
+		if amount <= 0:
+			continue
+		plan.append({
+			"doctype": dt,
+			"doc_name": doc_name,
+			"date": str(gl[0]["posting_date"]),
+			"amount": round(amount, 2),
+			"remarks_hint": (gl[0]["remarks"] or "")[:80],
+		})
+
+	if dry_run:
+		total = sum(p["amount"] for p in plan)
+		return {
+			"dry_run": True,
+			"bank_account": bank_account,
+			"clearing_account": _CLEARING_ACCOUNT,
+			"target_count": len(plan),
+			"total_amount": round(total, 2),
+			"sample": plan[:5],
+			"plan": plan,
+		}
+
+	# ---------------- 真正执行 ----------------
+	created = []
+	skipped = []
+	cost_center = frappe.db.get_value("Company", _COMPANY, "cost_center")
+
+	for p in plan:
+		mirror_cheque = f"MIRROR-{p['doc_name']}"
+
+		# 幂等: 如果同 cheque_no 的已提交 JE 已存在则跳过
+		if frappe.db.exists("Journal Entry", {"cheque_no": mirror_cheque, "docstatus": 1}):
+			skipped.append({"doc": p['doc_name'], "reason": "mirror already exists"})
+			continue
+
+		je = frappe.new_doc("Journal Entry")
+		je.voucher_type = "Journal Entry"
+		je.posting_date = p["date"]
+		je.company = _COMPANY
+		je.cheque_no = mirror_cheque
+		je.cheque_date = p["date"]
+		je.user_remark = (
+			f"历史补建银行流水镜像: 对应 {p['doctype']} {p['doc_name']}. "
+			f"老系统借壳供应商模式下原始 JE 已被删除, 此 JE 补回 10022 的"
+			f"到账记录并同时冲减 11215 清算中"
+		)
+		je.append(
+			"accounts",
+			{
+				"account": bank_account,
+				"debit_in_account_currency": p["amount"],
+				"credit_in_account_currency": 0,
+				"cost_center": cost_center,
+			},
+		)
+		je.append(
+			"accounts",
+			{
+				"account": _CLEARING_ACCOUNT,
+				"debit_in_account_currency": 0,
+				"credit_in_account_currency": p["amount"],
+				"cost_center": cost_center,
+			},
+		)
+		# 跳过 AccountsController 财年等一堆校验 (历史日期需要)
+		je.flags.ignore_validate = True
+		je.flags.ignore_permissions = True
+		try:
+			je.insert(ignore_permissions=True)
+			je.submit()
+		except Exception as e:
+			skipped.append({"doc": p['doc_name'], "reason": f"create/submit failed: {str(e)[:200]}"})
+			continue
+
+		created.append({
+			"doc": p['doc_name'],
+			"je": je.name,
+			"date": p["date"],
+			"amount": p["amount"],
+		})
+
+	frappe.db.commit()
+
+	# 3. 验证 11215 余额变动
+	new_net = frappe.db.sql(
+		"SELECT SUM(debit - credit) FROM `tabGL Entry` WHERE account=%s AND is_cancelled=0",
+		(_CLEARING_ACCOUNT,),
+	)[0][0]
+	new_bank_net = frappe.db.sql(
+		"SELECT SUM(debit - credit) FROM `tabGL Entry` WHERE account=%s AND is_cancelled=0",
+		(bank_account,),
+	)[0][0]
+
+	return {
+		"dry_run": False,
+		"created_count": len(created),
+		"skipped_count": len(skipped),
+		"total_amount_mirrored": round(sum(c["amount"] for c in created), 2),
+		"clearing_net_after": float(new_net or 0),
+		"bank_net_after": float(new_bank_net or 0),
+		"created": created,
+		"skipped": skipped,
+	}
