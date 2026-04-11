@@ -147,3 +147,100 @@ def purge_acceptance_data():
 
 	frappe.db.commit()
 	return counts
+
+
+@frappe.whitelist()
+def create_bank_subaccounts():
+	"""创建 4 个银行叶子子账户 (作为 10020 的兄弟, 后续再把 10020 改 group).
+
+	幂等: 已存在则跳过.
+	"""
+	if "System Manager" not in frappe.get_roles(frappe.session.user) and frappe.session.user != "Administrator":
+		frappe.throw(_("Only System Manager or Administrator can run this"))
+
+	parent = "10000 - 货币资金 - 台州京泰"
+	company = "台州京泰电气有限公司"
+	leaves = [
+		("10021", "京泰工行"),
+		("10022", "京泰宁波"),
+		("10023", "东方农行"),
+		("10024", "东方农商"),
+	]
+	created = []
+	existing = []
+	for num, name in leaves:
+		full = f"{num} - {name} - 台州京泰"
+		if frappe.db.exists("Account", full):
+			existing.append(full)
+			continue
+		doc = frappe.get_doc({
+			"doctype": "Account",
+			"account_name": name,
+			"account_number": num,
+			"parent_account": parent,
+			"company": company,
+			"account_type": "Bank",
+			"account_currency": "CNY",
+			"is_group": 0,
+		})
+		doc.insert(ignore_permissions=True)
+		created.append(doc.name)
+	return {"created": created, "existing": existing}
+
+
+@frappe.whitelist()
+def rewrite_gl_account(gl_names_json, target_account):
+	"""把指定 GL Entry 的 account 字段 SQL 改写为 target_account.
+
+	gl_names_json: JSON 数组, GL Entry.name 列表
+	target_account: 目标科目完整 name
+	仅改 is_cancelled=0 的活跃条目.
+	"""
+	if "System Manager" not in frappe.get_roles(frappe.session.user) and frappe.session.user != "Administrator":
+		frappe.throw(_("Only System Manager or Administrator can run this"))
+
+	gl_names = frappe.parse_json(gl_names_json) if isinstance(gl_names_json, str) else gl_names_json
+	if not gl_names:
+		return {"updated": 0}
+
+	# 校验目标账户存在且非 group
+	target = frappe.db.get_value("Account", target_account, ["is_group", "name"], as_dict=True)
+	if not target:
+		frappe.throw(f"Target account {target_account} not found")
+	if target.is_group:
+		frappe.throw(f"Target account {target_account} is a group")
+
+	placeholders = ",".join(["%s"] * len(gl_names))
+	frappe.db.sql(
+		f"UPDATE `tabGL Entry` SET account=%s WHERE name IN ({placeholders}) AND is_cancelled=0",
+		(target_account, *gl_names),
+	)
+	frappe.db.commit()
+	return {"updated": len(gl_names), "target": target_account}
+
+
+@frappe.whitelist()
+def convert_account_to_group(account_name):
+	"""把一个叶子账户改成 group (SQL, 绕过 is_group 校验).
+
+	前置条件: 该账户没有活跃 GL Entry (is_cancelled=0 数为 0).
+	会同时清空 account_type (group 不能设 Bank/Receivable 等).
+	"""
+	if "System Manager" not in frappe.get_roles(frappe.session.user) and frappe.session.user != "Administrator":
+		frappe.throw(_("Only System Manager or Administrator can run this"))
+
+	cnt = frappe.db.sql(
+		"SELECT COUNT(*) FROM `tabGL Entry` WHERE account=%s AND is_cancelled=0",
+		(account_name,),
+	)[0][0]
+	if cnt > 0:
+		frappe.throw(f"Account {account_name} still has {cnt} active GL entries, cannot convert to group")
+
+	frappe.db.sql(
+		"UPDATE `tabAccount` SET is_group=1, account_type='' WHERE name=%s",
+		(account_name,),
+	)
+	frappe.db.commit()
+	# 清 Account 文档缓存
+	frappe.clear_document_cache("Account", account_name)
+	return {"converted": account_name}
