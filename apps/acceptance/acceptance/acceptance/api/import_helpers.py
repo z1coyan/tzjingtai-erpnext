@@ -244,3 +244,122 @@ def convert_account_to_group(account_name):
 	# 清 Account 文档缓存
 	frappe.clear_document_cache("Account", account_name)
 	return {"converted": account_name}
+
+
+@frappe.whitelist()
+def migrate_bill_bank_to_clearing(je_names_json, clearing_account, bank_accounts_json):
+	"""把 Bill Discount/Payment 与 matched 银行流水 JE 的 "银行侧" 全部迁到票据清算中科目.
+
+	背景: 历史数据双源(acceptance 与 bank flow xlsx) 对同一笔现金运动各记了一次,
+	导致银行科目双重计账. 本函数通过 SQL 做标准的"票据清算"会计处理重构:
+
+	1. 把 voucher_type in (Bill Discount, Bill Payment) 且 account 落在 bank_accounts
+	   的 GL Entry, account 改成 clearing_account
+	2. 对于匹配到的银行流水 Journal Entry (je_names), 把它们除了银行行以外的那一行
+	   (即 counter-side, 一般是其他应付款/应收账款等) 的 account 也改成 clearing_account
+	3. 同步 tabJournal Entry Account 子表
+
+	两边都打进 clearing 后, clearing 借贷相抵接近零, 残余即未匹配的历史债项.
+
+	参数:
+		je_names_json:       JSON 数组, 待改写的银行流水 JE name 列表
+		clearing_account:    清算账户全名 (如 "11215 - 票据清算中 - 台州京泰")
+		bank_accounts_json:  JSON 数组, 银行子账户全名列表, 用于筛选 counter-side
+	"""
+	if "System Manager" not in frappe.get_roles(frappe.session.user) and frappe.session.user != "Administrator":
+		frappe.throw(_("Only System Manager or Administrator can run this"))
+
+	je_names = frappe.parse_json(je_names_json) if isinstance(je_names_json, str) else je_names_json
+	bank_accounts = frappe.parse_json(bank_accounts_json) if isinstance(bank_accounts_json, str) else bank_accounts_json
+
+	# 校验 clearing_account 存在且非 group
+	target = frappe.db.get_value("Account", clearing_account, ["is_group"], as_dict=True)
+	if not target:
+		frappe.throw(f"Clearing account {clearing_account} not found")
+	if target.is_group:
+		frappe.throw(f"Clearing account {clearing_account} is a group")
+
+	counts = {}
+
+	# Step 1: acceptance 侧 (Bill Discount/Payment 产生的 GL, 当前在银行子账户)
+	bank_placeholders = ",".join(["%s"] * len(bank_accounts))
+	r = frappe.db.sql(
+		f"""
+		UPDATE `tabGL Entry`
+		SET account=%s
+		WHERE voucher_type IN ('Bill Discount', 'Bill Payment')
+		  AND is_cancelled=0
+		  AND account IN ({bank_placeholders})
+		""",
+		(clearing_account, *bank_accounts),
+	)
+	counts["acceptance_gl_moved"] = frappe.db.sql("SELECT ROW_COUNT()")[0][0]
+
+	# Step 2: 银行流水 JE 的 counter-side
+	if je_names:
+		je_placeholders = ",".join(["%s"] * len(je_names))
+		bank_placeholders = ",".join(["%s"] * len(bank_accounts))
+
+		# 2a. tabGL Entry: 找每个 JE 里 account NOT IN bank_accounts 的那一行
+		frappe.db.sql(
+			f"""
+			UPDATE `tabGL Entry`
+			SET account=%s
+			WHERE voucher_type='Journal Entry'
+			  AND voucher_no IN ({je_placeholders})
+			  AND account NOT IN ({bank_placeholders})
+			  AND is_cancelled=0
+			""",
+			(clearing_account, *je_names, *bank_accounts),
+		)
+		counts["je_counter_gl_moved"] = frappe.db.sql("SELECT ROW_COUNT()")[0][0]
+
+		# 2b. tabJournal Entry Account 子表同步
+		frappe.db.sql(
+			f"""
+			UPDATE `tabJournal Entry Account`
+			SET account=%s
+			WHERE parent IN ({je_placeholders})
+			  AND account NOT IN ({bank_placeholders})
+			""",
+			(clearing_account, *je_names, *bank_accounts),
+		)
+		counts["je_counter_child_moved"] = frappe.db.sql("SELECT ROW_COUNT()")[0][0]
+
+		# 2c. 清 party_type/party 字段 - counter side 原本可能挂了 Customer/Supplier party,
+		#     改到清算账户后这些 party 字段应该清空 (clearing 不是 Receivable/Payable type)
+		frappe.db.sql(
+			f"""
+			UPDATE `tabGL Entry`
+			SET party_type=NULL, party=NULL
+			WHERE voucher_type='Journal Entry'
+			  AND voucher_no IN ({je_placeholders})
+			  AND account=%s
+			  AND is_cancelled=0
+			""",
+			(*je_names, clearing_account),
+		)
+		frappe.db.sql(
+			f"""
+			UPDATE `tabJournal Entry Account`
+			SET party_type=NULL, party=NULL
+			WHERE parent IN ({je_placeholders})
+			  AND account=%s
+			""",
+			(*je_names, clearing_account),
+		)
+
+	frappe.db.commit()
+
+	# 汇报 clearing 账户余额
+	bal = frappe.db.sql(
+		"SELECT SUM(debit) as dr, SUM(credit) as cr, SUM(debit - credit) as net FROM `tabGL Entry` WHERE account=%s AND is_cancelled=0",
+		(clearing_account,),
+		as_dict=True,
+	)[0]
+	counts["clearing_balance"] = {
+		"debit_total": float(bal.dr or 0),
+		"credit_total": float(bal.cr or 0),
+		"net_debit": float(bal.net or 0),
+	}
+	return counts
