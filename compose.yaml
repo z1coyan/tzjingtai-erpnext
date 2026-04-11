@@ -37,20 +37,12 @@ services:
         NODE_MIRROR: ${NODE_MIRROR:-}
         WKHTMLTOPDF_MIRROR: ${WKHTMLTOPDF_MIRROR:-https://github.com/wkhtmltopdf/packaging/releases/download}
         REGISTRY_MIRROR: ${REGISTRY_MIRROR:-}
+    # 唯一放开的 deploy-time 通道 —— 见 CLAUDE.md「app 安装完全由 configurator 自动完成」。
+    # 脚本负责：写 common_site_config、同步 sites-assets、flushall redis-cache、
+    # 自动 install-app。禁止改成在这里 inline 跑命令绕过它。
     entrypoint:
       - bash
-      - -c
-    command:
-      - >
-        ls -1 apps > sites/apps.txt;
-        rm -rf sites/assets && cp -r /home/frappe/frappe-bench/sites-assets sites/assets;
-        bench set-config -g db_host $$DB_HOST;
-        bench set-config -gp db_port $$DB_PORT;
-        bench set-config -g redis_cache "redis://$$REDIS_CACHE";
-        bench set-config -g redis_queue "redis://$$REDIS_QUEUE";
-        bench set-config -g redis_socketio "redis://$$REDIS_QUEUE";
-        bench set-config -gp socketio_port $$SOCKETIO_PORT;
-        bench set-config -g chromium_path /usr/bin/chromium-headless-shell;
+      - /usr/local/bin/configurator-init.sh
     environment:
       DB_HOST: db
       DB_PORT: "3306"
