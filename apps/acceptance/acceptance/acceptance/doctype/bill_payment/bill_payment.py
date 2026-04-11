@@ -10,6 +10,9 @@ from erpnext.controllers.accounts_controller import AccountsController
 
 class BillPayment(AccountsController):
 	def validate(self):
+		# AccountsController 需要 posting_date 来做 fiscal year 判断; 这里复用 payment_date
+		if not self.posting_date:
+			self.posting_date = self.payment_date
 		self.validate_bill_status()
 		self.validate_payment_amount()
 
