@@ -1044,7 +1044,7 @@ def _resolve_restore_target_from_bank_against(bank_against, title=None, pay_to_r
 	customer_row = frappe.db.get_value(
 		"Customer",
 		bank_against,
-		["name", "customer_name", "default_receivable_account"],
+		["name", "customer_name"],
 		as_dict=True,
 	)
 	if customer_row:
@@ -1053,9 +1053,7 @@ def _resolve_restore_target_from_bank_against(bank_against, title=None, pay_to_r
 				f"Customer {customer_row.name} 名称不匹配: "
 				f"counterparty={counterparty}, customer_name={customer_row.customer_name}"
 			)
-		target_account = customer_row.default_receivable_account or frappe.db.get_value(
-			"Company", _COMPANY, "default_receivable_account"
-		)
+		target_account = frappe.db.get_value("Company", _COMPANY, "default_receivable_account")
 		if not target_account:
 			return None, f"Customer {customer_row.name} 没有可用应收科目"
 		target_account_row = frappe.db.get_value("Account", target_account, ["name", "is_group"], as_dict=True)
@@ -1072,7 +1070,7 @@ def _resolve_restore_target_from_bank_against(bank_against, title=None, pay_to_r
 	supplier_row = frappe.db.get_value(
 		"Supplier",
 		bank_against,
-		["name", "supplier_name", "default_payable_account"],
+		["name", "supplier_name"],
 		as_dict=True,
 	)
 	if supplier_row:
@@ -1081,11 +1079,7 @@ def _resolve_restore_target_from_bank_against(bank_against, title=None, pay_to_r
 				f"Supplier {supplier_row.name} 名称不匹配: "
 				f"counterparty={counterparty}, supplier_name={supplier_row.supplier_name}"
 			)
-		target_account = (
-			supplier_row.default_payable_account
-			or frappe.db.get_value("Company", _COMPANY, "default_payable_account")
-			or _PAYABLE_SETTLEMENT
-		)
+		target_account = frappe.db.get_value("Company", _COMPANY, "default_payable_account") or _PAYABLE_SETTLEMENT
 		if not target_account:
 			return None, f"Supplier {supplier_row.name} 没有可用应付科目"
 		target_account_row = frappe.db.get_value("Account", target_account, ["name", "is_group"], as_dict=True)
