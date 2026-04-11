@@ -928,3 +928,146 @@ def delete_ningbo_bank_supplier():
 
 	frappe.db.commit()
 	return {"deleted": deleted, "cleared_ple": ple_cnt}
+
+
+# ---------------------------------------------------------------------------
+# 把存量 Bill Discount / Bill Payment 的"真实银行叶子账户"搬迁到票据清算中
+# ---------------------------------------------------------------------------
+#
+# 背景: 在引入 "贴现/兑付必须走 11215 票据清算中" 规则之前创建的单据(例如
+# 今天刚把宁波银行借壳供应商正规化出的 32 Bill Discount + 3 Bill Payment)
+# 仍然把 bank_account 写在 10022 京泰宁波 这样的真实银行叶子账户上, 会和
+# 未来银行流水导入规则产生不一致.
+#
+# 本工具扫描所有 docstatus=1 的 Bill Discount/Bill Payment, 找 bank_account
+# 指向 account_type='Bank' 的账户的那些, 把:
+#   1. 单据本身的 bank_account 字段改为 11215 票据清算中
+#   2. 对应 GL Entry 中 account 为该银行叶子 的条目改为 11215 票据清算中
+#   3. 被改动的 GL 条目上的 against_account 也同步刷新
+#
+# 注意: 这个工具只搬"acceptance 侧"产生的 GL, 不碰任何银行流水 JE. 跑完之后
+# 原来那些真实银行账户上的"贴现/兑付入账"会消失, 需要靠银行流水导入时重新把
+# 银行侧的到账条目生成出来(通常历史银行流水已经有了, 不需要额外动作).
+# 幂等: 第二次跑返回 moved=0.
+# ---------------------------------------------------------------------------
+
+
+@frappe.whitelist()
+def normalize_bill_settlement_to_clearing(dry_run=1):
+	"""把存量 Bill Discount / Bill Payment 从真实银行叶子账户搬到清算中.
+
+	参数:
+		dry_run: 默认 1 只打印计划, 传 0 才真改.
+	"""
+	_require_admin()
+	if isinstance(dry_run, str):
+		dry_run = dry_run.lower() not in ("0", "false", "no", "")
+
+	# 1. 找出 account_type='Bank' 的叶子账户清单
+	bank_accounts = [
+		r[0]
+		for r in frappe.db.sql(
+			"SELECT name FROM `tabAccount` WHERE account_type='Bank' AND is_group=0"
+		)
+	]
+	if not bank_accounts:
+		return {"dry_run": dry_run, "moved_docs": 0, "moved_gl": 0, "note": "no bank leaf accounts found"}
+
+	# 2. 找所有 bank_account 落在银行叶子上的已提交 Bill Discount / Bill Payment
+	plan = {"Bill Discount": [], "Bill Payment": []}
+	for dt in ("Bill Discount", "Bill Payment"):
+		rows = frappe.db.sql(
+			f"""
+			SELECT name, bank_account
+			FROM `tab{dt}`
+			WHERE docstatus=1 AND bank_account IN %(banks)s
+			ORDER BY name
+			""",
+			{"banks": tuple(bank_accounts)},
+			as_dict=True,
+		)
+		plan[dt] = rows
+
+	total_docs = sum(len(v) for v in plan.values())
+
+	if dry_run:
+		return {
+			"dry_run": True,
+			"bank_accounts_in_scope": bank_accounts,
+			"clearing_target": _CLEARING_ACCOUNT,
+			"Bill Discount_count": len(plan["Bill Discount"]),
+			"Bill Payment_count": len(plan["Bill Payment"]),
+			"total_docs": total_docs,
+			"sample": {
+				"Bill Discount": plan["Bill Discount"][:5],
+				"Bill Payment": plan["Bill Payment"][:5],
+			},
+		}
+
+	# ---------------- 真正执行 ----------------
+	moved_gl = 0
+	moved_docs_detail = {"Bill Discount": [], "Bill Payment": []}
+
+	for dt, rows in plan.items():
+		for r in rows:
+			doc_name = r["name"]
+			old_bank = r["bank_account"]
+
+			# 2a. 单据字段
+			frappe.db.sql(
+				f"UPDATE `tab{dt}` SET bank_account=%s WHERE name=%s",
+				(_CLEARING_ACCOUNT, doc_name),
+			)
+
+			# 2b. GL Entry account 字段 (Dr 银行侧 → Dr 清算中)
+			frappe.db.sql(
+				"""
+				UPDATE `tabGL Entry`
+				SET account=%s
+				WHERE voucher_type=%s
+				  AND voucher_no=%s
+				  AND account=%s
+				  AND is_cancelled=0
+				""",
+				(_CLEARING_ACCOUNT, dt, doc_name, old_bank),
+			)
+			rc = frappe.db.sql("SELECT ROW_COUNT()")[0][0]
+			moved_gl += rc
+
+			# 2c. against_account: 原来 against 是银行的条目(也就是 Cr 应收票据侧)
+			#     现在 against 改成清算中, 让 GL 双向可读
+			frappe.db.sql(
+				"""
+				UPDATE `tabGL Entry`
+				SET against=REPLACE(against, %s, %s)
+				WHERE voucher_type=%s
+				  AND voucher_no=%s
+				  AND is_cancelled=0
+				  AND against LIKE CONCAT('%%', %s, '%%')
+				""",
+				(old_bank, _CLEARING_ACCOUNT, dt, doc_name, old_bank),
+			)
+
+			frappe.clear_document_cache(dt, doc_name)
+			moved_docs_detail[dt].append({"name": doc_name, "from": old_bank, "to": _CLEARING_ACCOUNT})
+
+	frappe.db.commit()
+
+	# 3. 复查: 应该无残留
+	remaining = frappe.db.sql(
+		"""
+		SELECT COUNT(*) FROM `tabGL Entry`
+		WHERE voucher_type IN ('Bill Discount', 'Bill Payment')
+		  AND account IN %(banks)s
+		  AND is_cancelled=0
+		""",
+		{"banks": tuple(bank_accounts)},
+	)[0][0]
+
+	return {
+		"dry_run": False,
+		"moved_docs": total_docs,
+		"moved_gl_rows": moved_gl,
+		"remaining_on_bank_leaf": remaining,
+		"detail": moved_docs_detail,
+	}
