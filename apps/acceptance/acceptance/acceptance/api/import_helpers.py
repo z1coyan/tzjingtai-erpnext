@@ -703,6 +703,10 @@ def _pair_clearing_rows(dr_rows, cr_rows):
 def inspect_clearing_imbalance_by_bill_no(year=None, output_csv=True):
 	"""按票号精确诊断 11215 清算中账户的不平衡来源.
 
+	HOTFIX 2026-04-11 一次性诊断工具 — 清算中账户修数专用。
+	仅供 ad-hoc 调用，不得接入自动化流程。审计台账见
+	tmp/clearing_diagnosis_20260411/audit_trail.json。计划 2026-07-01 后评估删除。
+
 	规则:
 	1. Dr 侧仅看 Bill Discount / Bill Payment 在 11215 上的借方行，并回溯到 BoE.bill_no
 	2. Cr 侧仅看 Journal Entry 在 11215 上的贷方行，并从 JE.user_remark / GL.remarks 提取 30 位票号
@@ -912,7 +916,11 @@ def inspect_clearing_imbalance_by_bill_no(year=None, output_csv=True):
 def annotate_clearing_bank_journal_bill_no(annotations_json, dry_run=1):
 	"""给已存在的银行流水 JE 补充完整票号到 user_remark.
 
-	仅更新文字说明，不改金额、不改会计分录。适用于历史导入时 remarks 里只有
+	HOTFIX 2026-04-11 一次性修数工具 — 清算中账户修数专用。
+	仅更新文字说明，不改金额、不改会计分录。不得接入自动化流程，
+	审计台账见 tmp/clearing_diagnosis_20260411/audit_trail.json。计划 2026-07-01 后评估删除。
+
+	适用于历史导入时 remarks 里只有
 	20 位票号前缀、导致精确诊断工具抓不到 bill_no 的场景。
 
 	annotations_json: JSON 数组，每项至少包含:
@@ -1099,6 +1107,12 @@ def _resolve_restore_target_from_bank_against(bank_against, title=None, pay_to_r
 @frappe.whitelist()
 def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_run=1):
 	"""把误迁移到 11215 的银行流水 JE 对方科目恢复回原始 against_account 所指向的对象.
+
+	HOTFIX 2026-04-11 一次性修数工具 — 清算中账户修数专用。
+	该函数会直接修改已 submit 的 Journal Entry Account 与 GL Entry 的 account/party 字段，
+	**绕过了 submittable 不可篡改原则**，仅允许财务主管授权下 ad-hoc 调用，严禁接入自动化流程。
+	每次调用必须先 dry_run=1 复核，apply 后留下 tmp/clearing_diagnosis_20260411/*_apply.json 记录。
+	审计台账见 tmp/clearing_diagnosis_20260411/audit_trail.json。计划 2026-07-01 后评估删除。
 
 	使用场景:
 	- 历史 `migrate_bill_bank_to_clearing` 把普通银行回款/杂项入账一并迁进了 11215
