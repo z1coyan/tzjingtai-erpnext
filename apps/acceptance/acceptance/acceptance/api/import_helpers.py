@@ -1094,6 +1094,47 @@ def normalize_bill_settlement_to_clearing(dry_run=1):
 
 
 @frappe.whitelist()
+def purge_empty_mirror_journal_entries():
+	"""清掉上一轮 bug 版本创建的零金额 MIRROR JE (没有 GL, 直接 SQL 删).
+
+	仅清理 cheque_no LIKE 'MIRROR-%' AND total_debit=0 AND docstatus=1 的 JE.
+	幂等.
+	"""
+	_require_admin()
+	rows = frappe.db.sql(
+		"""
+		SELECT name FROM `tabJournal Entry`
+		WHERE cheque_no LIKE 'MIRROR-%%'
+		  AND total_debit=0
+		  AND docstatus=1
+		"""
+	)
+	names = [r[0] for r in rows]
+	if not names:
+		return {"purged": 0}
+	placeholders = ",".join(["%s"] * len(names))
+	frappe.db.sql(
+		f"DELETE FROM `tabJournal Entry Account` WHERE parent IN ({placeholders})",
+		tuple(names),
+	)
+	frappe.db.sql(
+		f"DELETE FROM `tabJournal Entry` WHERE name IN ({placeholders})",
+		tuple(names),
+	)
+	# 以防万一有残影 GL/PLE (这批肯定没有, 但防御一下)
+	frappe.db.sql(
+		f"DELETE FROM `tabGL Entry` WHERE voucher_type='Journal Entry' AND voucher_no IN ({placeholders})",
+		tuple(names),
+	)
+	frappe.db.sql(
+		f"DELETE FROM `tabPayment Ledger Entry` WHERE voucher_type='Journal Entry' AND voucher_no IN ({placeholders})",
+		tuple(names),
+	)
+	frappe.db.commit()
+	return {"purged": len(names), "names": names}
+
+
+@frappe.whitelist()
 def create_bank_mirror_for_migrated_bills(
 	dry_run=1,
 	bank_account="10022 - 京泰宁波 - 台州京泰",
@@ -1211,12 +1252,18 @@ def create_bank_mirror_for_migrated_bills(
 			f"老系统借壳供应商模式下原始 JE 已被删除, 此 JE 补回 10022 的"
 			f"到账记录并同时冲减 11215 清算中"
 		)
+		# 同时填充 debit_in_account_currency 和 debit (否则如果 validate 被跳过,
+		# 币种转换就不会发生, JE 会以零金额提交, GL 生成被跳过).
 		je.append(
 			"accounts",
 			{
 				"account": bank_account,
 				"debit_in_account_currency": p["amount"],
+				"debit": p["amount"],
 				"credit_in_account_currency": 0,
+				"credit": 0,
+				"exchange_rate": 1,
+				"account_currency": "CNY",
 				"cost_center": cost_center,
 			},
 		)
@@ -1225,12 +1272,17 @@ def create_bank_mirror_for_migrated_bills(
 			{
 				"account": _CLEARING_ACCOUNT,
 				"debit_in_account_currency": 0,
+				"debit": 0,
 				"credit_in_account_currency": p["amount"],
+				"credit": p["amount"],
+				"exchange_rate": 1,
+				"account_currency": "CNY",
 				"cost_center": cost_center,
 			},
 		)
-		# 跳过 AccountsController 财年等一堆校验 (历史日期需要)
-		je.flags.ignore_validate = True
+		je.total_debit = p["amount"]
+		je.total_credit = p["amount"]
+		# 允许历史财年日期
 		je.flags.ignore_permissions = True
 		try:
 			je.insert(ignore_permissions=True)
