@@ -908,6 +908,107 @@ def inspect_clearing_imbalance_by_bill_no(year=None, output_csv=True):
 	return result
 
 
+@frappe.whitelist()
+def annotate_clearing_bank_journal_bill_no(annotations_json, dry_run=1):
+	"""给已存在的银行流水 JE 补充完整票号到 user_remark.
+
+	仅更新文字说明，不改金额、不改会计分录。适用于历史导入时 remarks 里只有
+	20 位票号前缀、导致精确诊断工具抓不到 bill_no 的场景。
+
+	annotations_json: JSON 数组，每项至少包含:
+	- je: Journal Entry.name
+	- bill_no: 30 位票号
+	可选:
+	- source: 说明来源，如 "prefix-match"
+	"""
+	_require_admin()
+	if isinstance(dry_run, str):
+		dry_run = dry_run.lower() not in ("0", "false", "no", "")
+
+	annotations = frappe.parse_json(annotations_json) if isinstance(annotations_json, str) else annotations_json
+	if not annotations:
+		return {"dry_run": dry_run, "updated": 0, "skipped": 0, "plan": []}
+
+	plan = []
+	seen = set()
+	for item in annotations:
+		je_name = (item.get("je") or item.get("je_name") or "").strip()
+		bill_no = (item.get("bill_no") or "").strip()
+		source = (item.get("source") or "manual").strip()
+		if not je_name or not bill_no:
+			continue
+		key = (je_name, bill_no)
+		if key in seen:
+			continue
+		seen.add(key)
+
+		row = frappe.db.get_value(
+			"Journal Entry",
+			je_name,
+			["name", "docstatus", "user_remark"],
+			as_dict=True,
+		)
+		if not row:
+			plan.append({"je": je_name, "bill_no": bill_no, "source": source, "action": "skip", "reason": "JE not found"})
+			continue
+		if row.docstatus != 1:
+			plan.append({"je": je_name, "bill_no": bill_no, "source": source, "action": "skip", "reason": f"docstatus={row.docstatus}"})
+			continue
+
+		current = (row.user_remark or "").strip()
+		existing_bill_no = _extract_bill_no(current)
+		if existing_bill_no == bill_no:
+			plan.append({"je": je_name, "bill_no": bill_no, "source": source, "action": "skip", "reason": "already annotated"})
+			continue
+		if existing_bill_no and existing_bill_no != bill_no:
+			plan.append({
+				"je": je_name,
+				"bill_no": bill_no,
+				"source": source,
+				"action": "skip",
+				"reason": f"user_remark already has different bill_no={existing_bill_no}",
+			})
+			continue
+
+		note = f"自动补标票号：{bill_no}"
+		new_remark = f"{current} | {note}" if current else note
+		plan.append({
+			"je": je_name,
+			"bill_no": bill_no,
+			"source": source,
+			"action": "update",
+			"from": current,
+			"to": new_remark,
+		})
+
+	if dry_run:
+		return {
+			"dry_run": True,
+			"update_count": len([x for x in plan if x["action"] == "update"]),
+			"skip_count": len([x for x in plan if x["action"] == "skip"]),
+			"plan": plan,
+		}
+
+	updated = 0
+	for item in plan:
+		if item["action"] != "update":
+			continue
+		frappe.db.sql(
+			"UPDATE `tabJournal Entry` SET user_remark=%s WHERE name=%s",
+			(item["to"], item["je"]),
+		)
+		frappe.clear_document_cache("Journal Entry", item["je"])
+		updated += 1
+
+	frappe.db.commit()
+	return {
+		"dry_run": False,
+		"updated": updated,
+		"skipped": len([x for x in plan if x["action"] == "skip"]),
+		"plan": plan,
+	}
+
+
 def _allocate_proportional(boes, total_actual, total_interest):
 	"""按 face 比例把 total_actual 和 total_interest 分摊到每个 BoE.
 
