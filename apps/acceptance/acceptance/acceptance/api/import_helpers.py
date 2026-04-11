@@ -363,3 +363,136 @@ def migrate_bill_bank_to_clearing(je_names_json, clearing_account, bank_accounts
 		"net_debit": float(bal.net or 0),
 	}
 	return counts
+
+
+@frappe.whitelist()
+def purge_bank_account(account_name, delete_account=False):
+	"""清空某银行账户上的所有 JE/GL/PLE, 可选删除账户本身.
+
+	用于期初迭代中整体丢弃某个银行的所有数据, 重新开始.
+
+	步骤:
+	1. 找到所有在该 account 上留有 GL Entry 的 Journal Entry (voucher_no)
+	2. SQL 删除:
+	   - tabGL Entry (所有该 voucher_no 的条目)
+	   - tabPayment Ledger Entry (voucher_type=Journal Entry, voucher_no in list)
+	   - tabJournal Entry Account (parent in list)
+	   - tabJournal Entry (name in list)
+	3. 还要删该 account 自己残留的 GL Entry (例如 Bill Discount/Payment 直接生成的)
+	4. 若 delete_account=True, 删除 tabAccount 记录 (前提: 叶子账户, 已无 GL)
+
+	delete_account: 字符串 "1"/"true" 或 bool, 默认不删
+	"""
+	if "System Manager" not in frappe.get_roles(frappe.session.user) and frappe.session.user != "Administrator":
+		frappe.throw(_("Only System Manager or Administrator can run this"))
+
+	if isinstance(delete_account, str):
+		delete_account = delete_account.lower() in ("1", "true", "yes")
+
+	# 1. 找 JE 列表
+	je_rows = frappe.db.sql(
+		"SELECT DISTINCT voucher_no FROM `tabGL Entry` WHERE account=%s AND voucher_type='Journal Entry'",
+		(account_name,),
+	)
+	je_names = [r[0] for r in je_rows]
+
+	counts = {"account": account_name, "journal_entries_found": len(je_names)}
+
+	if je_names:
+		placeholders = ",".join(["%s"] * len(je_names))
+		# GL Entry (全部 voucher_no 相关)
+		frappe.db.sql(
+			f"DELETE FROM `tabGL Entry` WHERE voucher_type='Journal Entry' AND voucher_no IN ({placeholders})",
+			tuple(je_names),
+		)
+		# Payment Ledger Entry
+		frappe.db.sql(
+			f"DELETE FROM `tabPayment Ledger Entry` WHERE voucher_type='Journal Entry' AND voucher_no IN ({placeholders})",
+			tuple(je_names),
+		)
+		# JE Account 子表
+		frappe.db.sql(
+			f"DELETE FROM `tabJournal Entry Account` WHERE parent IN ({placeholders})",
+			tuple(je_names),
+		)
+		# JE 本体
+		frappe.db.sql(
+			f"DELETE FROM `tabJournal Entry` WHERE name IN ({placeholders})",
+			tuple(je_names),
+		)
+		counts["deleted_je"] = len(je_names)
+
+	# 2. 账户自身残留 GL (例如 Bill Discount/Payment 直接生成的, voucher_type != Journal Entry)
+	r = frappe.db.sql(
+		"DELETE FROM `tabGL Entry` WHERE account=%s",
+		(account_name,),
+	)
+	counts["deleted_residual_gl"] = frappe.db.sql("SELECT ROW_COUNT()")[0][0]
+
+	# 3. 删除账户本身
+	if delete_account:
+		remaining = frappe.db.sql(
+			"SELECT COUNT(*) FROM `tabGL Entry` WHERE account=%s",
+			(account_name,),
+		)[0][0]
+		if remaining > 0:
+			frappe.throw(f"Account {account_name} still has {remaining} GL entries after purge")
+		frappe.db.sql("DELETE FROM `tabAccount` WHERE name=%s", (account_name,))
+		counts["account_deleted"] = True
+		frappe.clear_document_cache("Account", account_name)
+
+	frappe.db.commit()
+	return counts
+
+
+@frappe.whitelist()
+def purge_cancelled_and_draft_je(cheque_no_like=None):
+	"""清理 docstatus=2 (cancelled) 和 docstatus=0 (draft) 的 Journal Entry.
+
+	可选 cheque_no_like 做前缀过滤 (比如 "F(B)-%"), 只清理导入相关的.
+	不传则清全部 (慎用).
+
+	会删:
+	- tabJournal Entry (name in list)
+	- tabJournal Entry Account (parent in list)
+	- tabGL Entry (is_cancelled=1 且 voucher_no in list) - cancel 后留下的影子条目
+	- tabPayment Ledger Entry 同上
+	"""
+	if "System Manager" not in frappe.get_roles(frappe.session.user) and frappe.session.user != "Administrator":
+		frappe.throw(_("Only System Manager or Administrator can run this"))
+
+	if cheque_no_like:
+		rows = frappe.db.sql(
+			"SELECT name FROM `tabJournal Entry` WHERE docstatus IN (0, 2) AND cheque_no LIKE %s",
+			(cheque_no_like,),
+		)
+	else:
+		rows = frappe.db.sql(
+			"SELECT name FROM `tabJournal Entry` WHERE docstatus IN (0, 2)",
+		)
+	je_names = [r[0] for r in rows]
+
+	counts = {"found": len(je_names)}
+
+	if je_names:
+		placeholders = ",".join(["%s"] * len(je_names))
+		frappe.db.sql(
+			f"DELETE FROM `tabGL Entry` WHERE voucher_type='Journal Entry' AND voucher_no IN ({placeholders})",
+			tuple(je_names),
+		)
+		frappe.db.sql(
+			f"DELETE FROM `tabPayment Ledger Entry` WHERE voucher_type='Journal Entry' AND voucher_no IN ({placeholders})",
+			tuple(je_names),
+		)
+		frappe.db.sql(
+			f"DELETE FROM `tabJournal Entry Account` WHERE parent IN ({placeholders})",
+			tuple(je_names),
+		)
+		frappe.db.sql(
+			f"DELETE FROM `tabJournal Entry` WHERE name IN ({placeholders})",
+			tuple(je_names),
+		)
+		counts["deleted"] = len(je_names)
+
+	frappe.db.commit()
+	return counts
