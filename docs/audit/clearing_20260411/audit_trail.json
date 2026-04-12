@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-04-12T22:56:27",
+  "generated_at": "2026-04-12T23:07:21",
   "event_date": "2026-04-11",
   "executor": "yanzhihao (via whitelisted API, token e70ec230a0b012c)",
   "scene": "清算中科目 11215 历史数据修数:补票号、处理重复贴现、贴现差额、回滚误迁入清算中的普通银行流水 JE、反向中和孤立 Bill Payment",
@@ -3338,6 +3338,62 @@
           "old_date": "2025-09-16",
           "new_date": "2025-11-11",
           "interest_gl_action": "inserted"
+        }
+      ]
+    },
+    {
+      "op_id": "NB-E3",
+      "type": "fix_discount_interest_split",
+      "year": "2025-2026",
+      "scene": "宁波银行贴现利率修正(DISC-00256 组 3 笔):整票 20 万分 3 子区间贴现,利息 475.56 按面额比例分摊",
+      "apply_file": "disc256_apply.json",
+      "method": "fix_bill_discount_from_bank_export",
+      "risk": "高 — 直接改已 submit Bill Discount + GL Entry / 新增利息 GL",
+      "status": "ok",
+      "count": 3,
+      "total_amount": 200000.0,
+      "target_jes": [
+        {
+          "je": "DISC-00255",
+          "amount": 3141.54,
+          "bill_no": "530549103001520250826001515259",
+          "old_rate": 0.0001,
+          "new_rate": 0.8,
+          "old_interest": 0.0,
+          "new_interest": 7.47,
+          "old_net": 3141.54,
+          "new_net": 3134.07,
+          "old_date": "2025-10-13",
+          "new_date": "2025-11-11",
+          "interest_gl_action": "inserted"
+        },
+        {
+          "je": "DISC-00257",
+          "amount": 38200.0,
+          "bill_no": "530549103001520250826001515259",
+          "old_rate": 0.0001,
+          "new_rate": 0.8,
+          "old_interest": 0.01,
+          "new_interest": 90.83,
+          "old_net": 38199.99,
+          "new_net": 38109.17,
+          "old_date": "2025-10-13",
+          "new_date": "2025-11-11",
+          "interest_gl_action": "updated"
+        },
+        {
+          "je": "DISC-00256",
+          "amount": 158658.46,
+          "bill_no": "530549103001520250826001515259",
+          "old_rate": 0.0001,
+          "new_rate": 0.8,
+          "old_interest": 0.06,
+          "new_interest": 377.26,
+          "old_net": 158658.4,
+          "new_net": 158281.2,
+          "old_date": "2025-10-13",
+          "new_date": "2025-11-11",
+          "interest_gl_action": "updated"
         }
       ]
     }

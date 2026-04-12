@@ -1,7 +1,7 @@
 # 清算中科目 11215 修数审计报告
 
 - 事件日期: **2026-04-11**
-- 生成时间: 2026-04-12T22:56:27
+- 生成时间: 2026-04-12T23:07:21
 - 执行人: yanzhihao (via whitelisted API, token e70ec230a0b012c)
 - 生产站点: https://erpnext.tzjingtai.com
 - 涉及科目: 11215 - 票据清算中 - 台州京泰
@@ -39,6 +39,7 @@
 | 2025-B2 | 2025 | create_gap_je | 44 | 8,541.56 | 中 — 新建 submit JE | 贴现净额差 JE 第二轮(44 笔 DISCDIFF-2025-*),配合 2025-C2 的 redirect 补精度差 |
 | NB-E1 | 2025-2026 | fix_discount_interest | 58 | 5,622,413.84 | 高 — 直接改已 submit Bill Discount 字段 + GL Entry 金额,绕过 submittable 原则 | 宁波银行贴现利率修正第 1 轮(58 笔):利率从 0.0001 占位值修正为真实利率,同步更新利息/实付/日期/GL |
 | NB-E2 | 2025-2026 | fix_discount_interest_insert_gl | 19 | 136,193.14 | 高 — 直接改已 submit Bill Discount + 新增 GL Entry,绕过 submittable 原则 | 宁波银行贴现利率修正第 2 轮(19 笔):修正利率/利息/实付 + 新增缺失的利息 GL Entry |
+| NB-E3 | 2025-2026 | fix_discount_interest_split | 3 | 200,000.0 | 高 — 直接改已 submit Bill Discount + GL Entry / 新增利息 GL | 宁波银行贴现利率修正(DISC-00256 组 3 笔):整票 20 万分 3 子区间贴现,利息 475.56 按面额比例分摊 |
 
 ## 每次操作详情
 
@@ -569,6 +570,21 @@
   - `DISC-00258` 金额 5404.0 — 
   - `DISC-00237` 金额 4050.0 — 
   - `DISC-00249` 金额 5000.0 — 
+
+### NB-E3 — fix_discount_interest_split
+
+- **年度**: 2025-2026
+- **场景**: 宁波银行贴现利率修正(DISC-00256 组 3 笔):整票 20 万分 3 子区间贴现,利息 475.56 按面额比例分摊
+- **方法**: `fix_bill_discount_from_bank_export`
+- **风险**: 高 — 直接改已 submit Bill Discount + GL Entry / 新增利息 GL
+- **apply 文件**: `disc256_apply.json`
+- **状态**: ok
+- **影响笔数**: 3
+- **金额合计**: 200,000.0
+- **受影响 JE 列表**:
+  - `DISC-00255` 金额 3141.54 — 
+  - `DISC-00257` 金额 38200.0 — 
+  - `DISC-00256` 金额 158658.46 — 
 
 ## 遗留问题
 
