@@ -2279,7 +2279,7 @@ def fix_bill_discount_from_bank_export(corrections_json, dry_run=1):
 	dry_run = _parse_flag(dry_run, default=True)
 
 	if isinstance(corrections_json, str):
-		corrections = json.loads(corrections_json)
+		corrections = frappe.parse_json(corrections_json)
 	else:
 		corrections = corrections_json
 
