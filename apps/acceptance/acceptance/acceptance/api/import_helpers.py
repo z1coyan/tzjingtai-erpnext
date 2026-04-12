@@ -700,6 +700,54 @@ def _pair_clearing_rows(dr_rows, cr_rows):
 	return matched, dr_unmatched, cr_unmatched
 
 
+_GROUP_MATCH_TOLERANCE = 0.02
+
+
+def _group_match_clearing_rows(dr_unmatched, cr_unmatched):
+	"""对逐笔配不上的残余行按 bill_no 分组,组内 DR ≈ CR 则整组视为 group_matched."""
+	dr_groups = defaultdict(list)
+	cr_groups = defaultdict(list)
+	for row in dr_unmatched:
+		dr_groups[row["bill_no"]].append(row)
+	for row in cr_unmatched:
+		cr_groups[row["bill_no"]].append(row)
+
+	all_bill_nos = set(dr_groups.keys()) | set(cr_groups.keys())
+
+	group_matched_bills = []
+	remaining_dr = []
+	remaining_cr = []
+
+	for bn in all_bill_nos:
+		dr_list = dr_groups.get(bn, [])
+		cr_list = cr_groups.get(bn, [])
+		dr_total = sum(float(r["amount"]) for r in dr_list)
+		cr_total = sum(float(r["amount"]) for r in cr_list)
+
+		if dr_list and cr_list and abs(dr_total - cr_total) <= _GROUP_MATCH_TOLERANCE:
+			group_matched_bills.append({
+				"bill_no": bn,
+				"dr_count": len(dr_list),
+				"cr_count": len(cr_list),
+				"amount": round(dr_total, 2),
+			})
+		else:
+			remaining_dr.extend(dr_list)
+			remaining_cr.extend(cr_list)
+
+	remaining_dr.sort(key=lambda d: (d["posting_date"], d["amount"]))
+	remaining_cr.sort(key=lambda d: (d["posting_date"], d["amount"]))
+
+	info = {
+		"bill_count": len(group_matched_bills),
+		"dr_rows": sum(g["dr_count"] for g in group_matched_bills),
+		"cr_rows": sum(g["cr_count"] for g in group_matched_bills),
+		"amount": round(sum(g["amount"] for g in group_matched_bills), 2),
+		"bills": group_matched_bills,
+	}
+	return remaining_dr, remaining_cr, info
+
+
 @frappe.whitelist()
 def inspect_clearing_imbalance_by_bill_no(year=None, output_csv=True):
 	"""按票号精确诊断 11215 清算中账户的不平衡来源.
@@ -849,6 +897,12 @@ def inspect_clearing_imbalance_by_bill_no(year=None, output_csv=True):
 
 	matched_rows, dr_unmatched_items, cr_unmatched_items = _pair_clearing_rows(dr_items, cr_items)
 
+	# ── 第二轮:票号组级配对 ──
+	# 逐笔配不上但同票号组内 DR 合计 ≈ CR 合计 的,整组视为 group_matched
+	dr_unmatched_items, cr_unmatched_items, group_matched_info = _group_match_clearing_rows(
+		dr_unmatched_items, cr_unmatched_items,
+	)
+
 	dr_unmatched_csv_rows = [
 		{
 			"票号": row["bill_no"],
@@ -878,6 +932,10 @@ def inspect_clearing_imbalance_by_bill_no(year=None, output_csv=True):
 		"cr_rows_in_scope": len(cr_items),
 		"matched_pairs": len(matched_rows),
 		"matched_amount": round(sum(row["金额"] for row in matched_rows), 2),
+		"group_matched_bill_count": group_matched_info["bill_count"],
+		"group_matched_dr_rows": group_matched_info["dr_rows"],
+		"group_matched_cr_rows": group_matched_info["cr_rows"],
+		"group_matched_amount": group_matched_info["amount"],
 		"dr_unmatched_count": len(dr_unmatched_csv_rows),
 		"dr_unmatched_amount": round(sum(row["金额"] for row in dr_unmatched_csv_rows), 2),
 		"cr_unmatched_count": len(cr_unmatched_csv_rows),
