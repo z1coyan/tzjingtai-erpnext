@@ -2248,3 +2248,200 @@ def redirect_discount_bank_journal_counter_to_clearing(plan_json, dry_run=1):
 		"updated": updated,
 		"skipped": skipped,
 	}
+
+
+# ---------------------------------------------------------------------------
+# Bill Discount 利率/利息/实付修正 (宁波银行导出对账)
+# ---------------------------------------------------------------------------
+
+@frappe.whitelist()
+def fix_bill_discount_from_bank_export(corrections_json, dry_run=1):
+	"""用银行导出的真实利率/利息/实付金额修正已提交 Bill Discount 及对应 GL Entry.
+
+	HOTFIX 2026-04-12 一次性修数工具 — 宁波银行贴现对账修正专用。
+	该函数会直接修改已 submit 的 Bill Discount 字段与 GL Entry 金额，
+	**绕过了 submittable 不可篡改原则**，仅允许财务主管授权下 ad-hoc 调用。
+	每次调用必须先 dry_run=1 复核，apply 后结果需纳入审计台账。
+	计划 2026-07-01 后评估删除。
+
+	仅处理面额一致(差 < 1 元)的 Bill Discount。面额不一致的会跳过并报告。
+
+	corrections_json: JSON 数组，每项:
+	- disc_name: Bill Discount.name (如 DISC-00239)
+	- bill_no: 票据号码(校验用)
+	- rate: 真实年化利率百分比值(如 0.8 代表 0.8%)
+	- interest: 真实贴现利息(元)
+	- net_amount: 真实贴现实付金额(元)
+	- discount_date: 真实交易成功日期 (YYYY-MM-DD)
+	"""
+	_require_admin()
+	dry_run = _parse_flag(dry_run, default=True)
+
+	if isinstance(corrections_json, str):
+		corrections = json.loads(corrections_json)
+	else:
+		corrections = corrections_json
+
+	plan = []
+	updated = []
+	skipped = []
+
+	for item in corrections:
+		disc_name = item.get("disc_name")
+		bill_no = item.get("bill_no", "")
+		new_rate = float(item.get("rate", 0))
+		new_interest = float(item.get("interest", 0))
+		new_net = float(item.get("net_amount", 0))
+		new_date = item.get("discount_date", "")
+
+		if not disc_name:
+			skipped.append({"disc_name": disc_name, "reason": "missing disc_name"})
+			continue
+
+		disc = frappe.db.get_value(
+			"Bill Discount", disc_name,
+			["name", "bill_no", "discount_amount", "discount_rate",
+			 "discount_interest", "actual_amount", "discount_date", "docstatus"],
+			as_dict=True,
+		)
+		if not disc:
+			skipped.append({"disc_name": disc_name, "reason": "not found"})
+			continue
+		if disc.docstatus != 1:
+			skipped.append({"disc_name": disc_name, "reason": f"docstatus={disc.docstatus}, expected 1"})
+			continue
+		if bill_no and disc.bill_no != bill_no:
+			skipped.append({
+				"disc_name": disc_name,
+				"reason": f"bill_no mismatch: input={bill_no}, system={disc.bill_no}",
+			})
+			continue
+
+		face_amount = float(disc.discount_amount or 0)
+		expected_face = new_interest + new_net
+		if abs(face_amount - expected_face) > 1.0:
+			skipped.append({
+				"disc_name": disc_name,
+				"reason": f"面额不一致: system={face_amount}, excel_interest+net={expected_face}, diff={round(face_amount - expected_face, 2)}",
+			})
+			continue
+
+		old_interest = float(disc.discount_interest or 0)
+		old_net = float(disc.actual_amount or 0)
+		old_rate = float(disc.discount_rate or 0)
+		old_date = str(disc.discount_date or "")
+
+		entry = {
+			"disc_name": disc_name,
+			"bill_no": disc.bill_no,
+			"face_amount": face_amount,
+			"old_rate": old_rate, "new_rate": new_rate,
+			"old_interest": old_interest, "new_interest": new_interest,
+			"old_net": old_net, "new_net": new_net,
+			"old_date": old_date, "new_date": new_date,
+			"interest_diff": round(new_interest - old_interest, 2),
+			"net_diff": round(new_net - old_net, 2),
+		}
+
+		gl_clearing = frappe.db.sql(
+			"""
+			SELECT name, debit, credit, account
+			FROM `tabGL Entry`
+			WHERE voucher_type='Bill Discount'
+			  AND voucher_no=%s
+			  AND is_cancelled=0
+			  AND account=%s
+			  AND debit > 0
+			""",
+			(disc_name, _CLEARING_ACCOUNT),
+			as_dict=True,
+		)
+		gl_interest = frappe.db.sql(
+			"""
+			SELECT name, debit, credit, account
+			FROM `tabGL Entry`
+			WHERE voucher_type='Bill Discount'
+			  AND voucher_no=%s
+			  AND is_cancelled=0
+			  AND account LIKE %s
+			  AND debit > 0
+			""",
+			(disc_name, "%贴现利息%"),
+			as_dict=True,
+		)
+
+		if len(gl_clearing) != 1 or len(gl_interest) != 1:
+			skipped.append({
+				"disc_name": disc_name,
+				"reason": f"GL 结构异常: clearing_rows={len(gl_clearing)}, interest_rows={len(gl_interest)}",
+			})
+			continue
+
+		entry["gl_clearing_name"] = gl_clearing[0].name
+		entry["gl_clearing_old_debit"] = float(gl_clearing[0].debit)
+		entry["gl_interest_name"] = gl_interest[0].name
+		entry["gl_interest_old_debit"] = float(gl_interest[0].debit)
+
+		plan.append(entry)
+
+	if dry_run:
+		return {
+			"dry_run": True,
+			"update_count": len(plan),
+			"skip_count": len(skipped),
+			"total_interest_increase": round(sum(e["interest_diff"] for e in plan), 2),
+			"total_net_decrease": round(sum(e["net_diff"] for e in plan), 2),
+			"plan": plan,
+			"skipped": skipped,
+		}
+
+	for entry in plan:
+		frappe.db.set_value("Bill Discount", entry["disc_name"], {
+			"discount_rate": entry["new_rate"],
+			"discount_interest": entry["new_interest"],
+			"actual_amount": entry["new_net"],
+			"discount_date": entry["new_date"],
+			"posting_date": entry["new_date"],
+		}, update_modified=False)
+
+		frappe.db.sql(
+			"""
+			UPDATE `tabGL Entry`
+			SET debit=%s, debit_in_account_currency=%s
+			WHERE name=%s
+			""",
+			(entry["new_net"], entry["new_net"], entry["gl_clearing_name"]),
+		)
+		frappe.db.sql(
+			"""
+			UPDATE `tabGL Entry`
+			SET debit=%s, debit_in_account_currency=%s
+			WHERE name=%s
+			""",
+			(entry["new_interest"], entry["new_interest"], entry["gl_interest_name"]),
+		)
+
+		if entry["new_date"] and entry["new_date"] != entry["old_date"]:
+			frappe.db.sql(
+				"""
+				UPDATE `tabGL Entry`
+				SET posting_date=%s
+				WHERE voucher_type='Bill Discount'
+				  AND voucher_no=%s
+				  AND is_cancelled=0
+				""",
+				(entry["new_date"], entry["disc_name"]),
+			)
+
+		updated.append(entry)
+
+	frappe.db.commit()
+	return {
+		"dry_run": False,
+		"updated_count": len(updated),
+		"skipped_count": len(skipped),
+		"total_interest_increase": round(sum(e["interest_diff"] for e in updated), 2),
+		"total_net_decrease": round(sum(e["net_diff"] for e in updated), 2),
+		"updated": updated,
+		"skipped": skipped,
+	}
