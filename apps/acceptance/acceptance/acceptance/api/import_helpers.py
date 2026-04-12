@@ -1164,7 +1164,7 @@ def _resolve_restore_target_from_bank_against(bank_against, title=None, pay_to_r
 
 
 @frappe.whitelist()
-def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_run=1):
+def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_run=1, strip_annotation=0):
 	"""把误迁移到 11215 的银行流水 JE 对方科目恢复回原始 against_account 所指向的对象.
 
 	HOTFIX 2026-04-11 一次性修数工具 — 清算中账户修数专用。
@@ -1181,9 +1181,11 @@ def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_r
 	参数:
 	- je_names_json: JSON 数组，Journal Entry.name 列表
 	- dry_run: 默认 1，仅输出恢复计划
+	- strip_annotation: 默认 0，为 1 时先移除 user_remark 中的"自动补标票号"注解再执行恢复
 	"""
 	_require_admin()
 	dry_run = _parse_flag(dry_run, default=True)
+	strip_annotation = _parse_flag(strip_annotation, default=False)
 	je_names = frappe.parse_json(je_names_json) if isinstance(je_names_json, str) else je_names_json
 	je_names = [str(name).strip() for name in (je_names or []) if str(name or "").strip()]
 	if not je_names:
@@ -1191,6 +1193,7 @@ def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_r
 
 	plan = []
 	seen = set()
+	annotation_removals = []
 	for je_name in je_names:
 		if je_name in seen:
 			continue
@@ -1209,8 +1212,14 @@ def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_r
 			plan.append({"je": je_name, "action": "skip", "reason": f"docstatus={je.docstatus}"})
 			continue
 		if _extract_bill_no(je.user_remark):
-			plan.append({"je": je_name, "action": "skip", "reason": "user_remark 已带票号，不做恢复"})
-			continue
+			if strip_annotation:
+				import re
+				cleaned = re.sub(r"\s*\|\s*自动补标票号：\d+\s*$", "", je.user_remark or "").strip()
+				annotation_removals.append({"je": je_name, "from": je.user_remark, "to": cleaned})
+				je.user_remark = cleaned
+			else:
+				plan.append({"je": je_name, "action": "skip", "reason": "user_remark 已带票号，不做恢复"})
+				continue
 
 		child_rows = frappe.db.sql(
 			"""
@@ -1315,13 +1324,16 @@ def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_r
 		})
 
 	if dry_run:
-		return {
+		result = {
 			"dry_run": True,
 			"update_count": len([item for item in plan if item["action"] == "update"]),
 			"skip_count": len([item for item in plan if item["action"] == "skip"]),
 			"total_amount": round(sum(item.get("amount", 0) for item in plan if item["action"] == "update"), 2),
 			"plan": plan,
 		}
+		if annotation_removals:
+			result["annotation_removals"] = annotation_removals
+		return result
 
 	updated = []
 	skipped = []
@@ -1357,6 +1369,19 @@ def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_r
 			"reason": item["reason"],
 		})
 
+	for removal in annotation_removals:
+		je_name = removal["je"]
+		if any(u["je"] == je_name for u in updated):
+			frappe.db.sql(
+				"UPDATE `tabJournal Entry` SET user_remark=%s WHERE name=%s",
+				(removal["to"], je_name),
+			)
+			frappe.db.sql(
+				"UPDATE `tabGL Entry` SET remarks=%s WHERE voucher_type='Journal Entry' AND voucher_no=%s AND is_cancelled=0",
+				(removal["to"], je_name),
+			)
+			frappe.clear_document_cache("Journal Entry", je_name)
+
 	frappe.db.commit()
 	return {
 		"dry_run": False,
@@ -1365,6 +1390,7 @@ def restore_clearing_bank_journal_counter_from_bank_against(je_names_json, dry_r
 		"total_amount": round(sum(item["amount"] for item in updated), 2),
 		"updated": updated,
 		"skipped": skipped,
+		"annotation_removals": annotation_removals,
 	}
 
 
