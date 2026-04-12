@@ -2371,7 +2371,7 @@ def fix_bill_discount_from_bank_export(corrections_json, dry_run=1):
 			as_dict=True,
 		)
 
-		if len(gl_clearing) != 1 or len(gl_interest) != 1:
+		if len(gl_clearing) != 1:
 			skipped.append({
 				"disc_name": disc_name,
 				"reason": f"GL 结构异常: clearing_rows={len(gl_clearing)}, interest_rows={len(gl_interest)}",
@@ -2380,8 +2380,21 @@ def fix_bill_discount_from_bank_export(corrections_json, dry_run=1):
 
 		entry["gl_clearing_name"] = gl_clearing[0].name
 		entry["gl_clearing_old_debit"] = float(gl_clearing[0].debit)
-		entry["gl_interest_name"] = gl_interest[0].name
-		entry["gl_interest_old_debit"] = float(gl_interest[0].debit)
+
+		if len(gl_interest) == 1:
+			entry["gl_interest_name"] = gl_interest[0].name
+			entry["gl_interest_old_debit"] = float(gl_interest[0].debit)
+			entry["needs_insert_interest_gl"] = False
+		elif len(gl_interest) == 0:
+			entry["gl_interest_name"] = None
+			entry["gl_interest_old_debit"] = 0.0
+			entry["needs_insert_interest_gl"] = True
+		else:
+			skipped.append({
+				"disc_name": disc_name,
+				"reason": f"GL 结构异常: interest_rows={len(gl_interest)}, expected 0 or 1",
+			})
+			continue
 
 		plan.append(entry)
 
@@ -2413,14 +2426,51 @@ def fix_bill_discount_from_bank_export(corrections_json, dry_run=1):
 			""",
 			(entry["new_net"], entry["new_net"], entry["gl_clearing_name"]),
 		)
-		frappe.db.sql(
-			"""
-			UPDATE `tabGL Entry`
-			SET debit=%s, debit_in_account_currency=%s
-			WHERE name=%s
-			""",
-			(entry["new_interest"], entry["new_interest"], entry["gl_interest_name"]),
-		)
+
+		if entry.get("needs_insert_interest_gl"):
+			ref_gl = frappe.db.sql(
+				"""
+				SELECT company, cost_center, remarks, fiscal_year, against
+				FROM `tabGL Entry`
+				WHERE name=%s
+				""",
+				(entry["gl_clearing_name"],),
+				as_dict=True,
+			)[0]
+			disc_doc = frappe.db.get_value(
+				"Bill Discount", entry["disc_name"],
+				["interest_account"], as_dict=True,
+			)
+			interest_account = disc_doc.interest_account if disc_doc else "财务费用_票据贴现利息 - 台州京泰"
+
+			frappe.get_doc({
+				"doctype": "GL Entry",
+				"posting_date": entry["new_date"] or entry["old_date"],
+				"account": interest_account,
+				"debit": entry["new_interest"],
+				"debit_in_account_currency": entry["new_interest"],
+				"credit": 0,
+				"credit_in_account_currency": 0,
+				"voucher_type": "Bill Discount",
+				"voucher_no": entry["disc_name"],
+				"company": ref_gl.company,
+				"cost_center": ref_gl.cost_center,
+				"remarks": ref_gl.remarks,
+				"fiscal_year": ref_gl.fiscal_year,
+				"against": ref_gl.against,
+				"is_cancelled": 0,
+			}).db_insert()
+			entry["interest_gl_action"] = "inserted"
+		else:
+			frappe.db.sql(
+				"""
+				UPDATE `tabGL Entry`
+				SET debit=%s, debit_in_account_currency=%s
+				WHERE name=%s
+				""",
+				(entry["new_interest"], entry["new_interest"], entry["gl_interest_name"]),
+			)
+			entry["interest_gl_action"] = "updated"
 
 		if entry["new_date"] and entry["new_date"] != entry["old_date"]:
 			frappe.db.sql(
