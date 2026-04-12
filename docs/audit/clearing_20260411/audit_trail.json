@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-04-11T23:58:00",
+  "generated_at": "2026-04-12T17:14:28",
   "event_date": "2026-04-11",
   "executor": "yanzhihao (via whitelisted API, token e70ec230a0b012c)",
   "scene": "清算中科目 11215 历史数据修数:补票号、处理重复贴现、贴现差额、回滚误迁入清算中的普通银行流水 JE、反向中和孤立 Bill Payment",
@@ -1588,6 +1588,650 @@
           "source_doc": "BPAY-03028",
           "posting_date": "2025-10-02",
           "cheque_no": "BPAYREV-BPAY-03028"
+        }
+      ]
+    },
+    {
+      "op_id": "2025-C2",
+      "type": "redirect_to_clearing",
+      "year": 2025,
+      "scene": "将原记在 22410 但实为贴现性质的 44 笔 JE 科目迁入 11215(从 22410→11215)",
+      "apply_file": "2025_redirect_apply.json",
+      "method": "restore_clearing_bank_journal_counter_from_bank_against (反向用法)",
+      "risk": "高 — 直接改已 submit JE 的 account 字段,绕过 submittable 原则",
+      "status": "ok",
+      "count": 44,
+      "total_amount": 3360975.54,
+      "target_jes": [
+        {
+          "je": "JE-26-01710",
+          "amount": 499311.11,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01698",
+          "amount": 249763.19,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-02270",
+          "amount": 227637.91,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01706",
+          "amount": 224558.81,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01680",
+          "amount": 206998.02,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01694",
+          "amount": 199524.44,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01693",
+          "amount": 140314.46,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01691",
+          "amount": 139358.91,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01685",
+          "amount": 132150.89,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01323",
+          "amount": 122733.83,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01562",
+          "amount": 99805.06,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01704",
+          "amount": 99853.33,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01315",
+          "amount": 99707.5,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01711",
+          "amount": 95868.0,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01695",
+          "amount": 65414.94,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01679",
+          "amount": 55091.16,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-02266",
+          "amount": 49619.86,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01707",
+          "amount": 49876.04,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01700",
+          "amount": 49853.33,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01705",
+          "amount": 49755.0,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01558",
+          "amount": 49648.93,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01560",
+          "amount": 49664.19,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01692",
+          "amount": 44193.09,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01317",
+          "amount": 42396.41,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01565",
+          "amount": 33521.41,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01316",
+          "amount": 30194.07,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01683",
+          "amount": 29938.0,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-02268",
+          "amount": 25893.59,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01688",
+          "amount": 25350.13,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-02265",
+          "amount": 23291.77,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01673",
+          "amount": 22883.32,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01302",
+          "amount": 19981.58,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01689",
+          "amount": 19965.33,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-02261",
+          "amount": 14802.99,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01687",
+          "amount": 11606.71,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01559",
+          "amount": 11644.05,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01699",
+          "amount": 10428.2,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01307",
+          "amount": 10151.51,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01674",
+          "amount": 9267.6,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01708",
+          "amount": 5384.3,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01681",
+          "amount": 4990.62,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01690",
+          "amount": 4040.3,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01322",
+          "amount": 3978.97,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        },
+        {
+          "je": "JE-26-01702",
+          "amount": 562.68,
+          "from": "22410 - 其他应付款 - 台州京泰",
+          "to": "11215 - 票据清算中 - 台州京泰",
+          "party_type": null,
+          "party": null,
+          "reason": null
+        }
+      ]
+    },
+    {
+      "op_id": "2025-B2",
+      "type": "create_gap_je",
+      "year": 2025,
+      "scene": "贴现净额差 JE 第二轮(44 笔 DISCDIFF-2025-*),配合 2025-C2 的 redirect 补精度差",
+      "apply_file": "2025_gap_je_submit.json",
+      "method": "(ad-hoc script via whitelisted API)",
+      "risk": "中 — 新建 submit JE",
+      "status": "ok",
+      "count": 44,
+      "total_amount": 8541.56,
+      "target_jes": [
+        {
+          "je": "JE-26-07571",
+          "amount": 11.8,
+          "cheque_no": "DISCDIFF-2025-510217100405820250618101312098"
+        },
+        {
+          "je": "JE-26-07555",
+          "amount": 351.05,
+          "cheque_no": "DISCDIFF-2025-510231202603120251127001427565"
+        },
+        {
+          "je": "JE-26-07536",
+          "amount": 236.72,
+          "cheque_no": "DISCDIFF-2025-510234540411720250612100647795"
+        },
+        {
+          "je": "JE-26-07549",
+          "amount": 84.03,
+          "cheque_no": "DISCDIFF-2025-510360303191520250623101147697"
+        },
+        {
+          "je": "JE-26-07556",
+          "amount": 335.79,
+          "cheque_no": "DISCDIFF-2025-510443757448220251120101478250"
+        },
+        {
+          "je": "JE-26-07553",
+          "amount": 146.65,
+          "cheque_no": "DISCDIFF-2025-510555200912320250923000139539"
+        },
+        {
+          "je": "JE-26-07535",
+          "amount": 688.69,
+          "cheque_no": "DISCDIFF-2025-530234573397920250711000571162"
+        },
+        {
+          "je": "JE-26-07562",
+          "amount": 65.2,
+          "cheque_no": "DISCDIFF-2025-530245103726420250120004360605"
+        },
+        {
+          "je": "JE-26-07545",
+          "amount": 194.91,
+          "cheque_no": "DISCDIFF-2025-530245103726420250813100709619"
+        },
+        {
+          "je": "JE-26-07554",
+          "amount": 244.98,
+          "cheque_no": "DISCDIFF-2025-530251303971720251028002136802"
+        },
+        {
+          "je": "JE-26-07565",
+          "amount": 42.27,
+          "cheque_no": "DISCDIFF-2025-530258104448620250801000083133"
+        },
+        {
+          "je": "JE-26-07567",
+          "amount": 34.66,
+          "cheque_no": "DISCDIFF-2025-530533251915120250728001651530"
+        },
+        {
+          "je": "JE-26-07540",
+          "amount": 475.49,
+          "cheque_no": "DISCDIFF-2025-530549103001520250826001515259"
+        },
+        {
+          "je": "JE-26-07547",
+          "amount": 292.46,
+          "cheque_no": "DISCDIFF-2025-530558601703820251029001704256"
+        },
+        {
+          "je": "JE-26-07548",
+          "amount": 131.97,
+          "cheque_no": "DISCDIFF-2025-530733602731020250626102107711"
+        },
+        {
+          "je": "JE-26-07559",
+          "amount": 234.05,
+          "cheque_no": "DISCDIFF-2025-530812100001620251124002429067"
+        },
+        {
+          "je": "JE-26-07542",
+          "amount": 204.62,
+          "cheque_no": "DISCDIFF-2025-530830100616620250716101710452"
+        },
+        {
+          "je": "JE-26-07543",
+          "amount": 109.05,
+          "cheque_no": "DISCDIFF-2025-530830100618220250606000849384"
+        },
+        {
+          "je": "JE-26-07557",
+          "amount": 85.59,
+          "cheque_no": "DISCDIFF-2025-530830100618220250806000180555"
+        },
+        {
+          "je": "JE-26-07560",
+          "amount": 12.32,
+          "cheque_no": "DISCDIFF-2025-530842102217820250903000570451"
+        },
+        {
+          "je": "JE-26-07570",
+          "amount": 5.95,
+          "cheque_no": "DISCDIFF-2025-530858400138720250723002519276"
+        },
+        {
+          "je": "JE-26-07546",
+          "amount": 146.63,
+          "cheque_no": "DISCDIFF-2025-530958800021820250627001658238"
+        },
+        {
+          "je": "JE-26-07578",
+          "amount": 1.32,
+          "cheque_no": "DISCDIFF-2025-531011000011020250820101393194"
+        },
+        {
+          "je": "JE-26-07563",
+          "amount": 115.86,
+          "cheque_no": "DISCDIFF-2025-531011000011020251021001409203"
+        },
+        {
+          "je": "JE-26-07544",
+          "amount": 486.12,
+          "cheque_no": "DISCDIFF-2025-531330201675520251127102623055"
+        },
+        {
+          "je": "JE-26-07568",
+          "amount": 31.0,
+          "cheque_no": "DISCDIFF-2025-531330208401420250108001644954"
+        },
+        {
+          "je": "JE-26-07552",
+          "amount": 123.94,
+          "cheque_no": "DISCDIFF-2025-531331200001520250821001290558"
+        },
+        {
+          "je": "JE-26-07541",
+          "amount": 265.48,
+          "cheque_no": "DISCDIFF-2025-531333109001320250804000576402"
+        },
+        {
+          "je": "JE-26-07539",
+          "amount": 946.05,
+          "cheque_no": "DISCDIFF-2025-531333109001320251016001164189"
+        },
+        {
+          "je": "JE-26-07566",
+          "amount": 18.42,
+          "cheque_no": "DISCDIFF-2025-531333207013220250827101915006"
+        },
+        {
+          "je": "JE-26-07564",
+          "amount": 43.23,
+          "cheque_no": "DISCDIFF-2025-531333332016620241224002287295"
+        },
+        {
+          "je": "JE-26-07576",
+          "amount": 9.7,
+          "cheque_no": "DISCDIFF-2025-531361700021920250718100338252"
+        },
+        {
+          "je": "JE-26-07561",
+          "amount": 61.99,
+          "cheque_no": "DISCDIFF-2025-531411000323720250630002100191"
+        },
+        {
+          "je": "JE-26-07538",
+          "amount": 713.26,
+          "cheque_no": "DISCDIFF-2025-531430520665020250905100481501"
+        },
+        {
+          "je": "JE-26-07573",
+          "amount": 40.4,
+          "cheque_no": "DISCDIFF-2025-531431230001220250915101521687"
+        },
+        {
+          "je": "JE-26-07572",
+          "amount": 65.48,
+          "cheque_no": "DISCDIFF-2025-531431230001220251229102218746"
+        },
+        {
+          "je": "JE-26-07537",
+          "amount": 762.05,
+          "cheque_no": "DISCDIFF-2025-531431230002920250121000364217"
+        },
+        {
+          "je": "JE-26-07550",
+          "amount": 140.82,
+          "cheque_no": "DISCDIFF-2025-531679100005720250901100380969"
+        },
+        {
+          "je": "JE-26-07551",
+          "amount": 380.12,
+          "cheque_no": "DISCDIFF-2025-531936100257220250424101387165"
+        },
+        {
+          "je": "JE-26-07577",
+          "amount": 21.03,
+          "cheque_no": "DISCDIFF-2025-532311000000820251204000855504"
+        },
+        {
+          "je": "JE-26-07575",
+          "amount": 9.38,
+          "cheque_no": "DISCDIFF-2025-540233546130220250703000679027"
+        },
+        {
+          "je": "JE-26-07574",
+          "amount": 19.7,
+          "cheque_no": "DISCDIFF-2025-540233546190720250918100972603"
+        },
+        {
+          "je": "JE-26-07558",
+          "amount": 103.58,
+          "cheque_no": "DISCDIFF-2025-540339300049020251017000816777"
+        },
+        {
+          "je": "JE-26-07569",
+          "amount": 47.75,
+          "cheque_no": "DISCDIFF-2025-562111000001120250908101145228"
         }
       ]
     }
