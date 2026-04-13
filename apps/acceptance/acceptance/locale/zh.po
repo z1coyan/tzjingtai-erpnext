@@ -1,0 +1,504 @@
+#
+# 承兑汇票管理 APP 中文翻译
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: acceptance 0.1.0\n"
+"Report-Msgid-Bugs-To: it@tzjingtai.com\n"
+"POT-Creation-Date: 2026-04-13 00:00+0000\n"
+"PO-Revision-Date: 2026-04-13 00:00+0000\n"
+"Last-Translator: 台州京泰 IT\n"
+"Language-Team: Simplified Chinese\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Module name
+msgid "Bill Of Exchange"
+msgstr "承兑汇票"
+
+#. DocTypes
+msgid "Bill of Exchange"
+msgstr "承兑汇票"
+
+msgid "Bill of Exchange Settings"
+msgstr "承兑汇票设置"
+
+msgid "Bill Segment"
+msgstr "子票区间"
+
+msgid "Bill Receipt"
+msgstr "承兑接收"
+
+msgid "Bill Transfer"
+msgstr "承兑背书转让"
+
+msgid "Bill Discount"
+msgstr "承兑贴现"
+
+msgid "Bill Discount Item"
+msgstr "承兑贴现明细"
+
+msgid "Bill Settlement"
+msgstr "承兑兑付"
+
+msgid "Bill Settlement Item"
+msgstr "承兑兑付明细"
+
+#. Select options / status
+msgid "Bank Acceptance Bill"
+msgstr "银行承兑汇票"
+
+msgid "Commercial Acceptance Bill"
+msgstr "商业承兑汇票"
+
+msgid "Active"
+msgstr "持有中"
+
+msgid "Partially Settled"
+msgstr "部分结清"
+
+msgid "Fully Settled"
+msgstr "全部结清"
+
+msgid "Written Off"
+msgstr "核销"
+
+msgid "Held"
+msgstr "持有中"
+
+msgid "Transferred Out"
+msgstr "已背书转出"
+
+msgid "Discounted"
+msgstr "已贴现"
+
+msgid "Settled"
+msgstr "已兑付"
+
+msgid "Endorsement Received"
+msgstr "背书转让接收"
+
+msgid "Refund Returned"
+msgstr "票据找回"
+
+msgid "Endorsement Out"
+msgstr "背书转让出"
+
+msgid "Refund To Customer"
+msgstr "退回客户"
+
+msgid "Penalty"
+msgstr "罚款给客户"
+
+#. Field labels — Bill of Exchange
+msgid "Bill No"
+msgstr "票据号码"
+
+msgid "Bill Type"
+msgstr "票据类型"
+
+msgid "Is Electronic"
+msgstr "是否电子"
+
+msgid "Is Legacy"
+msgstr "是否旧版承兑汇票"
+
+
+msgid "Drawer Name"
+msgstr "出票人"
+
+msgid "Drawer Account No"
+msgstr "出票人账号"
+
+msgid "Drawee Bank"
+msgstr "承兑行"
+
+msgid "Payee Name"
+msgstr "收款人"
+
+msgid "Issue Date"
+msgstr "出票日期"
+
+msgid "Maturity Date"
+msgstr "到期日期"
+
+msgid "Face Amount"
+msgstr "票面金额"
+
+msgid "Outstanding Amount"
+msgstr "未结金额"
+
+msgid "Face Image"
+msgstr "正面图"
+
+msgid "Back Image"
+msgstr "背面图"
+
+msgid "Back Image (Initial)"
+msgstr "背面图（首次接收）"
+
+msgid "Segments"
+msgstr "子票区间"
+
+msgid "Segment No"
+msgstr "子票号"
+
+msgid "Segment From"
+msgstr "子票起始号"
+
+msgid "Segment To"
+msgstr "子票终止号"
+
+msgid "Amount"
+msgstr "金额"
+
+msgid "Status"
+msgstr "状态"
+
+msgid "Holder"
+msgstr "当前持有人"
+
+msgid "Holder Type"
+msgstr "持有人类型"
+
+msgid "Source Document"
+msgstr "来源单据"
+
+msgid "Last Action Document"
+msgstr "最近动态单据"
+
+#. Transaction fields
+msgid "Posting Date"
+msgstr "记账日期"
+
+msgid "From Party Type"
+msgstr "来源方类型"
+
+msgid "From Party"
+msgstr "来源方"
+
+msgid "To Party Type"
+msgstr "接收方类型"
+
+msgid "To Party"
+msgstr "接收方"
+
+msgid "Purpose"
+msgstr "用途"
+
+msgid "Received Segment"
+msgstr "接收的子票区间"
+
+msgid "Transferred Segment"
+msgstr "转出的子票区间"
+
+msgid "Sub-bill starting number; leave blank for legacy paper bills"
+msgstr "子票起始号；老纸票留空"
+
+msgid "Sub-bill ending number; leave blank for legacy paper bills"
+msgstr "子票终止号；老纸票留空"
+
+msgid "Must match an existing held segment on the bill"
+msgstr "必须与承兑上一个在持有中的段精确匹配"
+
+msgid "Amount must be greater than zero"
+msgstr "金额必须大于零"
+
+msgid "Amount {0} exceeds bill face amount {1}"
+msgstr "金额 {0} 超过票面金额 {1}"
+
+msgid "Segment From and Segment To are required for electronic bills"
+msgstr "电子票必须填写子票起始号和终止号"
+
+msgid "For electronic bills: must equal (Segment To - Segment From + 1) / 100"
+msgstr "电子票：金额必须等于（子票终止号 - 起始号 + 1）/ 100"
+
+msgid "Amount {0} does not match sub-bill range {1}-{2}; expected {3}"
+msgstr "金额 {0} 与子票区间 {1}-{2} 不匹配，应为 {3}"
+
+msgid "Sub-bill number cannot be empty"
+msgstr "子票号不能为空"
+
+msgid "Sub-bill number {0} is not a valid integer"
+msgstr "子票号 {0} 不是合法整数"
+
+msgid "Segment To ({0}) must be >= Segment From ({1})"
+msgstr "子票终止号 ({0}) 必须大于等于起始号 ({1})"
+
+msgid "New range {0}-{1} overlaps with existing held segment {2}-{3}"
+msgstr "新区间 {0}-{1} 与已持有段 {2}-{3} 重叠"
+
+msgid "Target range {0}-{1} is not fully contained in a single held segment"
+msgstr "目标区间 {0}-{1} 未完整落在某一个持有段内"
+
+msgid "No held segment contains range {0}-{1}"
+msgstr "没有持有段包含区间 {0}-{1}"
+
+msgid "No legacy held segment with amount {0} found"
+msgstr "未找到金额为 {0} 的旧版承兑汇票持有段"
+
+msgid "Legacy bill {0} already exists. Legacy bills cannot be received more than once."
+msgstr "旧版承兑汇票 {0} 已存在。旧版承兑汇票不允许多次接收。"
+
+msgid "Legacy bills must be received in full: amount {0} must equal face amount {1}"
+msgstr "旧版承兑汇票必须整张接收：金额 {0} 必须等于票面金额 {1}"
+
+msgid "Legacy bills cannot be split. Amount {0} must equal the current outstanding holding {1}."
+msgstr "旧版承兑汇票不允许拆分。金额 {0} 必须等于当前持有 {1}。"
+
+msgid "Legacy bills cannot be split; provide exactly one row with the full amount"
+msgstr "旧版承兑汇票不允许拆分，只能有一行金额等于整张未结余额"
+
+msgid "Current Holdings"
+msgstr "当前持有段"
+
+msgid "Select a bill to see current holdings"
+msgstr "先选一张承兑才会显示其持有段"
+
+msgid "No held segments on this bill"
+msgstr "该承兑当前无持有段"
+
+msgid "Bill {0} · Face {1} · Outstanding {2}"
+msgstr "承兑 {0} · 票面 {1} · 当前持有 {2}"
+
+msgid "Discounted Segments"
+msgstr "贴现的子票区间"
+
+msgid "Segments Discounted"
+msgstr "贴现的子票区间"
+
+msgid "Total Face Amount"
+msgstr "票面合计金额"
+
+msgid "Settled Segments"
+msgstr "兑付的子票区间"
+
+msgid "Segments Settled"
+msgstr "兑付的子票区间"
+
+msgid "Total Amount"
+msgstr "合计金额"
+
+msgid "Debit Account"
+msgstr "借方科目"
+
+msgid "Credit Account"
+msgstr "贷方科目"
+
+msgid "Bill Credit Account"
+msgstr "票据贷方科目"
+
+msgid "Bank Cash Account"
+msgstr "银行存款科目"
+
+msgid "Discount Bank Account"
+msgstr "贴现银行账户"
+
+msgid "Settlement Bank Account"
+msgstr "兑付银行账户"
+
+msgid "Bank Reference No"
+msgstr "银行回单号"
+
+msgid "Bank Reference Date"
+msgstr "银行回单日期"
+
+msgid "Discount Rate"
+msgstr "贴现利率"
+
+msgid "Discount Interest"
+msgstr "贴现利息"
+
+msgid "Net Amount"
+msgstr "实际入账金额"
+
+msgid "Interest Account"
+msgstr "财务费用（利息）科目"
+
+msgid "Journal Entry"
+msgstr "会计凭证"
+
+msgid "Company"
+msgstr "公司"
+
+#. Settings
+msgid "OCR"
+msgstr "OCR 识别"
+
+msgid "OCR Enabled"
+msgstr "启用 OCR"
+
+msgid "Aliyun Access Key Id"
+msgstr "阿里云 Access Key ID"
+
+msgid "Aliyun Access Key Secret"
+msgstr "阿里云 Access Key Secret"
+
+msgid "Aliyun Region Id"
+msgstr "阿里云区域"
+
+msgid "Accounting Defaults"
+msgstr "会计默认科目"
+
+msgid "Default Bill Receivable Account"
+msgstr "默认应收票据科目"
+
+msgid "Default Discount Interest Account"
+msgstr "默认贴现利息科目"
+
+msgid "Default Bank Account"
+msgstr "默认银行账户"
+
+msgid "Alerts"
+msgstr "预警"
+
+msgid "Maturity Alert Days"
+msgstr "到期预警天数"
+
+#. Buttons / messages
+msgid "Recognize Front Image"
+msgstr "识别正面图"
+
+msgid "Please upload a face image first"
+msgstr "请先上传正面图"
+
+msgid "Calling Aliyun OCR..."
+msgstr "正在调用阿里云 OCR..."
+
+msgid "Recognizing bill front image..."
+msgstr "正在识别承兑汇票正面..."
+
+msgid "OCR returned no data"
+msgstr "OCR 未返回数据"
+
+msgid "OCR fields filled"
+msgstr "OCR 字段已回填"
+
+msgid "OCR filled {0} fields. Please manually enter sub-segment ranges."
+msgstr "OCR 已回填 {0} 个字段。请手动录入子票区间。"
+
+msgid "OCR returned no recognizable fields"
+msgstr "OCR 未返回任何可识别字段"
+
+msgid "Check Error Log for the raw Aliyun response; verify the image is a bill front image."
+msgstr "请在 Error Log 查看阿里云原始返回，确认上传的是承兑汇票正面图。"
+
+#. Validation errors
+msgid "Face Image is required when receiving a new bill"
+msgstr "首次接收新票时，正面图必填"
+
+msgid "Back Image is required"
+msgstr "背面图必填"
+
+msgid "Discounted Segments cannot be empty"
+msgstr "贴现的子票区间不能为空"
+
+msgid "Settled Segments cannot be empty"
+msgstr "兑付的子票区间不能为空"
+
+msgid "Discount Interest is required"
+msgstr "贴现利息必填"
+
+msgid "Discount interest exceeds face amount"
+msgstr "贴现利息不能超过票面金额"
+
+msgid "Segment range {0}-{1} overlaps with existing segment {2}-{3}"
+msgstr "子票区间 {0}-{1} 与已存在的 {2}-{3} 重叠"
+
+msgid "Cannot find held segment matching {0}-{1} amount {2} on bill {3}"
+msgstr "承兑汇票 {3} 上找不到 {0}-{1} 金额 {2} 的持有段"
+
+msgid "Cannot cancel: segment {0} has already been used downstream"
+msgstr "无法取消：子票段 {0} 已被下游单据使用"
+
+#. OCR errors
+msgid "OCR is not enabled in Bill of Exchange Settings"
+msgstr "承兑汇票设置中未启用 OCR"
+
+msgid "Aliyun access key is not configured in Bill of Exchange Settings"
+msgstr "承兑汇票设置中未配置阿里云 AK/SK"
+
+msgid "Aliyun access key secret is not set"
+msgstr "阿里云 Access Key Secret 未配置"
+
+msgid "file_url is required"
+msgstr "file_url 必填"
+
+msgid "Failed to read file: {0}"
+msgstr "读取文件失败：{0}"
+
+msgid "Aliyun OCR request failed: {0}"
+msgstr "阿里云 OCR 请求失败：{0}"
+
+msgid "Aliyun OCR returned invalid JSON"
+msgstr "阿里云 OCR 返回的 JSON 无效"
+
+msgid "Unsupported party_type: {0}"
+msgstr "不支持的 party_type：{0}"
+
+#. Reports
+msgid "Bill Register"
+msgstr "承兑汇票登记册"
+
+msgid "Bill Ledger"
+msgstr "承兑汇票流转明细"
+
+msgid "Upcoming Maturity"
+msgstr "即将到期承兑"
+
+msgid "Received"
+msgstr "已接收"
+
+msgid "Transferred ({0})"
+msgstr "已转出（{0}）"
+
+msgid "Discounted (interest {0})"
+msgstr "已贴现（利息 {0}）"
+
+msgid "Date"
+msgstr "日期"
+
+msgid "Action"
+msgstr "动作"
+
+msgid "Document"
+msgstr "单据"
+
+msgid "DocType"
+msgstr "文档类型"
+
+msgid "Counter Party"
+msgstr "对方"
+
+msgid "Days Left"
+msgstr "剩余天数"
+
+msgid "Bill of Exchange filter is required"
+msgstr "必须指定 Bill of Exchange 过滤条件"
+
+#. User remarks
+msgid "Bill Receipt {0}"
+msgstr "承兑接收 {0}"
+
+msgid "Bill Receipt {0} · {1}"
+msgstr "承兑接收 {0} · {1}"
+
+msgid "Bill Transfer {0}"
+msgstr "承兑背书转让 {0}"
+
+msgid "Bill Transfer {0} · {1}"
+msgstr "承兑背书转让 {0} · {1}"
+
+msgid "Bill Discount {0}"
+msgstr "承兑贴现 {0}"
+
+msgid "Bill Discount {0} · {1}"
+msgstr "承兑贴现 {0} · {1}"
+
+msgid "Bill Settlement {0}"
+msgstr "承兑兑付 {0}"
+
+msgid "Bill Settlement {0} · {1}"
+msgstr "承兑兑付 {0} · {1}"

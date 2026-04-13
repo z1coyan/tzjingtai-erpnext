@@ -1,0 +1,193 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-04-13 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "is_submittable": 1,
+ "field_order": [
+  "naming_series",
+  "posting_date",
+  "company",
+  "col_break_header",
+  "bill",
+  "holdings_display",
+  "bank_section",
+  "settlement_bank_account",
+  "bank_cash_account",
+  "col_break_bank",
+  "bank_reference_no",
+  "bank_reference_date",
+  "segments_section",
+  "segments_settled",
+  "total_amount",
+  "accounting_section",
+  "bill_credit_account",
+  "journal_entry",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "ACC-BS-.YYYY.-.####",
+   "reqd": 1,
+   "default": "ACC-BS-.YYYY.-.####"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1,
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_header",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bill",
+   "fieldtype": "Link",
+   "label": "Bill of Exchange",
+   "options": "Bill of Exchange",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "holdings_display",
+   "fieldtype": "HTML",
+   "label": "Current Holdings"
+  },
+  {
+   "fieldname": "bank_section",
+   "fieldtype": "Section Break",
+   "label": "Bank"
+  },
+  {
+   "fieldname": "settlement_bank_account",
+   "fieldtype": "Link",
+   "label": "Settlement Bank Account",
+   "options": "Bank Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bank_cash_account",
+   "fieldtype": "Link",
+   "label": "Bank Cash Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_bank",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bank_reference_no",
+   "fieldtype": "Data",
+   "label": "Bank Reference No",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bank_reference_date",
+   "fieldtype": "Date",
+   "label": "Bank Reference Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "segments_section",
+   "fieldtype": "Section Break",
+   "label": "Settled Segments"
+  },
+  {
+   "fieldname": "segments_settled",
+   "fieldtype": "Table",
+   "label": "Segments Settled",
+   "options": "Bill Settlement Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "bill_credit_account",
+   "fieldtype": "Link",
+   "label": "Bill Credit Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Bill Settlement",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-04-13 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bill Of Exchange",
+ "name": "Bill Settlement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

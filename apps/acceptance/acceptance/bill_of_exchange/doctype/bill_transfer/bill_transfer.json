@@ -1,0 +1,208 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-04-13 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "is_submittable": 1,
+ "field_order": [
+  "naming_series",
+  "posting_date",
+  "company",
+  "col_break_header",
+  "to_party_type",
+  "to_party",
+  "purpose",
+  "bill_section",
+  "bill",
+  "holdings_display",
+  "segment_section",
+  "segment_from",
+  "segment_to",
+  "col_break_seg",
+  "amount",
+  "accounting_section",
+  "debit_account",
+  "col_break_acc",
+  "credit_account",
+  "journal_entry",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "ACC-BT-.YYYY.-.####",
+   "reqd": 1,
+   "default": "ACC-BT-.YYYY.-.####"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1,
+   "default": "Today",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_header",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_party_type",
+   "fieldtype": "Select",
+   "label": "To Party Type",
+   "options": "Customer\nSupplier",
+   "reqd": 1,
+   "default": "Supplier"
+  },
+  {
+   "fieldname": "to_party",
+   "fieldtype": "Dynamic Link",
+   "label": "To Party",
+   "options": "to_party_type",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "purpose",
+   "fieldtype": "Select",
+   "label": "Purpose",
+   "options": "Endorsement Out\nRefund To Customer\nPenalty",
+   "default": "Endorsement Out",
+   "reqd": 1
+  },
+  {
+   "fieldname": "bill_section",
+   "fieldtype": "Section Break",
+   "label": "Bill"
+  },
+  {
+   "fieldname": "bill",
+   "fieldtype": "Link",
+   "label": "Bill of Exchange",
+   "options": "Bill of Exchange",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "holdings_display",
+   "fieldtype": "HTML",
+   "label": "Current Holdings"
+  },
+  {
+   "fieldname": "segment_section",
+   "fieldtype": "Section Break",
+   "label": "Transferred Segment"
+  },
+  {
+   "fieldname": "segment_from",
+   "fieldtype": "Data",
+   "label": "Segment From",
+   "description": "Must match an existing held segment on the bill"
+  },
+  {
+   "fieldname": "segment_to",
+   "fieldtype": "Data",
+   "label": "Segment To"
+  },
+  {
+   "fieldname": "col_break_seg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "reqd": 1
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "debit_account",
+   "fieldtype": "Link",
+   "label": "Debit Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_acc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "credit_account",
+   "fieldtype": "Link",
+   "label": "Credit Account",
+   "options": "Account",
+   "reqd": 1
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Bill Transfer",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-04-13 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bill Of Exchange",
+ "name": "Bill Transfer",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

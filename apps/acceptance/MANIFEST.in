@@ -1,0 +1,19 @@
+include MANIFEST.in
+include README.md
+include license.txt
+include requirements.txt
+include acceptance/*.json
+include acceptance/locale/*.po
+include acceptance/locale/*.csv
+recursive-include acceptance *.css
+recursive-include acceptance *.csv
+recursive-include acceptance *.html
+recursive-include acceptance *.ico
+recursive-include acceptance *.js
+recursive-include acceptance *.json
+recursive-include acceptance *.md
+recursive-include acceptance *.png
+recursive-include acceptance *.py
+recursive-include acceptance *.svg
+recursive-include acceptance *.txt
+recursive-exclude acceptance *.pyc

@@ -1,0 +1,43 @@
+{
+ "actions": [],
+ "creation": "2026-04-13 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "segment_from",
+  "segment_to",
+  "amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "segment_from",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Segment From"
+  },
+  {
+   "fieldname": "segment_to",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Segment To"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "reqd": 1
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-13 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bill Of Exchange",
+ "name": "Bill Settlement Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "ASC"
+}

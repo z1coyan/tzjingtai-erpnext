@@ -1,0 +1,181 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"header-intro\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Bill of Exchange</b></span>\",\"col\":12}},{\"id\":\"shortcut-row\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bill Receipt\",\"col\":3}},{\"id\":\"shortcut-row-2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bill Transfer\",\"col\":3}},{\"id\":\"shortcut-row-3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bill Discount\",\"col\":3}},{\"id\":\"shortcut-row-4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Bill Settlement\",\"col\":3}},{\"id\":\"card-row\",\"type\":\"card\",\"data\":{\"card_name\":\"Masters\",\"col\":4}},{\"id\":\"card-row-2\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"card-row-3\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}}]",
+ "creation": "2026-04-13 00:00:00",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "list",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Bill of Exchange",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Masters",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bill of Exchange",
+   "link_count": 0,
+   "link_to": "Bill of Exchange",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bill Receipt",
+   "link_count": 0,
+   "link_to": "Bill Receipt",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bill Transfer",
+   "link_count": 0,
+   "link_to": "Bill Transfer",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bill Discount",
+   "link_count": 0,
+   "link_to": "Bill Discount",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bill Settlement",
+   "link_count": 0,
+   "link_to": "Bill Settlement",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Bill Register",
+   "link_count": 0,
+   "link_to": "Bill Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Bill Ledger",
+   "link_count": 0,
+   "link_to": "Bill Ledger",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Upcoming Maturity",
+   "link_count": 0,
+   "link_to": "Upcoming Maturity",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Settings",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Bill of Exchange Settings",
+   "link_count": 0,
+   "link_to": "Bill of Exchange Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-13 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bill Of Exchange",
+ "name": "Bill of Exchange",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "Accounting",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [],
+ "sequence_id": 100.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "format": "{} Open",
+   "label": "Bill Receipt",
+   "link_to": "Bill Receipt",
+   "stats_filter": "{\"docstatus\":0}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "",
+   "format": "{} Open",
+   "label": "Bill Transfer",
+   "link_to": "Bill Transfer",
+   "stats_filter": "{\"docstatus\":0}",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "",
+   "format": "{} Open",
+   "label": "Bill Discount",
+   "link_to": "Bill Discount",
+   "stats_filter": "{\"docstatus\":0}",
+   "type": "DocType"
+  },
+  {
+   "color": "Red",
+   "doc_view": "",
+   "format": "{} Open",
+   "label": "Bill Settlement",
+   "link_to": "Bill Settlement",
+   "stats_filter": "{\"docstatus\":0}",
+   "type": "DocType"
+  }
+ ],
+ "title": "Bill of Exchange",
+ "type": "Workspace"
+}

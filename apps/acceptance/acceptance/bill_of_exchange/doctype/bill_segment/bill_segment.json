@@ -1,0 +1,97 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-04-13 00:00:00",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "segment_no",
+  "segment_from",
+  "segment_to",
+  "amount",
+  "status",
+  "col_break_1",
+  "holder_type",
+  "holder",
+  "source_doc",
+  "last_action_doc"
+ ],
+ "fields": [
+  {
+   "fieldname": "segment_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Segment No"
+  },
+  {
+   "fieldname": "segment_from",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Segment From"
+  },
+  {
+   "fieldname": "segment_to",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Segment To"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "reqd": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Held\nTransferred Out\nDiscounted\nSettled\nWritten Off",
+   "default": "Held"
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "holder_type",
+   "fieldtype": "Select",
+   "label": "Holder Type",
+   "options": "\nSelf\nCustomer\nSupplier",
+   "default": "Self"
+  },
+  {
+   "fieldname": "holder",
+   "fieldtype": "Dynamic Link",
+   "label": "Holder",
+   "options": "holder_type"
+  },
+  {
+   "fieldname": "source_doc",
+   "fieldtype": "Data",
+   "label": "Source Document",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_action_doc",
+   "fieldtype": "Data",
+   "label": "Last Action Document",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-04-13 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bill Of Exchange",
+ "name": "Bill Segment",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "ASC",
+ "states": [],
+ "track_changes": 1
+}

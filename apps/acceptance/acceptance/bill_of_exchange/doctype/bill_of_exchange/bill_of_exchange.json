@@ -1,0 +1,210 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "naming_series:",
+ "creation": "2026-04-13 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "bill_no",
+  "bill_type",
+  "is_electronic",
+  "is_legacy",
+  "col_break_header",
+  "status",
+  "face_amount",
+  "outstanding_amount",
+  "parties_section",
+  "drawer_name",
+  "drawer_account_no",
+  "payee_name",
+  "col_break_parties",
+  "drawee_bank",
+  "issue_date",
+  "maturity_date",
+  "images_section",
+  "face_image",
+  "col_break_img",
+  "back_image_initial",
+  "segments_section",
+  "segments"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "BOE-.YYYY.-.####",
+   "reqd": 1,
+   "default": "BOE-.YYYY.-.####"
+  },
+  {
+   "fieldname": "bill_no",
+   "fieldtype": "Data",
+   "label": "Bill No",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "bill_type",
+   "fieldtype": "Select",
+   "label": "Bill Type",
+   "options": "Bank Acceptance Bill\nCommercial Acceptance Bill",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "is_electronic",
+   "fieldtype": "Check",
+   "label": "Is Electronic",
+   "default": "1"
+  },
+  {
+   "fieldname": "is_legacy",
+   "fieldtype": "Check",
+   "label": "Is Legacy",
+   "default": "0"
+  },
+  {
+   "fieldname": "col_break_header",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Active\nPartially Settled\nFully Settled\nWritten Off",
+   "default": "Active",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "face_amount",
+   "fieldtype": "Currency",
+   "label": "Face Amount",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "outstanding_amount",
+   "fieldtype": "Currency",
+   "label": "Outstanding Amount",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "parties_section",
+   "fieldtype": "Section Break",
+   "label": "Parties"
+  },
+  {
+   "fieldname": "drawer_name",
+   "fieldtype": "Data",
+   "label": "Drawer Name"
+  },
+  {
+   "fieldname": "drawer_account_no",
+   "fieldtype": "Data",
+   "label": "Drawer Account No"
+  },
+  {
+   "fieldname": "payee_name",
+   "fieldtype": "Data",
+   "label": "Payee Name"
+  },
+  {
+   "fieldname": "col_break_parties",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "drawee_bank",
+   "fieldtype": "Data",
+   "label": "Drawee Bank",
+   "reqd": 1
+  },
+  {
+   "fieldname": "issue_date",
+   "fieldtype": "Date",
+   "label": "Issue Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "maturity_date",
+   "fieldtype": "Date",
+   "label": "Maturity Date",
+   "in_standard_filter": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "images_section",
+   "fieldtype": "Section Break",
+   "label": "Images"
+  },
+  {
+   "fieldname": "face_image",
+   "fieldtype": "Attach Image",
+   "label": "Face Image"
+  },
+  {
+   "fieldname": "col_break_img",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "back_image_initial",
+   "fieldtype": "Attach Image",
+   "label": "Back Image (Initial)"
+  },
+  {
+   "fieldname": "segments_section",
+   "fieldtype": "Section Break",
+   "label": "Segments"
+  },
+  {
+   "fieldname": "segments",
+   "fieldtype": "Table",
+   "label": "Segments",
+   "options": "Bill Segment"
+  }
+ ],
+ "links": [],
+ "modified": "2026-04-13 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Bill Of Exchange",
+ "name": "Bill of Exchange",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 0,
+   "delete": 0,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts User",
+   "share": 1,
+   "write": 0
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "bill_no",
+ "track_changes": 1
+}
