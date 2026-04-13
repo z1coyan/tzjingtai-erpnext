@@ -1,5 +1,5 @@
 x-customizable-image: &customizable_image
-  image: ${CUSTOM_IMAGE:-synie-erpnext}:${CUSTOM_TAG:-latest}
+  image: ${CUSTOM_IMAGE:-tzjingtai-erpnext}:${CUSTOM_TAG:-latest}
   pull_policy: ${PULL_POLICY:-never}
   restart: ${RESTART_POLICY:-unless-stopped}
   build:

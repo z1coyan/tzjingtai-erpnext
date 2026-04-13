@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 COMPOSE_FILE="${REPO_ROOT}/docker-compose.yaml"
-PROJECT_NAME="${PROJECT_NAME:-synie-erpnext}"
+PROJECT_NAME="${PROJECT_NAME:-tzjingtai-erpnext}"
 
 if [ ! -f "${COMPOSE_FILE}" ]; then
   echo "ERROR: docker-compose.yaml not found. Run 'make gen' first." >&2

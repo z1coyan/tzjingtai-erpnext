@@ -1,7 +1,7 @@
 .PHONY: build gen deploy dev logs ps down clean site
 
 OVERLAYS  ?= mariadb,redis
-PROJECT   ?= synie-erpnext
+PROJECT   ?= tzjingtai-erpnext
 
 ## Build the custom Docker image
 build:

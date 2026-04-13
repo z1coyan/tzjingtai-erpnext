@@ -1,4 +1,4 @@
-# synie-erpnext
+# tzjingtai-erpnext
 
 ERPNext 自部署 Mono-Repo —— 统一管理自研插件、第三方插件、Docker 镜像构建与生产部署。
 
@@ -75,10 +75,10 @@ Dokploy: 检测 git push → git pull → docker compose build → docker compos
 
 项目支持两种部署方式：
 
-| 方式 | 使用的 compose 文件 | 构建位置 | 适用场景 |
-| ---- | ------------------- | -------- | -------- |
-| **Dokploy（推荐）** | `compose.yaml`（已提交到 Git） | 服务器上构建 | 生产环境 |
-| **手动部署** | `docker-compose.yaml`（由 `make gen` 生成） | 本地构建 | 本地开发 |
+| 方式                | 使用的 compose 文件                         | 构建位置     | 适用场景 |
+| ------------------- | ------------------------------------------- | ------------ | -------- |
+| **Dokploy（推荐）** | `compose.yaml`（已提交到 Git）              | 服务器上构建 | 生产环境 |
+| **手动部署**        | `docker-compose.yaml`（由 `make gen` 生成） | 本地构建     | 本地开发 |
 
 ---
 
@@ -133,11 +133,11 @@ Dokploy: 检测 git push → git pull → docker compose build → docker compos
 
 Dokploy 检测到推送后自动拉取代码、构建镜像、重启服务。
 
-| 场景 | 本地机 | Dokploy | 手动操作 |
-| ---- | :----: | :-----: | :------: |
-| 框架小版本更新 | 改 `build/apps.json` → `git push` | 自动构建 + 部署 | 无 |
-| 自定义 app 代码更新 | 改 `apps/` 下代码 → `git push` | 自动构建 + 部署 | 无 |
-| 新增 app | 加 app → `git push` | 自动构建 + 部署（configurator 自动安装） | 无 |
+| 场景                |              本地机               |                 Dokploy                  | 手动操作 |
+| ------------------- | :-------------------------------: | :--------------------------------------: | :------: |
+| 框架小版本更新      | 改 `build/apps.json` → `git push` |             自动构建 + 部署              |    无    |
+| 自定义 app 代码更新 |  改 `apps/` 下代码 → `git push`   |             自动构建 + 部署              |    无    |
+| 新增 app            |        加 app → `git push`        | 自动构建 + 部署（configurator 自动安装） |    无    |
 
 > **注意**：小版本更新如果涉及 DB schema 变更（DocType 字段变化），需要评估影响。因为不执行 `bench migrate`，schema 不会自动更新。如确有 schema 变更，需考虑重建站点或编写自定义迁移脚本。
 
@@ -157,7 +157,7 @@ git push origin main
 
 ```bash
 # 1. 克隆仓库
-git clone <repo-url> && cd synie-erpnext
+git clone <repo-url> && cd tzjingtai-erpnext
 
 # 2. 配置环境变量
 cp .env.example .env
@@ -224,12 +224,12 @@ git pull origin main && make build && make deploy
 
 #### 流程对照表
 
-| 场景 | 本地机 | 生产服务器 | 容器内命令 |
-| ---- | :----: | :--------: | :--------: |
-| 首次上线 | `git push` | `make build` → `make gen` → `make deploy` → `make site` | `make site`（含 install-app） |
-| 框架小版本更新 | 改 `apps.json` → `git push` | `git pull` → `make build` → `make deploy` | **禁止** |
-| 自定义 app 代码更新 | 改代码 → `git push` | `git pull` → `make build` → `make deploy` | **禁止** |
-| 新增 app | 加 app → `git push` | `git pull` → `make build` → `make deploy` | **禁止**（configurator 自动装） |
+| 场景                |           本地机            |                       生产服务器                        |           容器内命令            |
+| ------------------- | :-------------------------: | :-----------------------------------------------------: | :-----------------------------: |
+| 首次上线            |         `git push`          | `make build` → `make gen` → `make deploy` → `make site` |  `make site`（含 install-app）  |
+| 框架小版本更新      | 改 `apps.json` → `git push` |        `git pull` → `make build` → `make deploy`        |            **禁止**             |
+| 自定义 app 代码更新 |     改代码 → `git push`     |        `git pull` → `make build` → `make deploy`        |            **禁止**             |
+| 新增 app            |     加 app → `git push`     |        `git pull` → `make build` → `make deploy`        | **禁止**（configurator 自动装） |
 
 ## 技术栈
 

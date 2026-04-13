@@ -8,11 +8,11 @@
     "branch": "version-16"
   },
   {
-    "url": "https://gitee.com/yuzelin/erpnext_china.git",
-    "branch": "master"
-  },
-  {
     "url": "https://github.com/frappe/offsite_backups",
     "branch": "develop"
+  },
+  {
+    "url": "https://gitee.com/yuzelin/erpnext_china.git",
+    "branch": "master"
   }
 ]
