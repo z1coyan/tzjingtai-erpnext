@@ -4,8 +4,7 @@
 
 ## 容器化部署铁律
 
-- **禁止在 docker build / deploy 之后要求进入容器执行任何 bench 命令**（包括 bench migrate、bench build、bench clear-cache、bench get-app、bench update 等）。生产环境中在容器内跑 bench 极有可能打挂 CSS/JS 静态资源导致线上故障。
-- 所有数据库变更（DocType schema、Workspace、fixtures 等）必须在 `bench install-app` 首次安装时一次性完成。后续代码更新只允许通过重新 build 镜像 + deploy 生效，不得依赖运行时 migrate。
+- **禁止在 docker build / deploy 之后要求进入容器执行任何可能导致生产css、js破坏 bench 命令**（包括 bench migrate、bench build、bench clear-cache、bench get-app、bench update 等）。生产环境中在容器内跑 bench 极有可能打挂 CSS/JS 静态资源导致线上故障。
 - Containerfile 中 `bench build` 生成的静态资源是唯一可信来源，deploy 时只做文件复制，不做任何编译或数据库操作。
 
 ### app 安装完全由 configurator 自动完成
@@ -16,6 +15,7 @@
 2. 在 Dokploy 控制台点 **Deploy**。完。
 
 Dokploy deploy 会触发：
+
 - 重新 build 镜像（app 源码 + 预编译 CSS/JS 被 baked-in）
 - 起 `configurator` 一次性容器，由 `build/resources/configurator-init.sh` 执行：
   1. 把镜像里的 `sites-assets` 同步到 sites volume（保证资源永远和镜像一致）
