@@ -66,21 +66,29 @@
 - 工具: `restore_clearing_bank_journal_counter_from_bank_against`
 - 审计记录: `p2_restore_40_apply.json`
 
-## P3: 代码清理 — HOTFIX 方法到期删除
+## P3: 代码清理 — ✅ 已完成 (2026-04-13)
 
-`acceptance.acceptance.api.import_helpers` 中 4 个 HOTFIX 方法:
+P1/P2 完全收口后, `acceptance.acceptance.api.import_helpers` 中 5 个 HOTFIX 方法及其专用辅助全部删除:
 
-| 方法 | 标记日期 | 计划评估日期 |
-|---|---|---|
-| `inspect_clearing_imbalance_by_bill_no` | 2026-04-11 | 2026-07-01 |
-| `annotate_clearing_bank_journal_bill_no` | 2026-04-11 | 2026-07-01 |
-| `restore_clearing_bank_journal_counter_from_bank_against` | 2026-04-11 | 2026-07-01 |
-| `fix_bill_discount_from_bank_export` | 2026-04-12 | 2026-07-01 |
+| 方法 | 状态 |
+|---|---|
+| `inspect_clearing_imbalance_by_bill_no` | ✅ 已删除 |
+| `annotate_clearing_bank_journal_bill_no` | ✅ 已删除 |
+| `restore_clearing_bank_journal_counter_from_bank_against` | ✅ 已删除 |
+| `redirect_discount_bank_journal_counter_to_clearing` | ✅ 已删除 |
+| `fix_bill_discount_from_bank_export` | ✅ 已删除 |
 
-**注意**: `inspect` 和 `annotate` 在 P2 早年遗留处理中仍需使用, 删除前需确认 P2 已完成.
-`redirect_discount_bank_journal_counter_to_clearing` 也是 HOTFIX, 同样待评估.
+连带删除的辅助函数/常量: `_pair_clearing_rows`, `_group_match_clearing_rows`,
+`_resolve_restore_target_from_bank_against`, `_normalize_year`, `_to_decimal_2`,
+`_extract_bill_no`, `_short_text`, `_csv_from_rows`, `_date_gap_days`,
+`_BILL_NO_IN_TEXT_RE`, `_AMOUNT_TOLERANCE`, `_GROUP_MATCH_TOLERANCE`.
 
-**建议**: 在 2026-07-01 做一次 review, 如果 P2 已完成则全部删除; 否则保留 inspect + annotate, 删除其余.
+清理无用 import: `csv`, `io`, `defaultdict`, `datetime.date`, `Decimal`, `InvalidOperation`.
+
+`import_helpers.py` 从 2582 行 → 1335 行 (净减 1247 行)。
+
+审计台账 `tmp/clearing_diagnosis_20260411/audit_trail.json` 和本次修复 JSON 留档,
+需要重现时可通过 `git log` 找回删除前的源码。
 
 ## P4: submittable 链条重建 (可选)
 
