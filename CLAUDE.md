@@ -4,7 +4,7 @@
 
 ## 容器化部署铁律
 
-- **禁止在 docker build / deploy 之后要求进入容器执行任何可能导致生产css、js破坏 bench 命令**（包括 bench migrate、bench build、bench clear-cache、bench get-app、bench update 等）。生产环境中在容器内跑 bench 极有可能打挂 CSS/JS 静态资源导致线上故障。
+- **禁止在 docker build / deploy 之后要求进入容器执行任何可能导致生产css、js破坏 bench 命令**。生产环境中在容器内跑 bench 极有可能打挂 CSS/JS 静态资源导致线上故障。
 - Containerfile 中 `bench build` 生成的静态资源是唯一可信来源，deploy 时只做文件复制，不做任何编译或数据库操作。
 
 ### app 安装完全由 configurator 自动完成
