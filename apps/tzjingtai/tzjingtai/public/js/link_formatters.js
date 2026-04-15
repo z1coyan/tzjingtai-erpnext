@@ -13,10 +13,3 @@ frappe.form.link_formatters["Supplier"] = function (value, doc) {
     }
     return value;
 };
-
-frappe.form.link_formatters["Item"] = function (value, doc) {
-    if (doc && doc.item_name && doc.item_name !== value) {
-        return value + ": " + doc.item_name;
-    }
-    return value;
-};
