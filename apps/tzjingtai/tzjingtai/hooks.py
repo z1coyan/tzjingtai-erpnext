@@ -7,7 +7,10 @@ app_license = "MIT"
 
 required_apps = ["erpnext"]
 
-app_include_js = ["/assets/tzjingtai/js/link_formatters.js"]
+app_include_js = [
+    "/assets/tzjingtai/js/link_formatters.js",
+    "/assets/tzjingtai/js/item_drawings_link.js",
+]
 
 fixtures = [
     {
