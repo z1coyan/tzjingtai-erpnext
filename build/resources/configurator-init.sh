@@ -14,7 +14,7 @@
 #
 # 这是 CLAUDE.md / AGENTS.md 容器化部署铁律里"唯一放开的通道"的**唯一实现**。
 # 禁止在这个脚本之外、在运行中的容器里手工跑任何 bench 子命令。脚本内部也只允许
-# 以下 bench 子命令：set-config / install-app / sync-fixtures。
+# 以下 bench 子命令：set-config / install-app / execute（仅 frappe.utils.fixtures.sync_fixtures）。
 
 set -euo pipefail
 
@@ -86,8 +86,12 @@ except Exception as e:
   # 把镜像里 fixtures/*.json 的变更刷进 DB（Custom Field / Property Setter /
   # Workflow 等）。install-app 已经自带 sync_fixtures，所以这一步对"刚装完
   # 的新 app"是幂等 no-op；对"已存在 app 里加了新 fixtures"是补齐漏洞。
+  #
+  # v16 的 bench CLI 没有独立的 sync-fixtures 子命令（只有 export-fixtures），
+  # 所以直接通过 bench execute 调用底层函数。sync_fixtures() 只读 fixtures/*.json
+  # 往 DB 写，不触碰 sites/assets。
   echo "==> [configurator] ${site}: 同步 fixtures"
-  bench --site "$site" sync-fixtures
+  bench --site "$site" execute frappe.utils.fixtures.sync_fixtures
 done
 
 echo "==> [configurator] 完成"
