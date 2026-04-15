@@ -75,8 +75,17 @@ def build_receipt_lines(receipt_doc, bill_doc) -> list[dict]:
 
     Customer:  Dr 应收票据   Cr 应收账款 (party=Customer)
     Supplier:  Dr 应收票据   Cr 应付账款 (party=Supplier)
+    Opening:   Dr 应收票据   Cr 期初调整科目 (no party)
     """
     amount = receipt_doc.amount
+    credit_line: dict = {
+        "account": receipt_doc.credit_account,
+        "debit_in_account_currency": 0,
+        "credit_in_account_currency": amount,
+    }
+    if not receipt_doc.is_opening:
+        credit_line["party_type"] = receipt_doc.from_party_type
+        credit_line["party"] = receipt_doc.from_party
     lines = [
         {
             "account": receipt_doc.debit_account,
@@ -84,13 +93,7 @@ def build_receipt_lines(receipt_doc, bill_doc) -> list[dict]:
             "credit_in_account_currency": 0,
             "user_remark": _("Bill Receipt {0} · {1}").format(receipt_doc.name, bill_doc.bill_no),
         },
-        {
-            "account": receipt_doc.credit_account,
-            "debit_in_account_currency": 0,
-            "credit_in_account_currency": amount,
-            "party_type": receipt_doc.from_party_type,
-            "party": receipt_doc.from_party,
-        },
+        credit_line,
     ]
     return lines
 

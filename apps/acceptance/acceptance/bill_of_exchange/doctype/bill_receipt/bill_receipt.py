@@ -23,6 +23,7 @@ class BillReceipt(Document):
     def validate(self):
         self._resolve_bill()
         self._validate_segment()
+        self._validate_opening()
 
     def on_submit(self):
         bill_doc = self._get_or_create_bill()
@@ -113,6 +114,14 @@ class BillReceipt(Document):
         if not self.segment_from or not self.segment_to:
             frappe.throw(_("Segment From and Segment To are required for electronic bills"))
         validate_range_and_amount(self.segment_from, self.segment_to, self.amount)
+
+    def _validate_opening(self):
+        if self.is_opening:
+            self.from_party_type = None
+            self.from_party = None
+            self.purpose = "Opening Balance"
+        elif self.purpose == "Opening Balance":
+            frappe.throw(_("Purpose 'Opening Balance' requires Is Opening to be checked"))
 
     def _get_or_create_bill(self):
         if self.is_new_bill:

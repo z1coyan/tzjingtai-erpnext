@@ -10,6 +10,7 @@
   "posting_date",
   "company",
   "col_break_header",
+  "is_opening",
   "from_party_type",
   "from_party",
   "purpose",
@@ -75,26 +76,35 @@
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "is_opening",
+   "fieldtype": "Check",
+   "label": "Is Opening",
+   "default": "0",
+   "description": "Opening balance entry: credits a clearing account instead of AR/AP and leaves party blank"
+  },
+  {
    "fieldname": "from_party_type",
    "fieldtype": "Select",
    "label": "From Party Type",
    "options": "Customer\nSupplier",
-   "reqd": 1,
-   "default": "Customer"
+   "default": "Customer",
+   "mandatory_depends_on": "eval:!doc.is_opening",
+   "depends_on": "eval:!doc.is_opening"
   },
   {
    "fieldname": "from_party",
    "fieldtype": "Dynamic Link",
    "label": "From Party",
    "options": "from_party_type",
-   "reqd": 1,
-   "in_list_view": 1
+   "in_list_view": 1,
+   "mandatory_depends_on": "eval:!doc.is_opening",
+   "depends_on": "eval:!doc.is_opening"
   },
   {
    "fieldname": "purpose",
    "fieldtype": "Select",
    "label": "Purpose",
-   "options": "Endorsement Received\nRefund Returned",
+   "options": "Endorsement Received\nRefund Returned\nOpening Balance",
    "default": "Endorsement Received"
   },
   {

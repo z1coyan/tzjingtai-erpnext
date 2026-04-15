@@ -83,6 +83,19 @@ msgstr "背书转让接收"
 msgid "Refund Returned"
 msgstr "票据找回"
 
+msgid "Opening Balance"
+msgstr "期初余额"
+
+msgid "Is Opening"
+msgstr "期初录入"
+
+#. Bill Receipt opening balance description
+msgid "Opening balance entry: credits a clearing account instead of AR/AP and leaves party blank"
+msgstr "期初录入：贷方记入期初调整科目而非客户/供应商往来，不关联 party"
+
+msgid "Purpose 'Opening Balance' requires Is Opening to be checked"
+msgstr "用途为\"期初余额\"时必须勾选\"期初录入\""
+
 msgid "Endorsement Out"
 msgstr "背书转让出"
 
