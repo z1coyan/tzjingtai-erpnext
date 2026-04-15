@@ -515,3 +515,11 @@ msgstr "承兑兑付 {0}"
 
 msgid "Bill Settlement {0} · {1}"
 msgstr "承兑兑付 {0} · {1}"
+
+#. Item custom field: 规格（tzjingtai Customizations）
+msgid "Specification"
+msgstr "规格"
+
+#. Item custom field: 客户方物料编码（tzjingtai Customizations）
+msgid "Customer Item Code"
+msgstr "客户方编码"

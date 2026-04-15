@@ -8,3 +8,32 @@ app_license = "MIT"
 required_apps = ["erpnext"]
 
 app_include_js = ["/assets/tzjingtai/js/link_formatters.js"]
+
+fixtures = [
+    {
+        "dt": "Custom Field",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Item-custom_specification",
+                    "Item-custom_customer_item_code",
+                    "Sales Order Item-custom_specification",
+                    "Sales Order Item-custom_customer_item_code",
+                    "Quotation Item-custom_specification",
+                    "Quotation Item-custom_customer_item_code",
+                    "Sales Invoice Item-custom_specification",
+                    "Sales Invoice Item-custom_customer_item_code",
+                    "Delivery Note Item-custom_specification",
+                    "Delivery Note Item-custom_customer_item_code",
+                    "Purchase Order Item-custom_specification",
+                    "Purchase Receipt Item-custom_specification",
+                    "Purchase Invoice Item-custom_specification",
+                    "Stock Entry Detail-custom_specification",
+                    "Stock Entry Detail-custom_customer_item_code",
+                ],
+            ]
+        ],
+    },
+]
