@@ -7,10 +7,7 @@ app_license = "MIT"
 
 required_apps = ["erpnext"]
 
-app_include_js = [
-    "/assets/tzjingtai/js/link_formatters.js",
-    "/assets/tzjingtai/js/item_drawings_link.js",
-]
+app_include_js = ["/assets/tzjingtai/js/link_formatters.js"]
 
 fixtures = [
     {
@@ -22,8 +19,6 @@ fixtures = [
                 [
                     "Item-custom_specification",
                     "Item-custom_customer_item_code",
-                    "Item-custom_drawings_section",
-                    "Item-custom_drawings",
                     "Sales Order Item-custom_specification",
                     "Sales Order Item-custom_customer_item_code",
                     "Quotation Item-custom_specification",
