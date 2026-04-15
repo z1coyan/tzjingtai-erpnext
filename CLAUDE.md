@@ -21,15 +21,18 @@ Dokploy deploy 会触发：
   1. 把镜像里的 `sites-assets` 同步到 sites volume（保证资源永远和镜像一致）
   2. 写入 common_site_config（db、redis、socketio 配置）
   3. **flushall redis-cache** —— 清掉上一轮镜像的 `assets_json` / `bootinfo` / 页面缓存，避免浏览器拉 404 的老 bundle hash
-  4. 遍历所有已存在的 site，比对 `sites/apps.txt` 与 `site_config.json.installed_apps`，对缺失的 app 自动 `bench --site <site> install-app <app> --skip-assets`
-- configurator 跑完后 backend / frontend / workers 才启动，拿到的就是已经配置好、app 已安装、缓存已清空的干净状态
+  4. 遍历所有已存在的 site，比对 `sites/apps.txt` 与 `site_config.json.installed_apps`，对缺失的 app 自动 `bench --site <site> install-app <app>`
+  5. 对每个已存在的 site 跑一次 `bench --site <site> sync-fixtures`，把镜像里 `fixtures/*.json` 的变更（Custom Field / Property Setter / Workflow 等）刷进 DB。`install-app` 只在"新装 app"时自动同步 fixtures，对已装 app 的 fixtures 改动无效，这一步补上这个盲区。`sync-fixtures` 只读 fixtures 目录往 DB 写，不触碰 sites/assets，对 CSS/JS 静态资源安全。
+- configurator 跑完后 backend / frontend / workers 才启动，拿到的就是已经配置好、app 已安装、fixtures 已同步、缓存已清空的干净状态
 
 `configurator-init.sh` 是这条通道的**唯一实现**。在任何时候、任何情况下：
 
-- 禁止手工 `docker compose exec backend bench ...`（包括 install-app）
+- 禁止手工 `docker compose exec backend bench ...`（包括 install-app、sync-fixtures）
 - 禁止 `bench migrate` / `bench build` / `bench clear-cache` / `bench get-app` / `bench update`
 - 禁止写 `scripts/install-app.sh` 之类的外挂脚本绕过 configurator
+- configurator-init.sh 内部也只允许以下 bench 子命令：`set-config` / `install-app` / `sync-fixtures`
 - 添加新 app 只改 `apps.json` + git push + Dokploy Deploy，绝无其他姿势
+- 修改已装 app 的 Custom Field / 其它 fixtures：同样 git push + Dokploy Deploy，configurator 第 5 步会自动 sync
 
 `redis-cache` 容器在 compose 里显式关闭了 RDB/AOF 持久化（`--save "" --appendonly no`），配合 configurator 的 flushall，双重保证任何 deploy 都从干净的缓存状态起步。
 

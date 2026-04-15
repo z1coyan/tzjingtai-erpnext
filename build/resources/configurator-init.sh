@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 # 一次性 bootstrap 脚本，由 docker-compose 里的 `configurator` 服务在每次 deploy 时调用。
 #
-# 它承担三件事，全部都是 "新镜像 deploy 时" 的幂等操作：
+# 它承担以下几件事，全部都是 "新镜像 deploy 时" 的幂等操作：
 #   1. 写入 common_site_config.json 里的 db / redis / socketio 配置（原 configurator 职责）
 #   2. 把镜像内 baked-in 的 sites-assets 同步到共享 sites volume（保证 CSS/JS 永远是镜像版本）
 #   3. 清空 redis-cache —— 避免老的 assets_json / bootinfo / 页面缓存引用已经被新 hash 替换的旧 bundle
 #   4. 对每个已存在的 site，比对 sites/apps.txt 与 site_config.json.installed_apps，
 #      自动安装新加入的 app（install-app 只动 DB，不会重建 sites/assets）
+#   5. 对每个已存在的 site 跑 bench sync-fixtures —— install-app 只在"新装 app"时
+#      同步 fixtures，对已装 app 的 fixtures 改动（Custom Field / Property Setter /
+#      Workflow 等）无效。这一步补上这个盲区。sync-fixtures 只读镜像里的
+#      fixtures/*.json 往 DB 写，不触碰 sites/assets，对 CSS/JS 静态资源安全。
 #
 # 这是 CLAUDE.md / AGENTS.md 容器化部署铁律里"唯一放开的通道"的**唯一实现**。
-# 禁止在这个脚本之外、在运行中的容器里手工跑任何 bench 子命令。
+# 禁止在这个脚本之外、在运行中的容器里手工跑任何 bench 子命令。脚本内部也只允许
+# 以下 bench 子命令：set-config / install-app / sync-fixtures。
 
 set -euo pipefail
 
@@ -77,6 +82,12 @@ except Exception as e:
       bench --site "$site" install-app "$app"
     fi
   done
+
+  # 把镜像里 fixtures/*.json 的变更刷进 DB（Custom Field / Property Setter /
+  # Workflow 等）。install-app 已经自带 sync_fixtures，所以这一步对"刚装完
+  # 的新 app"是幂等 no-op；对"已存在 app 里加了新 fixtures"是补齐漏洞。
+  echo "==> [configurator] ${site}: 同步 fixtures"
+  bench --site "$site" sync-fixtures
 done
 
 echo "==> [configurator] 完成"
