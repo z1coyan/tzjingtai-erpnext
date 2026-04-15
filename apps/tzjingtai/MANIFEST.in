@@ -1,0 +1,11 @@
+include MANIFEST.in
+include README.md
+include license.txt
+recursive-include tzjingtai *.css
+recursive-include tzjingtai *.html
+recursive-include tzjingtai *.js
+recursive-include tzjingtai *.json
+recursive-include tzjingtai *.md
+recursive-include tzjingtai *.py
+recursive-include tzjingtai *.txt
+recursive-exclude tzjingtai *.pyc
