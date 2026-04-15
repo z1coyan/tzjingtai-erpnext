@@ -523,3 +523,19 @@ msgstr "规格"
 #. Item custom field: 客户方物料编码（tzjingtai Customizations）
 msgid "Customer Item Code"
 msgstr "客户方编码"
+
+#. Item 图纸相关字段（tzjingtai Customizations / Item Drawing 子表）
+msgid "Drawings"
+msgstr "图纸"
+
+msgid "Drawing Name"
+msgstr "图纸名称"
+
+msgid "Drawing File"
+msgstr "图纸文件"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Remark"
+msgstr "备注"

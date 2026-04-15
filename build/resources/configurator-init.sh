@@ -7,14 +7,19 @@
 #   3. 清空 redis-cache —— 避免老的 assets_json / bootinfo / 页面缓存引用已经被新 hash 替换的旧 bundle
 #   4. 对每个已存在的 site，比对 sites/apps.txt 与 site_config.json.installed_apps，
 #      自动安装新加入的 app（install-app 只动 DB，不会重建 sites/assets）
-#   5. 对每个已存在的 site 跑 bench sync-fixtures —— install-app 只在"新装 app"时
-#      同步 fixtures，对已装 app 的 fixtures 改动（Custom Field / Property Setter /
-#      Workflow 等）无效。这一步补上这个盲区。sync-fixtures 只读镜像里的
-#      fixtures/*.json 往 DB 写，不触碰 sites/assets，对 CSS/JS 静态资源安全。
+#   5. 对每个已存在的 site 按顺序跑两个函数：
+#        a) frappe.model.sync.sync_all —— 把镜像里所有 app 的 DocType JSON（含
+#           新增 DocType、字段增减、类型变更）刷进 DB schema；
+#        b) frappe.utils.fixtures.sync_fixtures —— 把 fixtures/*.json 里的
+#           Custom Field / Property Setter / Workflow 等刷进 DB。
+#      install-app 只在"新装 app"时自动做这两件事，对已装 app 的 schema / fixtures
+#      改动无效 —— 这一步补上这个盲区。两个函数都只读镜像内的 JSON 往 DB 写，
+#      不触碰 sites/assets，对 CSS/JS 静态资源安全。
 #
 # 这是 CLAUDE.md / AGENTS.md 容器化部署铁律里"唯一放开的通道"的**唯一实现**。
 # 禁止在这个脚本之外、在运行中的容器里手工跑任何 bench 子命令。脚本内部也只允许
-# 以下 bench 子命令：set-config / install-app / execute（仅 frappe.utils.fixtures.sync_fixtures）。
+# 以下 bench 子命令：set-config / install-app / execute（仅允许调用
+# frappe.model.sync.sync_all 和 frappe.utils.fixtures.sync_fixtures）。
 
 set -euo pipefail
 
@@ -83,13 +88,16 @@ except Exception as e:
     fi
   done
 
-  # 把镜像里 fixtures/*.json 的变更刷进 DB（Custom Field / Property Setter /
-  # Workflow 等）。install-app 已经自带 sync_fixtures，所以这一步对"刚装完
-  # 的新 app"是幂等 no-op；对"已存在 app 里加了新 fixtures"是补齐漏洞。
+  # 先 sync_all 把镜像里的 DocType JSON 刷进 DB schema（新增 DocType / 字段增删 /
+  # 类型变更），再 sync_fixtures 把 Custom Field / Property Setter / Workflow 等
+  # fixtures 刷进 DB。install-app 已经自带这两步，所以对"刚装完的新 app"是幂等
+  # no-op；对"已存在 app 里加了新 DocType 或 fixtures"是补齐漏洞。
   #
-  # v16 的 bench CLI 没有独立的 sync-fixtures 子命令（只有 export-fixtures），
-  # 所以直接通过 bench execute 调用底层函数。sync_fixtures() 只读 fixtures/*.json
-  # 往 DB 写，不触碰 sites/assets。
+  # v16 的 bench CLI 没有独立的 sync-fixtures / sync-schema 子命令，所以统一通过
+  # bench execute 调用底层函数。两个函数都只读镜像内 JSON 往 DB 写，不触碰
+  # sites/assets。
+  echo "==> [configurator] ${site}: 同步 DocType schema"
+  bench --site "$site" execute frappe.model.sync.sync_all
   echo "==> [configurator] ${site}: 同步 fixtures"
   bench --site "$site" execute frappe.utils.fixtures.sync_fixtures
 done

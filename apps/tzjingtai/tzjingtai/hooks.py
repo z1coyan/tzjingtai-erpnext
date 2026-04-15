@@ -19,6 +19,8 @@ fixtures = [
                 [
                     "Item-custom_specification",
                     "Item-custom_customer_item_code",
+                    "Item-custom_drawings_section",
+                    "Item-custom_drawings",
                     "Sales Order Item-custom_specification",
                     "Sales Order Item-custom_customer_item_code",
                     "Quotation Item-custom_specification",
