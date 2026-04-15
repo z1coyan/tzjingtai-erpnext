@@ -1,0 +1,11 @@
+include MANIFEST.in
+include README.md
+include license.txt
+recursive-include item_drawings *.css
+recursive-include item_drawings *.html
+recursive-include item_drawings *.js
+recursive-include item_drawings *.json
+recursive-include item_drawings *.md
+recursive-include item_drawings *.py
+recursive-include item_drawings *.txt
+recursive-exclude item_drawings *.pyc

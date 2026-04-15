@@ -1,0 +1,26 @@
+[
+ {
+  "doctype": "Custom Field",
+  "name": "Item-custom_drawings_section",
+  "dt": "Item",
+  "module": "Item Drawings",
+  "fieldname": "custom_drawings_section",
+  "label": "Drawings",
+  "fieldtype": "Section Break",
+  "insert_after": "custom_customer_item_code",
+  "collapsible": 1,
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Item-custom_drawings",
+  "dt": "Item",
+  "module": "Item Drawings",
+  "fieldname": "custom_drawings",
+  "label": "Drawings",
+  "fieldtype": "Table",
+  "options": "Item Drawing",
+  "insert_after": "custom_drawings_section",
+  "translatable": 0
+ }
+]

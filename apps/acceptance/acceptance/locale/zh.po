@@ -523,3 +523,65 @@ msgstr "规格"
 #. Item custom field: 客户方物料编码（tzjingtai Customizations）
 msgid "Customer Item Code"
 msgstr "客户方编码"
+
+#. item_drawings app: module & DocType & fields
+msgid "Item Drawings"
+msgstr "物料图纸"
+
+msgid "Item Drawing"
+msgstr "物料图纸"
+
+msgid "Drawings"
+msgstr "图纸"
+
+msgid "Drawing Name"
+msgstr "图纸名称"
+
+msgid "Drawing File"
+msgstr "图纸文件"
+
+msgid "Is Main"
+msgstr "主图"
+
+msgid "Disabled"
+msgstr "禁用"
+
+msgid "Version"
+msgstr "版本"
+
+msgid "Remark"
+msgstr "备注"
+
+#. item_drawings lightbox UI
+msgid "View drawings"
+msgstr "查看图纸"
+
+msgid "No active drawings for {0}"
+msgstr "{0} 暂无可用图纸"
+
+msgid "Failed to load {0}"
+msgstr "加载 {0} 失败"
+
+msgid "Rotate"
+msgstr "旋转"
+
+msgid "Zoom in"
+msgstr "放大"
+
+msgid "Zoom out"
+msgstr "缩小"
+
+msgid "Download"
+msgstr "下载"
+
+msgid "Close"
+msgstr "关闭"
+
+msgid "Previous"
+msgstr "上一张"
+
+msgid "Next"
+msgstr "下一张"
+
+msgid "Main"
+msgstr "主图"
