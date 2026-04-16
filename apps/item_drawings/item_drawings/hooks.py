@@ -13,6 +13,12 @@ app_include_js = ["/assets/item_drawings/js/item_drawings_lightbox.js"]
 # Item 表单本地脚本：子表 is_main 单选 + 首行默认主图
 doctype_js = {"Item": "public/js/item_drawing_form.js"}
 
+doc_events = {
+    "Item": {
+        "validate": "item_drawings.api.normalize_item_drawings",
+    }
+}
+
 fixtures = [
     {
         "dt": "Custom Field",

@@ -1,15 +1,15 @@
 // Item 表单本地脚本：
-// 1) custom_drawings 子表新增一行时，如果这是唯一一行，自动勾上 is_main
-// 2) 用户勾选某一行的 is_main 时，其它行自动取消 —— 保证"主图唯一"语义
-//
-// 纯前端 UI 约束，不做后端 validate，符合 "按需加抽象" 原则。
+// 1) 第一张有效图纸自动成为主图
+// 2) 用户勾选某一行主图时，其它行自动取消
+// 3) 主图被禁用/删除后，自动把第一张有效图纸补成主图
 
 frappe.ui.form.on("Item", {
     custom_drawings_add: function (frm, cdt, cdn) {
-        const rows = frm.doc.custom_drawings || [];
-        if (rows.length === 1) {
-            frappe.model.set_value(cdt, cdn, "is_main", 1);
-        }
+        sync_main_drawing(frm, cdn);
+    },
+
+    custom_drawings_remove: function (frm) {
+        sync_main_drawing(frm);
     },
 });
 
@@ -23,4 +23,39 @@ frappe.ui.form.on("Item Drawing", {
             }
         });
     },
+
+    drawing_file: function (frm, cdt, cdn) {
+        sync_main_drawing(frm, cdn);
+    },
+
+    disabled: function (frm, cdt, cdn) {
+        sync_main_drawing(frm, cdn);
+    },
 });
+
+function sync_main_drawing(frm, preferred_row_name) {
+    const rows = frm.doc.custom_drawings || [];
+    const activeRows = rows.filter((row) => row.drawing_file && !row.disabled);
+
+    if (!activeRows.length) {
+        rows.forEach((row) => {
+            if (row.is_main) {
+                frappe.model.set_value(row.doctype, row.name, "is_main", 0);
+            }
+        });
+        return;
+    }
+
+    const preferredRow = preferred_row_name
+        ? activeRows.find((row) => row.name === preferred_row_name)
+        : null;
+    const currentMain = activeRows.find((row) => row.is_main);
+    const nextMain = preferredRow || currentMain || activeRows[0];
+
+    rows.forEach((row) => {
+        const shouldBeMain = row.name === nextMain.name ? 1 : 0;
+        if ((row.is_main || 0) !== shouldBeMain) {
+            frappe.model.set_value(row.doctype, row.name, "is_main", shouldBeMain);
+        }
+    });
+}

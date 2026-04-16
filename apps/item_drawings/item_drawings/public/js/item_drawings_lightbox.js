@@ -15,6 +15,12 @@
     const EYE_CLASS = "idw-drawings-eye";
     const OVERLAY_CLASS = "idw-drawings-lightbox";
     const IMG_EXT_RE = /\.(png|jpe?g|gif|webp|svg|bmp|tiff?)$/i;
+    const STATUS_PENDING = "pending";
+    const STATUS_READY = "ready";
+    const STATUS_EMPTY = "empty";
+    const statusCache = new Map();
+    const pendingItems = new Set();
+    let statusTimer = null;
 
     // ---------- Eye icon 注入 ----------
     // v16 的 formatters.js Link 分支用 `a.innerText = label` 渲染，link_formatters
@@ -44,12 +50,16 @@
         const item_code = item_code_of(anchor);
         if (!item_code) return;
         anchor.setAttribute(PROCESSED_ATTR, "1");
-        const span = document.createElement("span");
-        span.className = EYE_CLASS;
-        span.setAttribute("data-item", item_code);
-        span.setAttribute("title", __("View drawings"));
-        span.innerHTML = EYE_SVG;
-        anchor.parentNode.insertBefore(span, anchor);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = EYE_CLASS;
+        button.setAttribute("data-item", item_code);
+        button.setAttribute("title", __("Checking drawings"));
+        button.setAttribute("aria-label", __("Checking drawings"));
+        button.setAttribute("disabled", "disabled");
+        button.innerHTML = EYE_SVG;
+        anchor.parentNode.insertBefore(button, anchor);
+        request_eye_status(item_code);
     }
 
     function scan(root) {
@@ -91,17 +101,92 @@
     // 祖先元素的 bubble click handler 触发跳转之前拦截掉。
     // 同时拦 mousedown，避免 Frappe 某些控件在 mousedown 阶段就开始导航。
     function handle_eye(e) {
-        const span = e.target.closest && e.target.closest("." + EYE_CLASS);
-        if (!span) return;
+        const button = e.target.closest && e.target.closest("." + EYE_CLASS);
+        if (!button) return;
+        if (button.disabled) return;
         e.preventDefault();
         e.stopPropagation();
         if (e.stopImmediatePropagation) e.stopImmediatePropagation();
         if (e.type !== "click") return;
-        const item_code = span.getAttribute("data-item");
+        const item_code = button.getAttribute("data-item");
         if (item_code) open_lightbox(item_code);
     }
     document.addEventListener("mousedown", handle_eye, true);
     document.addEventListener("click", handle_eye, true);
+
+    function request_eye_status(item_code) {
+        if (!item_code) return;
+        if (statusCache.has(item_code)) {
+            apply_eye_state(item_code, statusCache.get(item_code));
+            return;
+        }
+
+        statusCache.set(item_code, { state: STATUS_PENDING });
+        pendingItems.add(item_code);
+        apply_eye_state(item_code, statusCache.get(item_code));
+
+        if (statusTimer) clearTimeout(statusTimer);
+        statusTimer = setTimeout(flush_eye_status_requests, 60);
+    }
+
+    function flush_eye_status_requests() {
+        const item_codes = Array.from(pendingItems);
+        pendingItems.clear();
+        statusTimer = null;
+        if (!item_codes.length) return;
+
+        frappe.call({
+            method: "item_drawings.api.get_item_drawing_status",
+            args: {
+                item_codes,
+            },
+            callback(r) {
+                const message = r.message || {};
+                item_codes.forEach((item_code) => {
+                    const info = message[item_code] || {};
+                    statusCache.set(item_code, {
+                        state: info.has_active_drawings ? STATUS_READY : STATUS_EMPTY,
+                        active_count: info.active_count || 0,
+                    });
+                    apply_eye_state(item_code, statusCache.get(item_code));
+                });
+            },
+            error() {
+                item_codes.forEach((item_code) => {
+                    statusCache.delete(item_code);
+                    apply_eye_state(item_code, null);
+                });
+            },
+        });
+    }
+
+    function apply_eye_state(item_code, status) {
+        const buttons = document.querySelectorAll("." + EYE_CLASS + '[data-item="' + css_escape(item_code) + '"]');
+        buttons.forEach((button) => {
+            const state = (status && status.state) || STATUS_PENDING;
+            button.classList.remove("is-pending", "is-disabled", "is-ready");
+            button.disabled = true;
+
+            if (state === STATUS_READY) {
+                button.classList.add("is-ready");
+                button.disabled = false;
+                button.setAttribute("title", __("View drawings"));
+                button.setAttribute("aria-label", __("View drawings"));
+                return;
+            }
+
+            if (state === STATUS_EMPTY) {
+                button.classList.add("is-disabled");
+                button.setAttribute("title", __("No drawings"));
+                button.setAttribute("aria-label", __("No drawings"));
+                return;
+            }
+
+            button.classList.add("is-pending");
+            button.setAttribute("title", __("Checking drawings"));
+            button.setAttribute("aria-label", __("Checking drawings"));
+        });
+    }
 
     function open_lightbox(item_code) {
         frappe.db
@@ -125,6 +210,11 @@
                     indicator: "red",
                 });
             });
+    }
+
+    function css_escape(value) {
+        if (window.CSS && window.CSS.escape) return window.CSS.escape(value);
+        return String(value).replace(/["\\]/g, "\\$&");
     }
 
     // ---------- Lightbox 组件 ----------
@@ -395,9 +485,13 @@
         if (_styles_injected) return;
         _styles_injected = true;
         const css =
-            "." + EYE_CLASS + " { display:inline-block; vertical-align:-0.15em; line-height:1; font-size:1em; width:1em; height:1em; cursor:pointer; color:var(--text-muted, #6c7680); margin-right:6px; }" +
+            "." + EYE_CLASS + " { display:inline-flex; align-items:center; justify-content:center; vertical-align:-0.15em; line-height:1; font-size:1em; width:1.75em; height:1.75em; cursor:pointer; color:var(--text-muted, #6c7680); margin-right:6px; padding:0; border:1px solid transparent; border-radius:6px; background:transparent; transition:color 0.15s, background 0.15s, border-color 0.15s; }" +
             "." + EYE_CLASS + " > svg { display:block; width:1em; height:1em; }" +
-            "." + EYE_CLASS + ":hover { color: var(--primary-color, #5e64ff); }" +
+            "." + EYE_CLASS + ".is-ready:hover { color: var(--primary-color, #5e64ff); background:rgba(94,100,255,0.08); border-color:rgba(94,100,255,0.16); }" +
+            "." + EYE_CLASS + ".is-disabled, ." + EYE_CLASS + ".is-pending { color:var(--disabled-text, #b8c2cc); cursor:not-allowed; }" +
+            "." + EYE_CLASS + ".is-disabled { background:rgba(0,0,0,0.03); border-color:rgba(0,0,0,0.04); }" +
+            "." + EYE_CLASS + ".is-pending { opacity:0.7; }" +
+            "." + EYE_CLASS + ":disabled { pointer-events:none; }" +
             "." + OVERLAY_CLASS + " { position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:9999; display:flex; align-items:center; justify-content:center; outline:none; }" +
             "." + OVERLAY_CLASS + " .idw-lb-topbar { position:absolute; top:0; left:0; right:0; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; color:#fff; background:linear-gradient(rgba(0,0,0,0.65), transparent); pointer-events:none; }" +
             "." + OVERLAY_CLASS + " .idw-lb-caption { font-size:14px; pointer-events:auto; }" +

@@ -611,6 +611,12 @@ msgstr "备注"
 msgid "View drawings"
 msgstr "查看图纸"
 
+msgid "Checking drawings"
+msgstr "检查图纸中"
+
+msgid "No drawings"
+msgstr "暂无图纸"
+
 msgid "No active drawings for {0}"
 msgstr "{0} 暂无可用图纸"
 
@@ -640,3 +646,6 @@ msgstr "下一张"
 
 msgid "Main"
 msgstr "主图"
+
+msgid "Item codes must be a list."
+msgstr "物料编码必须是列表。"
