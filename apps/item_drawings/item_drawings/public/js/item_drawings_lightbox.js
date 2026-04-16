@@ -60,6 +60,7 @@
     }
 
     function start_observer() {
+        inject_styles_once();
         scan(document);
         const observer = new MutationObserver((mutations) => {
             for (const m of mutations) {
