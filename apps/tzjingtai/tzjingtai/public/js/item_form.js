@@ -26,6 +26,7 @@
     function apply_item_code_rules(frm) {
         if (!frm.is_new()) {
             frm.set_df_property("item_code", "read_only", 1);
+            frm.toggle_enable("item_code", false);
             return;
         }
 
@@ -33,6 +34,7 @@
 
         if (!frm.doc.item_group) {
             frm.set_df_property("item_code", "read_only", 0);
+            frm.toggle_enable("item_code", false);
             frm.set_df_property(
                 "item_code",
                 "description",
@@ -57,6 +59,7 @@
     function apply_item_code_context(frm, context) {
         if (context.mode === AUTO_SEQUENCE_MODE) {
             frm.set_df_property("item_code", "read_only", 1);
+            frm.toggle_enable("item_code", false);
             frm.set_df_property(
                 "item_code",
                 "description",
@@ -71,6 +74,7 @@
 
         if (context.mode === MANUAL_WITH_PREFIX_MODE) {
             frm.set_df_property("item_code", "read_only", 0);
+            frm.toggle_enable("item_code", true);
             frm.set_df_property("item_code", "description", __("Code must start with {0}.", [context.prefix]));
 
             if (should_replace_manual_prefix(frm) && context.prefix) {
@@ -81,6 +85,7 @@
         }
 
         frm.set_df_property("item_code", "read_only", 0);
+        frm.toggle_enable("item_code", false);
         frm.set_df_property("item_code", "description", "");
     }
 })();

@@ -134,15 +134,28 @@ def _allocate_next_item_code(prefix: str) -> str:
 
 def _peek_next_item_code(prefix: str) -> str:
     series_key = _get_series_key(prefix)
-    current = frappe.db.get_value("Series", series_key, "current")
-    if current is None:
-        current = _find_max_existing_sequence(prefix)
+    current = max(_get_series_current(series_key), _find_max_existing_sequence(prefix))
 
     return f"{series_key}{int(current or 0) + 1}"
 
 
 def _get_series_key(prefix: str) -> str:
     return f"{prefix}-"
+
+
+def _get_series_current(series_key: str) -> int:
+    result = frappe.db.sql(
+        """
+        SELECT `current`
+        FROM `tabSeries`
+        WHERE `name` = %s
+        """,
+        (series_key,),
+    )
+    if not result:
+        return 0
+
+    return int(result[0][0] or 0)
 
 
 def _ensure_series_floor(series_key: str, prefix: str):
