@@ -9,6 +9,17 @@ required_apps = ["erpnext"]
 
 app_include_js = ["/assets/tzjingtai/js/link_formatters.js"]
 
+doctype_js = {
+    "Item": "public/js/item_form.js",
+}
+
+doc_events = {
+    "Item": {
+        "before_naming": "tzjingtai.item_code.before_naming_item",
+        "validate": "tzjingtai.item_code.validate_item",
+    },
+}
+
 fixtures = [
     {
         "dt": "Custom Field",
@@ -32,6 +43,8 @@ fixtures = [
                     "Purchase Invoice Item-custom_specification",
                     "Stock Entry Detail-custom_specification",
                     "Stock Entry Detail-custom_customer_item_code",
+                    "Item Group-custom_item_code_prefix",
+                    "Item Group-custom_item_code_mode",
                 ],
             ]
         ],

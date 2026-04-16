@@ -524,6 +524,61 @@ msgstr "规格"
 msgid "Customer Item Code"
 msgstr "客户方编码"
 
+#. tzjingtai app: Item code generation and validation
+msgid "Cannot generate item code for customer products."
+msgstr "客户产品不能自动生成物料编码。"
+
+msgid "Item Code Prefix"
+msgstr "物料编码前缀"
+
+msgid "Item Code Mode"
+msgstr "物料编码模式"
+
+msgid "Auto Sequence"
+msgstr "自动流水号"
+
+msgid "Manual With Prefix"
+msgstr "手工填写并校验前缀"
+
+msgid "Prefix used to build item code, for example F(TJ) or F(P)."
+msgstr "用于生成物料编码的前缀，例如 F(TJ) 或 F(P)。"
+
+msgid "Auto Sequence uses ERPNext Series. Manual With Prefix only validates the prefix."
+msgstr "自动流水号模式使用 ERPNext Series；手工填写模式只校验前缀。"
+
+msgid "Item code must start with {0} and include the custom suffix, for example {1}."
+msgstr "物料编码必须以 {0} 开头，并包含自定义后缀，例如 {1}。"
+
+msgid "Select an Item Group before loading item code settings."
+msgstr "请先选择物料分类，再加载物料编码配置。"
+
+msgid "Item Group {0} does not exist."
+msgstr "物料分类 {0} 不存在。"
+
+msgid "Item Group {0} is a group and cannot be used directly for items."
+msgstr "物料分类 {0} 是分组节点，不能直接用于创建物料。"
+
+msgid "Item Group {0} has no item code prefix configured."
+msgstr "物料分类 {0} 尚未配置物料编码前缀。"
+
+msgid "Item Group {0} has no item code mode configured."
+msgstr "物料分类 {0} 尚未配置物料编码模式。"
+
+msgid "Select Item Group first, then the system will decide how item code is handled."
+msgstr "请先选择物料分类，系统会自动决定物料编码处理方式。"
+
+msgid "Item code will be assigned automatically when the item is saved."
+msgstr "保存物料时会自动分配物料编码。"
+
+msgid "Code must start with {0}."
+msgstr "编码必须以 {0} 开头。"
+
+msgid "Item code {0} already exists."
+msgstr "物料编码 {0} 已存在。"
+
+msgid "Unable to allocate a unique item code for prefix {0}. Please retry."
+msgstr "前缀 {0} 暂时无法分配唯一物料编码，请重试。"
+
 #. item_drawings app: module & DocType & fields
 msgid "Item Drawings"
 msgstr "物料图纸"

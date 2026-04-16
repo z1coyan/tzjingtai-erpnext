@@ -215,5 +215,32 @@
   "in_list_view": 1,
   "columns": 2,
   "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Item Group-custom_item_code_prefix",
+  "dt": "Item Group",
+  "module": "Customizations",
+  "fieldname": "custom_item_code_prefix",
+  "label": "Item Code Prefix",
+  "fieldtype": "Data",
+  "insert_after": "is_group",
+  "depends_on": "eval:!doc.is_group",
+  "description": "Prefix used to build item code, for example F(TJ) or F(P).",
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Item Group-custom_item_code_mode",
+  "dt": "Item Group",
+  "module": "Customizations",
+  "fieldname": "custom_item_code_mode",
+  "label": "Item Code Mode",
+  "fieldtype": "Select",
+  "options": "Auto Sequence\nManual With Prefix",
+  "insert_after": "custom_item_code_prefix",
+  "depends_on": "eval:!doc.is_group",
+  "description": "Auto Sequence uses ERPNext Series. Manual With Prefix only validates the prefix.",
+  "translatable": 0
  }
 ]
