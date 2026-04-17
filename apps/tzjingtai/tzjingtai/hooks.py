@@ -11,6 +11,10 @@ app_include_js = ["/assets/tzjingtai/js/link_formatters.js"]
 
 doctype_js = {
     "Item": "public/js/item_form.js",
+    "Delivery Note": "public/js/order_remark.js",
+    "Purchase Receipt": "public/js/order_remark.js",
+    "Stock Entry": "public/js/order_remark.js",
+    "Subcontracting Receipt": "public/js/order_remark.js",
 }
 
 doc_events = {
@@ -38,11 +42,15 @@ fixtures = [
                     "Sales Invoice Item-custom_customer_item_code",
                     "Delivery Note Item-custom_specification",
                     "Delivery Note Item-custom_customer_item_code",
+                    "Delivery Note Item-custom_remark",
                     "Purchase Order Item-custom_specification",
                     "Purchase Receipt Item-custom_specification",
+                    "Purchase Receipt Item-custom_remark",
                     "Purchase Invoice Item-custom_specification",
                     "Stock Entry Detail-custom_specification",
                     "Stock Entry Detail-custom_customer_item_code",
+                    "Stock Entry Detail-custom_remark",
+                    "Subcontracting Receipt Item-custom_remark",
                     "Item Group-custom_item_code_prefix",
                     "Item Group-custom_item_code_mode",
                 ],

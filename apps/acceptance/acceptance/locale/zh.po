@@ -105,6 +105,9 @@ msgstr "退回客户"
 msgid "Penalty"
 msgstr "罚款给客户"
 
+msgid "Remark"
+msgstr "备注"
+
 #. Field labels — Bill of Exchange
 msgid "Bill No"
 msgstr "票据号码"
