@@ -1,0 +1,54 @@
+#
+# tzjingtai 自定义 APP 中文翻译
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: tzjingtai 0.1.0\n"
+"Report-Msgid-Bugs-To: it@tzjingtai.com\n"
+"POT-Creation-Date: 2026-04-18 00:00+0000\n"
+"PO-Revision-Date: 2026-04-18 00:00+0000\n"
+"Last-Translator: 台州京泰 IT\n"
+"Language-Team: Simplified Chinese\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Employee section break
+msgid "Insurance Details"
+msgstr "保险信息"
+
+#. Employee insurance checkboxes
+msgid "Pension Insurance"
+msgstr "养老保险"
+
+msgid "Medical Insurance"
+msgstr "医疗保险"
+
+msgid "Unemployment Insurance"
+msgstr "失业保险"
+
+msgid "Work Injury Insurance"
+msgstr "工伤保险"
+
+msgid "Maternity Insurance"
+msgstr "生育保险"
+
+msgid "Insurance Provider"
+msgstr "承保方"
+
+msgid "Which insurer or company carries the policy"
+msgstr "保险由哪家保险公司或企业承保"
+
+#. Employee ID card section
+msgid "ID Card"
+msgstr "身份证"
+
+msgid "ID Card No"
+msgstr "身份证号"
+
+msgid "ID Card Front"
+msgstr "身份证人像面"
+
+msgid "ID Card Back"
+msgstr "身份证国徽面"

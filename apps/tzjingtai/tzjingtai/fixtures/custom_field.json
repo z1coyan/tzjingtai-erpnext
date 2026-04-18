@@ -294,5 +294,150 @@
   "depends_on": "eval:!doc.is_group",
   "description": "Auto Sequence uses ERPNext Series. Manual With Prefix only validates the prefix.",
   "translatable": 0
+ },
+
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_insurance_section",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_insurance_section",
+  "label": "Insurance Details",
+  "fieldtype": "Section Break",
+  "insert_after": "blood_group",
+  "translatable": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_insurance_pension",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_insurance_pension",
+  "label": "Pension Insurance",
+  "fieldtype": "Check",
+  "insert_after": "custom_insurance_section",
+  "translatable": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_insurance_medical",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_insurance_medical",
+  "label": "Medical Insurance",
+  "fieldtype": "Check",
+  "insert_after": "custom_insurance_pension",
+  "translatable": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_insurance_unemployment",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_insurance_unemployment",
+  "label": "Unemployment Insurance",
+  "fieldtype": "Check",
+  "insert_after": "custom_insurance_medical",
+  "translatable": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_insurance_injury",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_insurance_injury",
+  "label": "Work Injury Insurance",
+  "fieldtype": "Check",
+  "insert_after": "custom_insurance_unemployment",
+  "translatable": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_insurance_maternity",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_insurance_maternity",
+  "label": "Maternity Insurance",
+  "fieldtype": "Check",
+  "insert_after": "custom_insurance_injury",
+  "translatable": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_insurance_column_break",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_insurance_column_break",
+  "fieldtype": "Column Break",
+  "insert_after": "custom_insurance_maternity",
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_insurance_provider",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_insurance_provider",
+  "label": "Insurance Provider",
+  "fieldtype": "Data",
+  "insert_after": "custom_insurance_column_break",
+  "description": "Which insurer or company carries the policy",
+  "translatable": 1
+ },
+
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_id_card_section",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_id_card_section",
+  "label": "ID Card",
+  "fieldtype": "Section Break",
+  "insert_after": "place_of_issue",
+  "translatable": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_id_card_no",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_id_card_no",
+  "label": "ID Card No",
+  "fieldtype": "Data",
+  "insert_after": "custom_id_card_section",
+  "in_standard_filter": 1,
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_id_card_col_break",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_id_card_col_break",
+  "fieldtype": "Column Break",
+  "insert_after": "custom_id_card_no",
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_id_card_front",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_id_card_front",
+  "label": "ID Card Front",
+  "fieldtype": "Attach Image",
+  "insert_after": "custom_id_card_col_break",
+  "translatable": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-custom_id_card_back",
+  "dt": "Employee",
+  "module": "Customizations",
+  "fieldname": "custom_id_card_back",
+  "label": "ID Card Back",
+  "fieldtype": "Attach Image",
+  "insert_after": "custom_id_card_front",
+  "translatable": 1
  }
 ]

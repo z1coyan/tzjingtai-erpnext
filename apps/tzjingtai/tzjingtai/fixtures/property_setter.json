@@ -1,0 +1,101 @@
+[
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-middle_name-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "middle_name",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ },
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-last_name-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "last_name",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ },
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-employee_name-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "employee_name",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ },
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-health_details-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "health_details",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ },
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-passport_details_section-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "passport_details_section",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ },
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-passport_number-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "passport_number",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ },
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-valid_upto-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "valid_upto",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ },
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-date_of_issue-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "date_of_issue",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ },
+ {
+  "doctype": "Property Setter",
+  "name": "Employee-place_of_issue-hidden",
+  "doctype_or_field": "DocField",
+  "doc_type": "Employee",
+  "field_name": "place_of_issue",
+  "property": "hidden",
+  "property_type": "Check",
+  "value": "1",
+  "module": "Customizations"
+ }
+]
