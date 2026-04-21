@@ -1,0 +1,230 @@
+{
+ "actions": [],
+ "creation": "2026-04-18 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "time_windows_section",
+  "morning_start",
+  "morning_end",
+  "column_break_afternoon",
+  "afternoon_start",
+  "afternoon_end",
+  "column_break_overtime",
+  "overtime_start",
+  "overtime_end",
+  "rules_section",
+  "window_buffer_minutes",
+  "extra_minutes",
+  "column_break_rules",
+  "round_unit_hours",
+  "regular_cap_hours",
+  "overtime_section",
+  "overtime_full_threshold_hours",
+  "overtime_full_credit_hours",
+  "column_break_overtime_rules",
+  "overtime_full_tolerance_minutes",
+  "wage_section",
+  "regular_hours_per_day",
+  "shift_integration_section",
+  "shift_type_name",
+  "linked_shift_type",
+  "column_break_shift",
+  "shift_process_start_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "time_windows_section",
+   "fieldtype": "Section Break",
+   "label": "Time Windows"
+  },
+  {
+   "fieldname": "morning_start",
+   "fieldtype": "Time",
+   "label": "Morning Start",
+   "default": "07:00:00",
+   "reqd": 1
+  },
+  {
+   "fieldname": "morning_end",
+   "fieldtype": "Time",
+   "label": "Morning End",
+   "default": "11:00:00",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_afternoon",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "afternoon_start",
+   "fieldtype": "Time",
+   "label": "Afternoon Start",
+   "default": "12:30:00",
+   "reqd": 1
+  },
+  {
+   "fieldname": "afternoon_end",
+   "fieldtype": "Time",
+   "label": "Afternoon End",
+   "default": "16:30:00",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_overtime",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overtime_start",
+   "fieldtype": "Time",
+   "label": "Overtime Start",
+   "default": "17:00:00"
+  },
+  {
+   "fieldname": "overtime_end",
+   "fieldtype": "Time",
+   "label": "Overtime End",
+   "default": "20:30:00"
+  },
+  {
+   "fieldname": "rules_section",
+   "fieldtype": "Section Break",
+   "label": "Calculation Rules"
+  },
+  {
+   "fieldname": "window_buffer_minutes",
+   "fieldtype": "Int",
+   "label": "Window Buffer Minutes",
+   "default": "30",
+   "description": "Tolerance in minutes for a checkin to be counted in a window"
+  },
+  {
+   "fieldname": "extra_minutes",
+   "fieldtype": "Int",
+   "label": "Extra Minutes",
+   "default": "5",
+   "description": "Minutes added to raw worked duration before rounding"
+  },
+  {
+   "fieldname": "column_break_rules",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "round_unit_hours",
+   "fieldtype": "Float",
+   "label": "Round Unit Hours",
+   "default": "0.5",
+   "precision": "2",
+   "description": "Hours truncated down to multiples of this unit"
+  },
+  {
+   "fieldname": "regular_cap_hours",
+   "fieldtype": "Float",
+   "label": "Regular Cap Hours",
+   "default": "8",
+   "precision": "2",
+   "description": "Maximum regular hours counted per day (morning + afternoon)"
+  },
+  {
+   "fieldname": "overtime_section",
+   "fieldtype": "Section Break",
+   "label": "Overtime Full Attendance Bonus"
+  },
+  {
+   "fieldname": "overtime_full_threshold_hours",
+   "fieldtype": "Float",
+   "label": "Overtime Full Threshold Hours",
+   "default": "3.5",
+   "precision": "2",
+   "description": "Overtime worked hours at or above this value qualifies for full credit"
+  },
+  {
+   "fieldname": "overtime_full_credit_hours",
+   "fieldtype": "Float",
+   "label": "Overtime Full Credit Hours",
+   "default": "4",
+   "precision": "2",
+   "description": "Hours credited when overtime is fully attended"
+  },
+  {
+   "fieldname": "column_break_overtime_rules",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "overtime_full_tolerance_minutes",
+   "fieldtype": "Int",
+   "label": "Overtime Full Tolerance Minutes",
+   "default": "5",
+   "description": "Minutes shortfall still considered fully attended"
+  },
+  {
+   "fieldname": "wage_section",
+   "fieldtype": "Section Break",
+   "label": "Wage"
+  },
+  {
+   "fieldname": "regular_hours_per_day",
+   "fieldtype": "Float",
+   "label": "Regular Hours Per Day",
+   "default": "8",
+   "precision": "2",
+   "description": "Divisor used to derive hourly rate from daily wage"
+  },
+  {
+   "fieldname": "shift_integration_section",
+   "fieldtype": "Section Break",
+   "label": "Shift Integration",
+   "description": "Create a Shift Type from these time windows and bind it to every Active Employee's Default Shift. This lets ERPNext native Auto Attendance generate daily Attendance records from Employee Checkins."
+  },
+  {
+   "fieldname": "shift_type_name",
+   "fieldtype": "Data",
+   "label": "Shift Type Name",
+   "default": "Hourly Payroll Shift",
+   "description": "Name of the Shift Type created/updated by the Setup button"
+  },
+  {
+   "fieldname": "linked_shift_type",
+   "fieldtype": "Link",
+   "label": "Linked Shift Type",
+   "options": "Shift Type",
+   "read_only": 1,
+   "description": "Populated after you click Setup. New placeholder employees are bound to this shift on creation."
+  },
+  {
+   "fieldname": "column_break_shift",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shift_process_start_date",
+   "fieldtype": "Date",
+   "label": "Auto Attendance Process From",
+   "description": "The Shift Type's Process Attendance After date. Set to a date before your earliest Checkin so Auto Attendance can backfill historical records."
+  }
+ ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-04-18 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Hourly Payroll",
+ "name": "Hourly Payroll Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "ASC"
+}

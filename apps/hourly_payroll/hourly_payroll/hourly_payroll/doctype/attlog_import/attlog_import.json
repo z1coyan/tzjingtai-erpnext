@@ -1,0 +1,171 @@
+{
+ "actions": [],
+ "autoname": "format:ATTLOG-{YYYY}-{MM}-{#####}",
+ "creation": "2026-04-18 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "status",
+  "device_id",
+  "column_break_head",
+  "import_date",
+  "file_section",
+  "attach_file",
+  "options_section",
+  "auto_create_unknown",
+  "column_break_options",
+  "default_company",
+  "result_section",
+  "total_records",
+  "created_checkins",
+  "created_employees",
+  "column_break_result",
+  "skipped_duplicates",
+  "skipped_unmapped",
+  "log_section",
+  "log"
+ ],
+ "fields": [
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nImported\nFailed",
+   "default": "Draft",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "device_id",
+   "fieldtype": "Data",
+   "label": "Device Id",
+   "description": "Optional identifier of the source attendance device"
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "import_date",
+   "fieldtype": "Date",
+   "label": "Import Date",
+   "default": "Today",
+   "in_list_view": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "file_section",
+   "fieldtype": "Section Break",
+   "label": "File"
+  },
+  {
+   "fieldname": "attach_file",
+   "fieldtype": "Attach",
+   "label": "Attlog File",
+   "reqd": 1
+  },
+  {
+   "fieldname": "options_section",
+   "fieldtype": "Section Break",
+   "label": "Options"
+  },
+  {
+   "fieldname": "auto_create_unknown",
+   "fieldtype": "Check",
+   "label": "Auto Create Unknown Employees",
+   "default": "0",
+   "description": "When enabled, a placeholder Employee will be created for any device user id that is not yet mapped"
+  },
+  {
+   "fieldname": "column_break_options",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_company",
+   "fieldtype": "Link",
+   "label": "Default Company",
+   "options": "Company",
+   "depends_on": "eval:doc.auto_create_unknown",
+   "mandatory_depends_on": "eval:doc.auto_create_unknown",
+   "description": "Company assigned to auto-created placeholder employees"
+  },
+  {
+   "fieldname": "result_section",
+   "fieldtype": "Section Break",
+   "label": "Result"
+  },
+  {
+   "fieldname": "total_records",
+   "fieldtype": "Int",
+   "label": "Total Records",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_checkins",
+   "fieldtype": "Int",
+   "label": "Created Checkins",
+   "read_only": 1
+  },
+  {
+   "fieldname": "created_employees",
+   "fieldtype": "Int",
+   "label": "Created Employees",
+   "read_only": 1,
+   "description": "Placeholder employees created for previously unmapped device user ids"
+  },
+  {
+   "fieldname": "column_break_result",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "skipped_duplicates",
+   "fieldtype": "Int",
+   "label": "Skipped Duplicates",
+   "read_only": 1
+  },
+  {
+   "fieldname": "skipped_unmapped",
+   "fieldtype": "Int",
+   "label": "Skipped Unmapped",
+   "read_only": 1,
+   "description": "Records whose device user id has no matching Employee"
+  },
+  {
+   "fieldname": "log_section",
+   "fieldtype": "Section Break",
+   "label": "Log",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "log",
+   "fieldtype": "Long Text",
+   "label": "Log",
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-04-18 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Hourly Payroll",
+ "name": "Attlog Import",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "device_id"
+}

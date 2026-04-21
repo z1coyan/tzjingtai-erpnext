@@ -1,0 +1,65 @@
+[
+ {
+  "doctype": "Custom Field",
+  "name": "Employee-daily_wage",
+  "dt": "Employee",
+  "module": "Hourly Payroll",
+  "fieldname": "daily_wage",
+  "label": "Daily Wage",
+  "fieldtype": "Currency",
+  "insert_after": "salary_mode",
+  "description": "Used by Hourly Payroll: hourly rate = daily_wage / regular_hours_per_day",
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Attendance-hourly_payroll_section",
+  "dt": "Attendance",
+  "module": "Hourly Payroll",
+  "fieldname": "hourly_payroll_section",
+  "label": "Hourly Payroll",
+  "fieldtype": "Section Break",
+  "insert_after": "working_hours",
+  "collapsible": 1,
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Attendance-regular_hours",
+  "dt": "Attendance",
+  "module": "Hourly Payroll",
+  "fieldname": "regular_hours",
+  "label": "Regular Hours",
+  "fieldtype": "Float",
+  "precision": "2",
+  "insert_after": "hourly_payroll_section",
+  "read_only": 1,
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Attendance-overtime_hours",
+  "dt": "Attendance",
+  "module": "Hourly Payroll",
+  "fieldname": "overtime_hours",
+  "label": "Overtime Hours",
+  "fieldtype": "Float",
+  "precision": "2",
+  "insert_after": "regular_hours",
+  "read_only": 1,
+  "translatable": 0
+ },
+ {
+  "doctype": "Custom Field",
+  "name": "Attendance-net_work_hours",
+  "dt": "Attendance",
+  "module": "Hourly Payroll",
+  "fieldname": "net_work_hours",
+  "label": "Net Work Hours",
+  "fieldtype": "Float",
+  "precision": "2",
+  "insert_after": "overtime_hours",
+  "read_only": 1,
+  "translatable": 0
+ }
+]

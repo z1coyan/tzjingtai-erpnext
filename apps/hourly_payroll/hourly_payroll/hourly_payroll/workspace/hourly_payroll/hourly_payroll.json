@@ -1,0 +1,215 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"header-intro\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Hourly Payroll</b></span>\",\"col\":12}},{\"id\":\"sc-attlog\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Attlog Import\",\"col\":3}},{\"id\":\"sc-payroll\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Monthly Payroll Run\",\"col\":3}},{\"id\":\"sc-adjust\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payroll Adjustment\",\"col\":3}},{\"id\":\"sc-summary\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payroll Summary\",\"col\":3}},{\"id\":\"card-employees\",\"type\":\"card\",\"data\":{\"card_name\":\"Employees\",\"col\":4}},{\"id\":\"card-payroll\",\"type\":\"card\",\"data\":{\"card_name\":\"Payroll\",\"col\":4}},{\"id\":\"card-reports\",\"type\":\"card\",\"data\":{\"card_name\":\"Reports\",\"col\":4}},{\"id\":\"card-import\",\"type\":\"card\",\"data\":{\"card_name\":\"Import\",\"col\":4}},{\"id\":\"card-settings\",\"type\":\"card\",\"data\":{\"card_name\":\"Settings\",\"col\":4}}]",
+ "creation": "2026-04-20 00:00:00",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "users",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Hourly Payroll",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employees",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee",
+   "link_count": 0,
+   "link_to": "Employee",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Employee Checkin",
+   "link_count": 0,
+   "link_to": "Employee Checkin",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Attendance",
+   "link_count": 0,
+   "link_to": "Attendance",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Department",
+   "link_count": 0,
+   "link_to": "Department",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payroll",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Monthly Payroll Run",
+   "link_count": 0,
+   "link_to": "Monthly Payroll Run",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Payroll Adjustment",
+   "link_count": 0,
+   "link_to": "Payroll Adjustment",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Journal Entry",
+   "link_count": 0,
+   "link_to": "Journal Entry",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Reports",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Payroll Summary",
+   "link_count": 0,
+   "link_to": "Payroll Summary",
+   "link_type": "Report",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Import",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Attlog Import",
+   "link_count": 0,
+   "link_to": "Attlog Import",
+   "link_type": "DocType",
+   "onboard": 1,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Settings",
+   "link_count": 0,
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Hourly Payroll Settings",
+   "link_count": 0,
+   "link_to": "Hourly Payroll Settings",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Shift Type",
+   "link_count": 0,
+   "link_to": "Shift Type",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-04-20 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Hourly Payroll",
+ "name": "Hourly Payroll",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "restrict_to_domain": "",
+ "roles": [],
+ "sequence_id": 110.0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "",
+   "format": "{} Draft",
+   "label": "Attlog Import",
+   "link_to": "Attlog Import",
+   "stats_filter": "{\"status\":\"Draft\"}",
+   "type": "DocType"
+  },
+  {
+   "color": "Green",
+   "doc_view": "",
+   "format": "{} Draft",
+   "label": "Monthly Payroll Run",
+   "link_to": "Monthly Payroll Run",
+   "stats_filter": "{\"docstatus\":0}",
+   "type": "DocType"
+  },
+  {
+   "color": "Orange",
+   "doc_view": "",
+   "format": "{} Draft",
+   "label": "Payroll Adjustment",
+   "link_to": "Payroll Adjustment",
+   "stats_filter": "{\"docstatus\":0}",
+   "type": "DocType"
+  },
+  {
+   "color": "Grey",
+   "doc_view": "",
+   "label": "Payroll Summary",
+   "link_to": "Payroll Summary",
+   "type": "Report"
+  }
+ ],
+ "title": "Hourly Payroll",
+ "type": "Workspace"
+}

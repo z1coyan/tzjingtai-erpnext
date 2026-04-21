@@ -1,0 +1,16 @@
+[project]
+name = "hourly_payroll"
+version = "0.1.0"
+description = "Hourly Payroll for ERPNext - attendance-based wage calculation"
+authors = [{ name = "台州京泰", email = "it@tzjingtai.com" }]
+license = { text = "MIT" }
+requires-python = ">=3.10"
+readme = "README.md"
+dependencies = []
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "hourly_payroll"

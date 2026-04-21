@@ -1,0 +1,556 @@
+#
+# Hourly Payroll APP 中文翻译
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: hourly_payroll 0.1.0\n"
+"Report-Msgid-Bugs-To: it@tzjingtai.com\n"
+"POT-Creation-Date: 2026-04-18 00:00+0000\n"
+"PO-Revision-Date: 2026-04-18 00:00+0000\n"
+"Last-Translator: 台州京泰 IT\n"
+"Language-Team: Simplified Chinese\n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Module name / Workspace title
+msgid "Hourly Payroll"
+msgstr "打卡考勤"
+
+#. Workspace — card sections
+msgid "Employees"
+msgstr "员工管理"
+
+msgid "Payroll"
+msgstr "薪资"
+
+msgid "Reports"
+msgstr "报表"
+
+msgid "Import"
+msgstr "导入"
+
+msgid "Settings"
+msgstr "设置"
+
+#. DocTypes
+msgid "Hourly Payroll Settings"
+msgstr "工时薪资设置"
+
+msgid "Attlog Import"
+msgstr "考勤导入"
+
+msgid "Monthly Payroll Run"
+msgstr "月度薪资运算"
+
+msgid "Monthly Payroll Detail"
+msgstr "月度薪资明细"
+
+msgid "Payroll Adjustment"
+msgstr "工资补发/奖金发放"
+
+msgid "Payroll Adjustment Detail"
+msgstr "补发/奖金发放明细"
+
+msgid "Payroll Summary"
+msgstr "薪资汇总"
+
+#. Hourly Payroll Settings — sections
+msgid "Time Windows"
+msgstr "时间窗"
+
+msgid "Calculation Rules"
+msgstr "计算规则"
+
+msgid "Overtime Full Attendance Bonus"
+msgstr "加班全勤奖励"
+
+msgid "Wage"
+msgstr "薪资"
+
+#. Hourly Payroll Settings — fields
+msgid "Morning Start"
+msgstr "上午上班"
+
+msgid "Morning End"
+msgstr "上午下班"
+
+msgid "Afternoon Start"
+msgstr "下午上班"
+
+msgid "Afternoon End"
+msgstr "下午下班"
+
+msgid "Overtime Start"
+msgstr "加班开始"
+
+msgid "Overtime End"
+msgstr "加班结束"
+
+msgid "Window Buffer Minutes"
+msgstr "时间窗容差（分钟）"
+
+msgid "Tolerance in minutes for a checkin to be counted in a window"
+msgstr "打卡被归入某个时间窗的前后容差分钟数"
+
+msgid "Extra Minutes"
+msgstr "附加分钟"
+
+msgid "Minutes added to raw worked duration before rounding"
+msgstr "截断前，对原始工时额外累加的分钟数"
+
+msgid "Round Unit Hours"
+msgstr "截断单位（小时）"
+
+msgid "Hours truncated down to multiples of this unit"
+msgstr "工时按此单位向下取整"
+
+msgid "Regular Cap Hours"
+msgstr "正班封顶（小时）"
+
+msgid "Maximum regular hours counted per day (morning + afternoon)"
+msgstr "每日正班（上午+下午）累计封顶小时数"
+
+msgid "Overtime Full Threshold Hours"
+msgstr "加班全勤阈值（小时）"
+
+msgid "Overtime worked hours at or above this value qualifies for full credit"
+msgstr "加班净时长达到此值即按全勤奖励计算"
+
+msgid "Overtime Full Credit Hours"
+msgstr "加班全勤奖励（小时）"
+
+msgid "Hours credited when overtime is fully attended"
+msgstr "加班全勤时实际计入的工时"
+
+msgid "Overtime Full Tolerance Minutes"
+msgstr "加班全勤容差（分钟）"
+
+msgid "Minutes shortfall still considered fully attended"
+msgstr "差多少分钟以内仍视为加班全勤"
+
+msgid "Regular Hours Per Day"
+msgstr "日标准工时"
+
+msgid "Divisor used to derive hourly rate from daily wage"
+msgstr "由日薪推算时薪时使用的每日标准工时"
+
+#. Hourly Payroll Settings — Shift Integration
+msgid "Shift Integration"
+msgstr "班次对接"
+
+msgid "Create a Shift Type from these time windows and bind it to every Active Employee's Default Shift. This lets ERPNext native Auto Attendance generate daily Attendance records from Employee Checkins."
+msgstr "根据以上时间窗创建一个班次，并绑定到所有在职员工的默认班次。ERPNext 的自动考勤会据此从员工打卡自动生成每日考勤记录。"
+
+msgid "Shift Type Name"
+msgstr "班次名称"
+
+msgid "Name of the Shift Type created/updated by the Setup button"
+msgstr "点击「一键配置」按钮时创建/更新的 Shift Type 名称"
+
+msgid "Linked Shift Type"
+msgstr "已绑定班次"
+
+msgid "Populated after you click Setup. New placeholder employees are bound to this shift on creation."
+msgstr "点击「一键配置」后自动填入；后续自动新建的占位员工会绑定到此班次。"
+
+msgid "Auto Attendance Process From"
+msgstr "自动考勤起始日"
+
+msgid "The Shift Type's Process Attendance After date. Set to a date before your earliest Checkin so Auto Attendance can backfill historical records."
+msgstr "班次的自动考勤处理起始日期。设为早于最早一条打卡的日期，自动考勤就能回溯历史打卡。"
+
+msgid "Setup Shift & Assignments"
+msgstr "一键配置班次与绑定"
+
+msgid "Leave empty to bind every Active employee across all companies"
+msgstr "留空表示绑定所有公司的在职员工"
+
+msgid "Company"
+msgstr "公司"
+
+msgid "Run"
+msgstr "运行"
+
+msgid "Shift Setup Finished"
+msgstr "班次配置完成"
+
+msgid "Shift Type: {0}<br>Created: {1} · Updated: {2}<br>Employees bound: {3} · Already bound: {4}"
+msgstr "班次：{0}<br>新建：{1} · 更新：{2}<br>本次绑定员工：{3} · 原已绑定：{4}"
+
+msgid "Open Shift Type"
+msgstr "打开班次"
+
+msgid "Morning Start and Afternoon End (or Overtime End) must be set first"
+msgstr "请先填写上午上班时间和下午下班时间（或加班结束时间）"
+
+#. Attlog Import — fields
+msgid "Status"
+msgstr "状态"
+
+msgid "Device Id"
+msgstr "设备编号"
+
+msgid "Optional identifier of the source attendance device"
+msgstr "来源考勤机的可选标识"
+
+msgid "Import Date"
+msgstr "导入日期"
+
+msgid "File"
+msgstr "文件"
+
+msgid "Attlog File"
+msgstr "考勤文件"
+
+msgid "Result"
+msgstr "结果"
+
+msgid "Total Records"
+msgstr "记录总数"
+
+msgid "Created Checkins"
+msgstr "新建打卡数"
+
+msgid "Skipped Duplicates"
+msgstr "跳过重复"
+
+msgid "Skipped Unmapped"
+msgstr "跳过未映射"
+
+msgid "Records whose device user id has no matching Employee"
+msgstr "设备用户号在员工表中没有匹配的记录数"
+
+msgid "Options"
+msgstr "选项"
+
+msgid "Auto Create Unknown Employees"
+msgstr "自动新建未知员工"
+
+msgid "When enabled, a placeholder Employee will be created for any device user id that is not yet mapped"
+msgstr "启用后，遇到未映射的设备用户号会自动建一条占位员工记录"
+
+msgid "Default Company"
+msgstr "默认公司"
+
+msgid "Company assigned to auto-created placeholder employees"
+msgstr "自动新建占位员工时所属的公司"
+
+msgid "Created Employees"
+msgstr "新建员工数"
+
+msgid "Placeholder employees created for previously unmapped device user ids"
+msgstr "为此前未映射的设备用户号自动新建的占位员工数量"
+
+msgid "Default Company is required when Auto Create Unknown Employees is enabled"
+msgstr "勾选「自动新建未知员工」后，必须填写默认公司"
+
+msgid "Created placeholder Employee {0} for device user id {1}"
+msgstr "已为设备用户号 {1} 新建占位员工 {0}"
+
+msgid "Log"
+msgstr "日志"
+
+#. Attlog Import — select options
+msgid "Draft"
+msgstr "草稿"
+
+msgid "Imported"
+msgstr "已导入"
+
+msgid "Failed"
+msgstr "失败"
+
+#. Attlog Import — messages
+msgid "Please attach an attlog file first"
+msgstr "请先上传考勤文件"
+
+msgid "Unmapped device user ids: {0}"
+msgstr "未映射的设备用户号：{0}"
+
+msgid "Parse & Create Checkins"
+msgstr "解析并创建打卡"
+
+msgid "Parse the attlog file and create Employee Checkin records?"
+msgstr "确认解析考勤文件并批量创建员工打卡记录？"
+
+msgid "Import Finished"
+msgstr "导入完成"
+
+msgid "Total: {0} · Created: {1} · New Employees: {2} · Duplicates: {3} · Unmapped: {4}"
+msgstr "共 {0} 条，新建打卡 {1}，新建员工 {2}，重复 {3}，未映射 {4}"
+
+#. Monthly Payroll Run — fields
+msgid "Company"
+msgstr "公司"
+
+msgid "Period Year"
+msgstr "薪资年份"
+
+msgid "Period Month"
+msgstr "薪资月份"
+
+msgid "Filters"
+msgstr "筛选"
+
+msgid "Department"
+msgstr "部门"
+
+msgid "Limit to one department; leave empty for all"
+msgstr "限定单个部门；留空表示全部"
+
+msgid "Employee"
+msgstr "员工"
+
+msgid "Limit to one employee; leave empty for all"
+msgstr "限定单个员工；留空表示全部"
+
+msgid "Details"
+msgstr "明细"
+
+msgid "Totals"
+msgstr "汇总"
+
+msgid "Total Employees"
+msgstr "员工总数"
+
+msgid "Total Regular Hours"
+msgstr "正班工时合计"
+
+msgid "Total Overtime Hours"
+msgstr "加班工时合计"
+
+msgid "Total Amount"
+msgstr "应发金额合计"
+
+msgid "Amended From"
+msgstr "修订自"
+
+#. Monthly Payroll Run — Accounting
+msgid "Accounting"
+msgstr "会计"
+
+msgid "When this payroll run is submitted, a Draft Journal Entry will be auto-created (Dr Wage Expense per employee / Cr Payroll Payable total) for accounting review before manual submission."
+msgstr "当此月度薪资单提交时，会自动生成一张草稿状态的会计凭证（按员工逐行借记工资费用、贷记应付工资合计），待会计复核无误后再手动提交。"
+
+msgid "Posting Date"
+msgstr "记账日期"
+
+msgid "Posting date of the Journal Entry. Defaults to the last day of the payroll month."
+msgstr "凭证的记账日期，默认取薪资月的最后一天。"
+
+msgid "Wage Expense Account"
+msgstr "工资费用科目"
+
+msgid "Debit side: salary/wage expense GL account"
+msgstr "借方：工资费用总账科目"
+
+msgid "Payroll Payable Account"
+msgstr "应付工资科目"
+
+msgid "Credit side: payable/liability GL account that will be settled when wages are actually paid"
+msgstr "贷方：应付工资/负债类总账科目，实际发薪时再冲销"
+
+msgid "Cost Center"
+msgstr "成本中心"
+
+msgid "Cost center used on every Journal Entry line. Defaults to the company's default cost center."
+msgstr "用于凭证每一行的成本中心，默认取公司的默认成本中心。"
+
+msgid "Journal Entry"
+msgstr "会计凭证"
+
+msgid "Auto-created on submit"
+msgstr "提交时自动创建（草稿状态，需会计复核后手动提交）"
+
+msgid "Open Journal Entry"
+msgstr "打开凭证"
+
+#. Submit-time validations & remarks
+msgid "Wage Expense Account and Payroll Payable Account are required to submit"
+msgstr "提交前必须填写工资费用科目和应付工资科目"
+
+msgid "Wage Expense Account and Payroll Payable Account must be different"
+msgstr "工资费用科目和应付工资科目必须不同"
+
+msgid "No payable amount in details; nothing to post"
+msgstr "明细中没有可入账金额，无需生成凭证"
+
+msgid "{0} · {1} · {2} hrs"
+msgstr "{0} · {1} · {2} 小时"
+
+msgid "Hourly Payroll Run {0} ({1}-{2:02d})"
+msgstr "工时薪资 {0}（{1}-{2:02d}）"
+
+#. Monthly Payroll Run — select
+msgid "Generated"
+msgstr "已生成"
+
+msgid "Submitted"
+msgstr "已提交"
+
+msgid "Cancelled"
+msgstr "已取消"
+
+#. Monthly Payroll Detail — fields
+msgid "Employee Name"
+msgstr "员工姓名"
+
+msgid "Attendance Device Id"
+msgstr "考勤机编号"
+
+msgid "Days Present"
+msgstr "出勤天数"
+
+msgid "Regular Hours"
+msgstr "正班工时"
+
+msgid "Overtime Hours"
+msgstr "加班工时"
+
+msgid "Total Hours"
+msgstr "总工时"
+
+msgid "Work Days"
+msgstr "工日"
+
+msgid "Equivalent working days = Total Hours / Regular Hours Per Day"
+msgstr "折算工日 = 总工时 / 日标准工时"
+
+msgid "Daily Wage"
+msgstr "日薪"
+
+msgid "Hourly Rate"
+msgstr "时薪"
+
+msgid "Basic Wage"
+msgstr "基本工资"
+
+msgid "Work Days × Daily Wage"
+msgstr "工日 × 日薪"
+
+msgid "Bonus"
+msgstr "奖金"
+
+msgid "Supplementary"
+msgstr "补发"
+
+msgid "Back-pay or correction paid in this run"
+msgstr "本月并发的补发或更正金额"
+
+msgid "Amount"
+msgstr "金额"
+
+msgid "Basic Wage + Bonus + Supplementary"
+msgstr "基本工资 + 奖金 + 补发"
+
+msgid "A Monthly Payroll Run for {0} {1}-{2:02d} already exists: {3}"
+msgstr "公司 {0} 的 {1}-{2:02d} 月度薪资运算已存在：{3}"
+
+#. Payroll Adjustment — fields & messages
+msgid "Title"
+msgstr "标题"
+
+msgid "A readable name for this adjustment run (e.g. 春节奖金发放 / 3月份补发)"
+msgstr "自定义标题，便于区分用途（如：春节奖金发放 / 3月份补发）"
+
+msgid "Posting date used on the Journal Entry"
+msgstr "凭证的记账日期"
+
+msgid "Notes"
+msgstr "说明"
+
+msgid "Description"
+msgstr "说明内容"
+
+msgid "Total Bonus"
+msgstr "奖金合计"
+
+msgid "Total Supplementary"
+msgstr "补发合计"
+
+msgid "Adjustment Type"
+msgstr "类型"
+
+msgid "Supplementary"
+msgstr "补发"
+
+msgid "Bonus"
+msgstr "奖金"
+
+msgid "Remark"
+msgstr "备注"
+
+msgid "On submit, a Draft Journal Entry will be auto-created: Dr Wage Expense per employee / Cr Payroll Payable total."
+msgstr "提交时自动生成一张草稿状态的会计凭证：按员工逐行借记工资费用、贷记应付工资合计。"
+
+msgid "Cannot submit with empty details"
+msgstr "明细为空，无法提交"
+
+msgid "Row {0}: Amount must be greater than zero"
+msgstr "第 {0} 行：金额必须大于 0"
+
+msgid "{0} · {1} · {2}: {3}"
+msgstr "{0} · {1} · {2}：{3}"
+
+msgid "Payroll Adjustment {0} · {1} ({2}-{3:02d})"
+msgstr "工资补发/奖金发放 {0} · {1}（{2}-{3:02d}）"
+
+#. Payroll Summary Report
+msgid "Total Paid"
+msgstr "总发放"
+
+msgid "Period"
+msgstr "期间"
+
+msgid "Please select Company and Period Year"
+msgstr "请先选择公司和薪资年份"
+
+#. Custom Field (Attendance / Employee)
+msgid "Net Work Hours"
+msgstr "净工时"
+
+msgid "Used by Hourly Payroll: hourly rate = daily_wage / regular_hours_per_day"
+msgstr "工时薪资使用：时薪 = 日薪 / 日标准工时"
+
+#. Monthly Payroll Run — buttons & messages
+msgid "Generate"
+msgstr "生成"
+
+msgid "Missing Fields"
+msgstr "字段未填"
+
+msgid "Please fill Company, Period Year and Period Month first."
+msgstr "请先填写公司、薪资年份和薪资月份。"
+
+msgid "Recalculate details for {0}-{1}?"
+msgstr "确认重新计算 {0}-{1} 的薪资明细？"
+
+msgid "Generated {0} rows, total {1}"
+msgstr "已生成 {0} 条明细，合计 {1}"
+
+msgid "Only Draft payroll runs can be regenerated"
+msgstr "仅草稿状态的薪资运算可以重新生成"
+
+msgid "Cannot submit an empty payroll run. Click Generate first."
+msgstr "明细为空，无法提交，请先点击「生成」。"
+
+msgid "Period Year and Period Month must be integers"
+msgstr "薪资年份和薪资月份必须是整数"
+
+#. Hourly Payroll Settings — validate messages
+msgid "Morning End must be later than Morning Start"
+msgstr "上午下班时间必须晚于上午上班时间"
+
+msgid "Afternoon End must be later than Afternoon Start"
+msgstr "下午下班时间必须晚于下午上班时间"
+
+msgid "Overtime End must be later than Overtime Start"
+msgstr "加班结束时间必须晚于加班开始时间"
+
+msgid "Round Unit Hours must be positive"
+msgstr "截断单位必须大于 0"
+
+msgid "Regular Hours Per Day must be positive"
+msgstr "日标准工时必须大于 0"

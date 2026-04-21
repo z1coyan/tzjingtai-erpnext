@@ -1,0 +1,235 @@
+{
+ "actions": [],
+ "autoname": "format:PAY-{YYYY}-{MM}-{#####}",
+ "creation": "2026-04-18 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "is_submittable": 1,
+ "field_order": [
+  "status",
+  "company",
+  "column_break_head",
+  "period_year",
+  "period_month",
+  "filters_section",
+  "department",
+  "column_break_filters",
+  "employee",
+  "details_section",
+  "details",
+  "totals_section",
+  "total_employees",
+  "total_regular_hours",
+  "column_break_totals",
+  "total_overtime_hours",
+  "total_amount",
+  "accounting_section",
+  "posting_date",
+  "wage_expense_account",
+  "cost_center",
+  "column_break_accounting",
+  "payroll_payable_account",
+  "journal_entry",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nGenerated\nSubmitted\nCancelled",
+   "default": "Draft",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "column_break_head",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "period_year",
+   "fieldtype": "Int",
+   "label": "Period Year",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "period_month",
+   "fieldtype": "Select",
+   "label": "Period Month",
+   "options": "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "filters_section",
+   "fieldtype": "Section Break",
+   "label": "Filters",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "department",
+   "fieldtype": "Link",
+   "label": "Department",
+   "options": "Department",
+   "description": "Limit to one department; leave empty for all"
+  },
+  {
+   "fieldname": "column_break_filters",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "description": "Limit to one employee; leave empty for all"
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "details",
+   "fieldtype": "Table",
+   "label": "Details",
+   "options": "Monthly Payroll Detail",
+   "read_only": 1
+  },
+  {
+   "fieldname": "totals_section",
+   "fieldtype": "Section Break",
+   "label": "Totals"
+  },
+  {
+   "fieldname": "total_employees",
+   "fieldtype": "Int",
+   "label": "Total Employees",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_regular_hours",
+   "fieldtype": "Float",
+   "label": "Total Regular Hours",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_totals",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_overtime_hours",
+   "fieldtype": "Float",
+   "label": "Total Overtime Hours",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_amount",
+   "fieldtype": "Currency",
+   "label": "Total Amount",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "accounting_section",
+   "fieldtype": "Section Break",
+   "label": "Accounting",
+   "description": "When this payroll run is submitted, a Draft Journal Entry will be auto-created (Dr Wage Expense per employee / Cr Payroll Payable total) for accounting review before manual submission."
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "description": "Posting date of the Journal Entry. Defaults to the last day of the payroll month.",
+   "mandatory_depends_on": "eval:doc.docstatus>0||doc.status==\"Generated\""
+  },
+  {
+   "fieldname": "wage_expense_account",
+   "fieldtype": "Link",
+   "label": "Wage Expense Account",
+   "options": "Account",
+   "description": "Debit side: salary/wage expense GL account",
+   "mandatory_depends_on": "eval:doc.docstatus>0||doc.status==\"Generated\""
+  },
+  {
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center",
+   "description": "Cost center used on every Journal Entry line. Defaults to the company's default cost center."
+  },
+  {
+   "fieldname": "column_break_accounting",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "payroll_payable_account",
+   "fieldtype": "Link",
+   "label": "Payroll Payable Account",
+   "options": "Account",
+   "description": "Credit side: payable/liability GL account that will be settled when wages are actually paid",
+   "mandatory_depends_on": "eval:doc.docstatus>0||doc.status==\"Generated\""
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1,
+   "description": "Auto-created on submit"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Monthly Payroll Run",
+   "no_copy": 1,
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "links": [],
+ "modified": "2026-04-18 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Hourly Payroll",
+ "name": "Monthly Payroll Run",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "HR Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "HR User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

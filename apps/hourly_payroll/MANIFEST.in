@@ -1,0 +1,15 @@
+include MANIFEST.in
+include README.md
+include license.txt
+include hourly_payroll/*.json
+include hourly_payroll/locale/*.po
+include hourly_payroll/fixtures/*.json
+recursive-include hourly_payroll *.css
+recursive-include hourly_payroll *.html
+recursive-include hourly_payroll *.js
+recursive-include hourly_payroll *.json
+recursive-include hourly_payroll *.md
+recursive-include hourly_payroll *.po
+recursive-include hourly_payroll *.py
+recursive-include hourly_payroll *.txt
+recursive-exclude hourly_payroll *.pyc
