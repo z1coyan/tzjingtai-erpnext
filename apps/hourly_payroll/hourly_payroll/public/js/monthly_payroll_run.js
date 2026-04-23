@@ -51,6 +51,17 @@ frappe.ui.form.on("Monthly Payroll Run", {
                 frappe.set_route("Form", "Journal Entry", frm.doc.journal_entry);
             });
         }
+
+        if (!frm.is_new() && (frm.doc.details || []).length) {
+            frm.add_custom_button(__("Export Details (Excel)"), () => {
+                const url =
+                    "/api/method/hourly_payroll.hourly_payroll.doctype" +
+                    ".monthly_payroll_run.monthly_payroll_run.export_details_xlsx" +
+                    "?name=" +
+                    encodeURIComponent(frm.doc.name);
+                window.open(url, "_blank");
+            });
+        }
     },
 
     company(frm) {

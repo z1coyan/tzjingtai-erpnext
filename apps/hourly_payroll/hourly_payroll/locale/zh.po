@@ -524,6 +524,15 @@ msgstr "工时薪资使用：时薪 = 日薪 / 日标准工时"
 msgid "Generate"
 msgstr "生成"
 
+msgid "Export Details (Excel)"
+msgstr "导出明细（Excel）"
+
+msgid "No."
+msgstr "序号"
+
+msgid "Total"
+msgstr "合计"
+
 msgid "Missing Fields"
 msgstr "字段未填"
 

@@ -5,6 +5,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
+from frappe.utils.xlsxutils import build_xlsx_response
 
 from hourly_payroll.utils.wage_calc import aggregate
 
@@ -194,3 +195,81 @@ class MonthlyPayrollRun(Document):
 def _month_end(year: int, month: int) -> date_type:
     last_day = calendar.monthrange(year, month)[1]
     return date_type(year, month, last_day)
+
+
+@frappe.whitelist()
+def export_details_xlsx(name: str):
+    """导出月度薪资明细为 xlsx，供财务给银行代发工资使用。
+
+    - 权限：沿用 Monthly Payroll Run 的 read 权限。
+    - 列：覆盖员工银行发放所需的全部字段（姓名/身份证号/开户银行/银行账号/金额），
+      同时保留工时与基本工资，便于财务在同一文件里做核对。
+    """
+    doc = frappe.get_doc("Monthly Payroll Run", name)
+    doc.check_permission("read")
+
+    headers = [
+        _("No."),
+        _("Employee"),
+        _("Employee Name"),
+        _("Attendance Device Id"),
+        _("ID Card No"),
+        _("Bank Name"),
+        _("Bank Account No"),
+        _("Department"),
+        _("Days Present"),
+        _("Regular Hours"),
+        _("Overtime Hours"),
+        _("Total Hours"),
+        _("Work Days"),
+        _("Daily Wage"),
+        _("Basic Wage"),
+        _("Adjustment"),
+        _("Amount"),
+    ]
+
+    rows: list[list] = [headers]
+    for idx, d in enumerate(doc.details, start=1):
+        rows.append([
+            idx,
+            d.employee,
+            d.employee_name,
+            d.attendance_device_id,
+            d.id_card_no,
+            d.bank_name,
+            d.bank_ac_no,
+            d.department,
+            d.days_present,
+            flt(d.regular_hours, 2),
+            flt(d.overtime_hours, 2),
+            flt(d.total_hours, 2),
+            flt(d.work_days, 2),
+            flt(d.daily_wage, 2),
+            flt(d.basic_wage, 2),
+            flt(d.adjustment, 2),
+            flt(d.amount, 2),
+        ])
+
+    # 合计行，便于与银行发放金额对账
+    rows.append([
+        "",
+        "",
+        _("Total"),
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        flt(doc.total_regular_hours, 2),
+        flt(doc.total_overtime_hours, 2),
+        "",
+        "",
+        "",
+        "",
+        "",
+        flt(doc.total_amount, 2),
+    ])
+
+    filename = f"{doc.name}-{doc.period_year}-{int(doc.period_month):02d}"
+    build_xlsx_response(rows, filename)
