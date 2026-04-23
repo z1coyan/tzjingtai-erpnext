@@ -49,12 +49,12 @@ class MonthlyPayrollRun(Document):
             )
 
     def _recompute_details_and_totals(self):
-        """根据每行 basic_wage + bonus + supplementary 重算 amount；然后刷新表头合计。"""
+        """根据每行 basic_wage + adjustment 重算 amount；然后刷新表头合计。"""
         total_reg = 0.0
         total_ot = 0.0
         total_amt = 0.0
         for d in self.details:
-            d.amount = flt(flt(d.basic_wage) + flt(d.bonus) + flt(d.supplementary), 2)
+            d.amount = flt(flt(d.basic_wage) + flt(d.adjustment), 2)
             total_reg += flt(d.regular_hours)
             total_ot += flt(d.overtime_hours)
             total_amt += flt(d.amount)
@@ -101,19 +101,13 @@ class MonthlyPayrollRun(Document):
             employee=self.employee or None,
         )
 
-        # 保留已存在行上用户手填的 bonus/supplementary（按 employee 对齐）
-        preserved: dict[str, dict[str, float]] = {
-            d.employee: {
-                "bonus": flt(d.bonus),
-                "supplementary": flt(d.supplementary),
-            }
-            for d in self.details
-            if d.employee
+        # 保留已存在行上用户手填的 adjustment（按 employee 对齐）
+        preserved: dict[str, float] = {
+            d.employee: flt(d.adjustment) for d in self.details if d.employee
         }
 
         self.set("details", [])
         for r in rows:
-            keep = preserved.get(r["employee"], {})
             self.append("details", {
                 "employee": r["employee"],
                 "employee_name": r["employee_name"],
@@ -127,8 +121,7 @@ class MonthlyPayrollRun(Document):
                 "daily_wage": r["daily_wage"],
                 "hourly_rate": r["hourly_rate"],
                 "basic_wage": r["basic_wage"],
-                "bonus": keep.get("bonus", 0.0),
-                "supplementary": keep.get("supplementary", 0.0),
+                "adjustment": preserved.get(r["employee"], 0.0),
                 # amount 在 validate() 里重算
             })
 
@@ -146,7 +139,9 @@ class MonthlyPayrollRun(Document):
 
     def _make_journal_entry(self) -> str:
         """按员工分行生成 Draft JE：
-        - 每个 detail 一行 Dr 工资费用，金额 = basic_wage + bonus + supplementary
+        - 每个 detail 一行 Dr 工资费用，金额 = basic_wage + adjustment
+          借方不绑 Employee（ERPNext 要求绑 party 的账户必须是 Receivable/Payable），
+          员工信息保留在 user_remark 里供审计追溯。
         - 合并一行 Cr 应付工资 = 应发合计
         """
         payable_rows = [d for d in self.details if flt(d.amount) > 0]
@@ -162,18 +157,16 @@ class MonthlyPayrollRun(Document):
                 "account": self.wage_expense_account,
                 "debit_in_account_currency": flt(d.amount, 2),
                 "credit_in_account_currency": 0,
-                "party_type": "Employee",
-                "party": d.employee,
                 "cost_center": cost_center,
                 "user_remark": _(
-                    "{0} · {1} · {2} hrs · basic {3} + bonus {4} + supp {5}"
+                    "{0} ({1}) · {2} · {3} hrs · basic {4} + adj {5}"
                 ).format(
                     d.employee_name or d.employee,
+                    d.employee,
                     d.department or "",
                     flt(d.total_hours, 2),
                     flt(d.basic_wage, 2),
-                    flt(d.bonus, 2),
-                    flt(d.supplementary, 2),
+                    flt(d.adjustment, 2),
                 ),
             })
         accounts.append({

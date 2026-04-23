@@ -59,11 +59,11 @@ Attendance 三个字段由 `before_save` 钩子在每次 save 时从 `Employee C
 2. **Monthly Payroll Run** → 新建（同公司同月只能一条）→ 选公司 + 年 + 月 → Generate → 核对明细 → 填工资费用 / 应付工资 / 成本中心 → Submit → 生成 Draft JE
 3. 会计进 **Journal Entry** 复核 → 手动 Submit 过账
 4. 月中临时补发 / 集中发奖金：**Payroll Adjustment** → 新建 → 填 Title + 明细 → 提交 → 出独立 Draft JE
-5. **Payroll Summary** 报表 → 筛公司 / 年 / 月 → 看每员工总发放（基本 + 奖金 + 补发）
+5. **Payroll Summary** 报表 → 筛公司 / 年 / 月 → 看每员工总发放（基本 + 补正 + 调整单发放）
 
 ### 事后更正
 
-- Monthly Payroll Run 已提交后发现错误：Cancel 原单（Draft JE 删掉 / Submitted JE 反冲）→ Amend → 改 bonus / supplementary → 重新提交 → 新 Draft JE
+- Monthly Payroll Run 已提交后发现错误：Cancel 原单（Draft JE 删掉 / Submitted JE 反冲）→ Amend → 改 adjustment → 重新提交 → 新 Draft JE
 - 或走 Payroll Adjustment 追加一张调整单（推荐，原始凭证不动，审计链清晰）
 
 ## 部署

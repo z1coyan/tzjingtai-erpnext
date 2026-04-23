@@ -86,8 +86,7 @@ def aggregate(
             "daily_wage": daily_wage,
             "hourly_rate": hourly_rate,
             "basic_wage": basic_wage,
-            "bonus": 0.0,
-            "supplementary": 0.0,
+            "adjustment": 0.0,
             "amount": basic_wage,
         })
 

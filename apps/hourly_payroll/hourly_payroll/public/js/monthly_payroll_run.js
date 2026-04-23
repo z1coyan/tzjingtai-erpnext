@@ -71,16 +71,14 @@ frappe.ui.form.on("Monthly Payroll Run", {
 });
 
 frappe.ui.form.on("Monthly Payroll Detail", {
-    bonus: recalc_row,
-    supplementary: recalc_row,
+    adjustment: recalc_row,
 });
 
 function recalc_row(frm, cdt, cdn) {
     const row = locals[cdt][cdn];
     const amt =
         (parseFloat(row.basic_wage) || 0) +
-        (parseFloat(row.bonus) || 0) +
-        (parseFloat(row.supplementary) || 0);
+        (parseFloat(row.adjustment) || 0);
     frappe.model.set_value(cdt, cdn, "amount", amt);
 
     let total = 0;

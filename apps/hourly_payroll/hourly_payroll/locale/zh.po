@@ -430,20 +430,17 @@ msgstr "基本工资"
 msgid "Work Days × Daily Wage"
 msgstr "工日 × 日薪"
 
-msgid "Bonus"
-msgstr "奖金"
+msgid "Adjustment"
+msgstr "补正"
 
-msgid "Supplementary"
-msgstr "补发"
-
-msgid "Back-pay or correction paid in this run"
-msgstr "本月并发的补发或更正金额"
+msgid "Positive or negative correction applied in this run"
+msgstr "本月的调整金额（支持正负数）"
 
 msgid "Amount"
 msgstr "金额"
 
-msgid "Basic Wage + Bonus + Supplementary"
-msgstr "基本工资 + 奖金 + 补发"
+msgid "Basic Wage + Adjustment"
+msgstr "基本工资 + 补正"
 
 msgid "A Monthly Payroll Run for {0} {1}-{2:02d} already exists: {3}"
 msgstr "公司 {0} 的 {1}-{2:02d} 月度薪资运算已存在：{3}"

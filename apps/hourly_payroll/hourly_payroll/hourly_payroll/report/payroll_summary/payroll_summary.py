@@ -6,7 +6,7 @@ Payroll Summary —— 按员工汇总某公司某年某月（或某年全年）
   - Payroll Adjustment   (docstatus<2) 的 Payroll Adjustment Detail (Bonus / Supplementary)
 
 每个员工一行，金额展示为：
-  基本工资 + (月内奖金 + 调整单奖金) + (月内补发 + 调整单补发) = 总发放
+  基本工资 + (月内补正 + 调整单奖金 + 调整单补发) = 总发放
 """
 
 from __future__ import annotations
@@ -34,8 +34,7 @@ def _columns():
         {"label": _("Period"), "fieldname": "period", "fieldtype": "Data", "width": 90},
         {"label": _("Work Days"), "fieldname": "work_days", "fieldtype": "Float", "precision": 2, "width": 90},
         {"label": _("Basic Wage"), "fieldname": "basic_wage", "fieldtype": "Currency", "width": 120},
-        {"label": _("Bonus"), "fieldname": "bonus", "fieldtype": "Currency", "width": 110},
-        {"label": _("Supplementary"), "fieldname": "supplementary", "fieldtype": "Currency", "width": 110},
+        {"label": _("Adjustment"), "fieldname": "adjustment", "fieldtype": "Currency", "width": 120},
         {"label": _("Total Paid"), "fieldname": "total_paid", "fieldtype": "Currency", "width": 130},
     ]
 
@@ -57,20 +56,16 @@ def _data(filters: dict) -> list[dict]:
         b = _ensure(bucket, key, r)
         b["work_days"] += flt(r["work_days"])
         b["basic_wage"] += flt(r["basic_wage"])
-        b["bonus"] += flt(r["bonus"])
-        b["supplementary"] += flt(r["supplementary"])
+        b["adjustment"] += flt(r["adjustment"])
 
     for r in adj_rows:
         key = (r["employee"], r["period"])
         b = _ensure(bucket, key, r)
-        if r["adjustment_type"] == "Bonus":
-            b["bonus"] += flt(r["amount"])
-        else:
-            b["supplementary"] += flt(r["amount"])
+        b["adjustment"] += flt(r["amount"])
 
     data: list[dict] = []
     for (emp, period), b in bucket.items():
-        b["total_paid"] = flt(b["basic_wage"] + b["bonus"] + b["supplementary"], 2)
+        b["total_paid"] = flt(b["basic_wage"] + b["adjustment"], 2)
         data.append(b)
 
     data.sort(key=lambda r: (r["period"], r["department"] or "", r["employee_name"] or "", r["employee"]))
@@ -87,8 +82,7 @@ def _ensure(bucket: dict, key: tuple, template: dict) -> dict:
             "period": key[1],
             "work_days": 0.0,
             "basic_wage": 0.0,
-            "bonus": 0.0,
-            "supplementary": 0.0,
+            "adjustment": 0.0,
         }
     return bucket[key]
 
@@ -118,8 +112,7 @@ def _load_payroll_details(year: int, month: int | None, company: str, employee: 
             CONCAT(run.period_year, '-', LPAD(run.period_month, 2, '0')) AS period,
             det.work_days,
             det.basic_wage,
-            det.bonus,
-            det.supplementary
+            det.adjustment
         FROM `tabMonthly Payroll Detail` det
         JOIN `tabMonthly Payroll Run` run ON det.parent = run.name
         WHERE {' AND '.join(conditions)}
