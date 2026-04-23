@@ -400,6 +400,15 @@ msgstr "员工姓名"
 msgid "Attendance Device Id"
 msgstr "考勤机编号"
 
+msgid "ID Card No"
+msgstr "身份证号"
+
+msgid "Bank Name"
+msgstr "开户银行"
+
+msgid "Bank Account No"
+msgstr "银行账号"
+
 msgid "Days Present"
 msgstr "出勤天数"
 
